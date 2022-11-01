@@ -1,0 +1,3 @@
+jdbc: 'jdbc:mysql//localhost:3306/language'
+user: 'language'
+pwd: 'test123'

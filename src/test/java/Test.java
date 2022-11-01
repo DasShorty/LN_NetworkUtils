@@ -1,5 +1,4 @@
 import de.shortexception.networkutils.NetworkHandler;
-import de.shortexception.networkutils.api.messanger.MongoTextHandler;
 import de.shortexception.networkutils.api.player.NetworkPlayer;
 
 import java.util.UUID;
@@ -12,7 +11,7 @@ public class Test {
 
         var networkPlayer = new NetworkPlayer(networkHandler.getMongoConnection(), UUID.fromString("1f9905df-3e25-4852-b7b8-92e1e61e67ac"));
 
-        networkPlayer.createNetworkData(MongoTextHandler.Language.GERMAN);
+        networkPlayer.createNetworkData(SQLTextHandler.Language.GERMAN);
 
     }
 
