@@ -2,6 +2,8 @@ name: Build Gradle
 
 on:
     push:
+        tags:
+            - '*'
 
 jobs:
     build-gradle-project:
@@ -9,10 +11,16 @@ jobs:
         steps:
             -   name: Checkout project sources
                 uses: actions/checkout@v3
+            -   name: Set env
+                run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
             -   name: Setup Gradle
                 uses: gradle/gradle-build-action@v2
             -   name: Run build with Gradle Wrapper
-                run: ./gradlew build
+                run: ./gradlew publish
+                env:
+                    USERNAME: ${{secrets.USERNAME}}
+                    TOKEN: ${{secrets.TOKEN}}
+                    RELEASE_VERSION: ${{env.RELEASE_VERSION}}
             -   name: Upload artifacts
                 uses: actions/upload-artifact@v3
                 with:
