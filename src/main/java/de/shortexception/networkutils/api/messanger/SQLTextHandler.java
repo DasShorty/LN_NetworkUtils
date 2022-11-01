@@ -14,6 +14,7 @@ public class SQLTextHandler {
 
     public SQLTextHandler(Plugin plugin) {
         connection = new SQLConnection(plugin.getConfig().getString("jdbc"), plugin.getConfig().getString("user"), plugin.getConfig().getString("pwd"));
+        // lade hoch
     }
 
     public String getKey(String key, Language language) {
