@@ -1,0 +1,7 @@
+name: NetworkUtils
+version: 1.0
+main: de.shortexception.networkutils.NetworkUtils
+api-version: 1.19
+prefix: NU
+authors: [ ShortException ]
+description: Network Management (chat, ui, tablist, scoreboard)

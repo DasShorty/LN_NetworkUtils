@@ -1,0 +1,83 @@
+package de.shortexception.networkutils.api.item.itembuilder;
+
+import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+@SuppressWarnings({"rawtypes", "unchecked"})
+@NotNull
+public class ItemBuilder implements ItemStackBuilder<ItemBuilder> {
+
+    private final ItemStack itemStack;
+    private final ItemMeta meta;
+
+    public ItemBuilder(Material material) {
+        this.itemStack = new ItemStack(material);
+        meta = itemStack.getItemMeta();
+    }
+
+    public ItemBuilder(ItemStack itemStack) {
+        this.itemStack = itemStack;
+        this.meta = this.itemStack.getItemMeta();
+    }
+
+    @Override
+    public ItemBuilder itemFlags(ItemFlag... flags) {
+        meta.addItemFlags(flags);
+        return this;
+    }
+
+    @Override
+    public ItemBuilder displayName(Component component) {
+        meta.displayName(component);
+        return this;
+    }
+
+    @Override
+    public ItemBuilder lore(Component... components) {
+        meta.lore(Arrays.asList(components));
+        return this;
+    }
+
+    @Override
+    public ItemBuilder lore(ArrayList<Component> components) {
+        meta.lore(components);
+        return this;
+    }
+
+    @Override
+    public ItemBuilder amount(int amount) {
+        itemStack.setAmount(amount);
+        return this;
+    }
+
+    @Override
+    public Object persistentData(PersistentDataType type, NamespacedKey namespacedKey) {
+        return meta.getPersistentDataContainer().get(namespacedKey, type);
+    }
+
+    @Override
+    public boolean hasPersistentData(NamespacedKey namespacedKey, PersistentDataType type) {
+        return meta.getPersistentDataContainer().has(namespacedKey, type);
+    }
+
+    @Override
+    public ItemBuilder persistentData(NamespacedKey namespacedKey, PersistentDataType type, Object value) {
+        meta.getPersistentDataContainer().set(namespacedKey, type, value);
+        return this;
+    }
+
+    @Override
+    public ItemStack build() {
+        itemStack.setItemMeta(meta);
+        return itemStack;
+    }
+}
