@@ -2,7 +2,6 @@ package de.shortexception.networkutils.api.player;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
-import de.shortexception.networkutils.api.messanger.MongoTextHandler;
 import de.shortexception.networkutils.api.mongo.MongoConnection;
 import org.bson.Document;
 import org.slf4j.Logger;
@@ -32,7 +31,7 @@ public class NetworkPlayer {
         return networkplayers;
     }
 
-    public void createNetworkData(MongoTextHandler.Language language) {
+    public void createNetworkData(SQLTextHandler.Language language) {
         logger.info("attempting to create network data");
         if (!existsInDatabase()) {
             logger.info("creating network data for user " + uid);
@@ -45,18 +44,18 @@ public class NetworkPlayer {
         return document != null;
     }
 
-    public MongoTextHandler.Language getSelectedLanguage() {
+    public SQLTextHandler.Language getSelectedLanguage() {
 
         var document = getCollection().find(Filters.eq("uid", uid.toString())).first();
 
         if (document == null)
-            return MongoTextHandler.Language.ENGLISH;
+            return SQLTextHandler.Language.ENGLISH;
 
         if (!document.containsKey("language"))
-            return MongoTextHandler.Language.ENGLISH;
+            return SQLTextHandler.Language.ENGLISH;
 
         logger.info("get selected language from user " + uid);
 
-        return MongoTextHandler.Language.valueOf(String.valueOf(document.get("language")));
+        return SQLTextHandler.Language.valueOf(String.valueOf(document.get("language")));
     }
 }
