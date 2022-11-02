@@ -1,61 +1,68 @@
 package de.shortexception.networkutils.api.player;
 
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Filters;
-import de.shortexception.networkutils.api.mongo.MongoConnection;
-import org.bson.Document;
+import de.shortexception.networkutils.api.messanger.SQLTextHandler;
+import de.shortexception.networkutils.api.sql.SQLConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
+@SuppressWarnings("SqlResolve")
 public class NetworkPlayer {
 
-    private final MongoConnection connection;
-    private final UUID uid;
+    private final SQLConnection connection;
+    private final UUID uuid;
     private final Logger logger;
 
-    public NetworkPlayer(MongoConnection connection, UUID uid) {
+    public NetworkPlayer(SQLConnection connection, UUID uuid) {
         this.connection = connection;
-        this.uid = uid;
-        this.logger = LoggerFactory.getLogger("networkplayer");
-    }
-
-    private MongoCollection<Document> getCollection() {
-        var networkplayers = connection.getDatabase().getCollection("networkplayers");
-
-        if (!connection.existsCollection("networkplayers")) {
-            connection.getDatabase().createCollection("networkplayers");
-            networkplayers = connection.getDatabase().getCollection("networkplayers");
-        }
-        return networkplayers;
+        this.uuid = uuid;
+        this.logger = LoggerFactory.getLogger("NetworkPlayer");
     }
 
     public void createNetworkData(SQLTextHandler.Language language) {
         logger.info("attempting to create network data");
-        if (!existsInDatabase()) {
-            logger.info("creating network data for user " + uid);
-            getCollection().insertOne(new Document("uid", uid.toString()).append("language", language.name()));
+        if (existsNot()) {
+            logger.info("creating network data for user " + uuid);
         }
+
     }
 
-    public boolean existsInDatabase() {
-        var document = getCollection().find(Filters.eq("uid", uid.toString())).first();
-        return document != null;
+    public boolean existsNot() {
+        return !connection.existsColumn("playerLanguageStorage", "uuid", uuid.toString());
     }
 
     public SQLTextHandler.Language getSelectedLanguage() {
 
-        var document = getCollection().find(Filters.eq("uid", uid.toString())).first();
-
-        if (document == null)
+        if (existsNot()) {
+            connection.insert("playerLanguageStorage", new SQLConnection.DataColumn("uuid", uuid.toString()),
+                    new SQLConnection.DataColumn("language", SQLTextHandler.Language.ENGLISH));
             return SQLTextHandler.Language.ENGLISH;
+        }
 
-        if (!document.containsKey("language"))
-            return SQLTextHandler.Language.ENGLISH;
+        logger.info("get selected language from user " + uuid);
 
-        logger.info("get selected language from user " + uid);
+        SQLTextHandler.Language language = SQLTextHandler.Language.ENGLISH;
 
-        return SQLTextHandler.Language.valueOf(String.valueOf(document.get("language")));
+        try {
+            var ps = connection.getConnection().prepareStatement("SELECT * FROM `playerLanguageStorage` WHERE `uuid` = " + uuid);
+            var resultSet = ps.executeQuery();
+            while (resultSet.next()) {
+                language = SQLTextHandler.Language.valueOf(resultSet.getString("language").toUpperCase());
+            }
+
+            ps.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return language;
+    }
+
+    public void setLanguage(SQLTextHandler.Language newLanguage) {
+        logger.info("language updated from user " + uuid + " new language "+ newLanguage.name());
+        connection.update("playerLanguageStorage", "uuid", uuid.toString(),
+                new SQLConnection.DataColumn("language", newLanguage.name()));
     }
 }

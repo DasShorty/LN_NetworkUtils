@@ -13,8 +13,7 @@ public class SQLTextHandler {
     private final SQLConnection connection;
 
     public SQLTextHandler(Plugin plugin) {
-        connection = new SQLConnection(plugin.getConfig().getString("jdbc"), plugin.getConfig().getString("user"), plugin.getConfig().getString("pwd"));
-        // lade hoch
+        connection = new SQLConnection(plugin.getConfig().getString("language.jdbc"), plugin.getConfig().getString("language.user"), plugin.getConfig().getString("language.pwd"));
     }
 
     public String getKey(String key, Language language) {
@@ -48,7 +47,7 @@ public class SQLTextHandler {
 
     record Replacement(String placeholder, Object replaced){}
 
-    enum Language {
+    public enum Language {
         GERMAN,
         ENGLISH,
         RUSSIAN,
