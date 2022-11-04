@@ -1,6 +1,6 @@
-package de.shortexception.networkutils.listeners;
+package com.laudynetwork.networkutils.listeners;
 
-import de.shortexception.networkutils.api.item.Base64;
+import com.laudynetwork.networkutils.api.item.Base64;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;

@@ -1,4 +1,4 @@
-package de.shortexception.networkutils.api.gui;
+package com.laudynetwork.networkutils.api.gui;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

@@ -1,62 +1,60 @@
-package de.shortexception.networkutils.api.item.itembuilder;
+package com.laudynetwork.networkutils.api.item.itembuilder;
 
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.inventory.meta.FireworkEffectMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.UUID;
 
-public class HeadBuilder implements ItemStackBuilder<HeadBuilder> {
-
+public class FireworkStarBuilder implements ItemStackBuilder<FireworkStarBuilder> {
+    private final FireworkEffectMeta meta;
     private final ItemStack itemStack;
-    private final SkullMeta meta;
 
-    public HeadBuilder() {
-        this.itemStack = new ItemStack(Material.PLAYER_HEAD);
-        meta = (SkullMeta) itemStack.getItemMeta();
+    public FireworkStarBuilder() {
+        this.itemStack = new ItemStack(Material.FIREWORK_STAR);
+        this.meta = (FireworkEffectMeta) itemStack.getItemMeta();
     }
 
-    public HeadBuilder(ItemStack itemStack) {
+    public FireworkStarBuilder(ItemStack itemStack) {
         this.itemStack = itemStack;
-        if (itemStack.getType() != Material.PLAYER_HEAD)
-            throw new IllegalStateException("type must be PLAYER_HEAD");
-        this.meta = (SkullMeta) this.itemStack.getItemMeta();
+        if (itemStack.getType() != Material.FIREWORK_STAR)
+            throw new IllegalStateException("type must be FIREWORK_STAR");
+        this.meta = (FireworkEffectMeta) this.itemStack.getItemMeta();
     }
 
     @Override
-    public HeadBuilder itemFlags(ItemFlag... flags) {
+    public FireworkStarBuilder itemFlags(ItemFlag... flags) {
         meta.addItemFlags(flags);
         return this;
     }
 
     @Override
-    public HeadBuilder displayName(Component component) {
+    public FireworkStarBuilder displayName(Component component) {
         meta.displayName(component);
         return this;
     }
 
     @Override
-    public HeadBuilder lore(Component... components) {
+    public FireworkStarBuilder lore(Component... components) {
         meta.lore(Arrays.asList(components));
         return this;
     }
 
     @Override
-    public HeadBuilder lore(ArrayList<Component> components) {
+    public FireworkStarBuilder lore(ArrayList<Component> components) {
         meta.lore(components);
         return this;
     }
 
     @Override
-    public HeadBuilder amount(int amount) {
+    public FireworkStarBuilder amount(int amount) {
         itemStack.setAmount(amount);
         return this;
     }
@@ -72,13 +70,8 @@ public class HeadBuilder implements ItemStackBuilder<HeadBuilder> {
     }
 
     @Override
-    public HeadBuilder persistentData(NamespacedKey namespacedKey, PersistentDataType type, Object value) {
+    public FireworkStarBuilder persistentData(NamespacedKey namespacedKey, PersistentDataType type, Object value) {
         meta.getPersistentDataContainer().set(namespacedKey, type, value);
-        return this;
-    }
-
-    public HeadBuilder headOwner(UUID headOwner) {
-        meta.setOwningPlayer(Bukkit.getOfflinePlayer(headOwner));
         return this;
     }
 
@@ -86,5 +79,10 @@ public class HeadBuilder implements ItemStackBuilder<HeadBuilder> {
     public ItemStack build() {
         itemStack.setItemMeta(meta);
         return itemStack;
+    }
+
+    public FireworkStarBuilder setColor(Color color) {
+        meta.setEffect(FireworkEffect.builder().withColor(color).build());
+        return this;
     }
 }

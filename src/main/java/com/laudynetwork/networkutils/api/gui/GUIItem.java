@@ -1,6 +1,6 @@
-package de.shortexception.networkutils.api.gui;
+package com.laudynetwork.networkutils.api.gui;
 
-import de.shortexception.networkutils.api.item.itembuilder.ItemStackBuilder;
+import com.laudynetwork.networkutils.api.item.itembuilder.ItemStackBuilder;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

@@ -1,7 +1,6 @@
-package de.shortexception.networkutils;
+package com.laudynetwork.networkutils;
 
-import de.shortexception.networkutils.api.sql.SQLConnection;
-import org.bukkit.plugin.Plugin;
+import com.laudynetwork.networkutils.api.sql.SQLConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

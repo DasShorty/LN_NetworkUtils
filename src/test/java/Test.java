@@ -1,5 +1,5 @@
-import de.shortexception.networkutils.NetworkHandler;
-import de.shortexception.networkutils.api.player.NetworkPlayer;
+import com.laudynetwork.networkutils.NetworkHandler;
+import com.laudynetwork.networkutils.api.player.NetworkPlayer;
 
 import java.util.UUID;
 

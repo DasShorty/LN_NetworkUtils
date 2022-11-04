@@ -1,6 +1,6 @@
-package de.shortexception.networkutils;
+package com.laudynetwork.networkutils;
 
-import de.shortexception.networkutils.listeners.Base64Listener;
+import com.laudynetwork.networkutils.listeners.Base64Listener;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;

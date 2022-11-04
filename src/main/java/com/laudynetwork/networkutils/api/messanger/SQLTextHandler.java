@@ -1,6 +1,6 @@
-package de.shortexception.networkutils.api.messanger;
+package com.laudynetwork.networkutils.api.messanger;
 
-import de.shortexception.networkutils.api.sql.SQLConnection;
+import com.laudynetwork.networkutils.api.sql.SQLConnection;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.plugin.Plugin;

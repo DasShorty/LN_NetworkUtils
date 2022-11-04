@@ -1,4 +1,4 @@
-package de.shortexception.networkutils.api.item;
+package com.laudynetwork.networkutils.api.item;
 
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;

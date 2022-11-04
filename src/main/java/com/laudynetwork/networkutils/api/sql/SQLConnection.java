@@ -1,4 +1,4 @@
-package de.shortexception.networkutils.api.sql;
+package com.laudynetwork.networkutils.api.sql;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -163,7 +163,6 @@ public class SQLConnection {
     enum ColumnType {
         VARCHAR,
         INTEGER
-
     }
 
     public record DataColumn(String name, Object value) {

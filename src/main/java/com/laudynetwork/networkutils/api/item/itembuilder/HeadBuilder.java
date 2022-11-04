@@ -1,60 +1,61 @@
-package de.shortexception.networkutils.api.item.itembuilder;
+package com.laudynetwork.networkutils.api.item.itembuilder;
 
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataType;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.UUID;
 
-@SuppressWarnings({"rawtypes", "unchecked"})
-@NotNull
-public class ItemBuilder implements ItemStackBuilder<ItemBuilder> {
+public class HeadBuilder implements ItemStackBuilder<HeadBuilder> {
 
     private final ItemStack itemStack;
-    private final ItemMeta meta;
+    private final SkullMeta meta;
 
-    public ItemBuilder(Material material) {
-        this.itemStack = new ItemStack(material);
-        meta = itemStack.getItemMeta();
+    public HeadBuilder() {
+        this.itemStack = new ItemStack(Material.PLAYER_HEAD);
+        meta = (SkullMeta) itemStack.getItemMeta();
     }
 
-    public ItemBuilder(ItemStack itemStack) {
+    public HeadBuilder(ItemStack itemStack) {
         this.itemStack = itemStack;
-        this.meta = this.itemStack.getItemMeta();
+        if (itemStack.getType() != Material.PLAYER_HEAD)
+            throw new IllegalStateException("type must be PLAYER_HEAD");
+        this.meta = (SkullMeta) this.itemStack.getItemMeta();
     }
 
     @Override
-    public ItemBuilder itemFlags(ItemFlag... flags) {
+    public HeadBuilder itemFlags(ItemFlag... flags) {
         meta.addItemFlags(flags);
         return this;
     }
 
     @Override
-    public ItemBuilder displayName(Component component) {
+    public HeadBuilder displayName(Component component) {
         meta.displayName(component);
         return this;
     }
 
     @Override
-    public ItemBuilder lore(Component... components) {
+    public HeadBuilder lore(Component... components) {
         meta.lore(Arrays.asList(components));
         return this;
     }
 
     @Override
-    public ItemBuilder lore(ArrayList<Component> components) {
+    public HeadBuilder lore(ArrayList<Component> components) {
         meta.lore(components);
         return this;
     }
 
     @Override
-    public ItemBuilder amount(int amount) {
+    public HeadBuilder amount(int amount) {
         itemStack.setAmount(amount);
         return this;
     }
@@ -70,8 +71,13 @@ public class ItemBuilder implements ItemStackBuilder<ItemBuilder> {
     }
 
     @Override
-    public ItemBuilder persistentData(NamespacedKey namespacedKey, PersistentDataType type, Object value) {
+    public HeadBuilder persistentData(NamespacedKey namespacedKey, PersistentDataType type, Object value) {
         meta.getPersistentDataContainer().set(namespacedKey, type, value);
+        return this;
+    }
+
+    public HeadBuilder headOwner(UUID headOwner) {
+        meta.setOwningPlayer(Bukkit.getOfflinePlayer(headOwner));
         return this;
     }
 

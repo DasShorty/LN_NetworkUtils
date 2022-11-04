@@ -1,7 +1,7 @@
-package de.shortexception.networkutils.api.gui;
+package com.laudynetwork.networkutils.api.gui;
 
-import de.shortexception.networkutils.api.item.itembuilder.ItemBuilder;
-import de.shortexception.networkutils.api.item.itembuilder.ItemStackBuilder;
+import com.laudynetwork.networkutils.api.item.itembuilder.ItemBuilder;
+import com.laudynetwork.networkutils.api.item.itembuilder.ItemStackBuilder;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;

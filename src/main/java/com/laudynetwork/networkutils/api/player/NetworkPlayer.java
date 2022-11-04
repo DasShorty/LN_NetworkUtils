@@ -1,7 +1,7 @@
-package de.shortexception.networkutils.api.player;
+package com.laudynetwork.networkutils.api.player;
 
-import de.shortexception.networkutils.api.messanger.SQLTextHandler;
-import de.shortexception.networkutils.api.sql.SQLConnection;
+import com.laudynetwork.networkutils.api.messanger.SQLTextHandler;
+import com.laudynetwork.networkutils.api.sql.SQLConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
