@@ -1,7 +1,7 @@
-package de.shortexception.networkutils.api.player;
+package com.laudynetwork.networkutils.api.player;
 
-import de.shortexception.networkutils.api.messanger.SQLTextHandler;
-import de.shortexception.networkutils.api.sql.SQLConnection;
+import com.laudynetwork.networkutils.api.messanger.SQLTextHandler;
+import com.laudynetwork.networkutils.api.sql.SQLConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +46,7 @@ public class NetworkPlayer {
         SQLTextHandler.Language language = SQLTextHandler.Language.ENGLISH;
 
         try {
-            var ps = connection.getConnection().prepareStatement("SELECT * FROM `playerLanguageStorage` WHERE `uuid` = " + uuid);
+            var ps = connection.getMySQLConnection().prepareStatement("SELECT * FROM `playerLanguageStorage` WHERE `uuid` = " + uuid);
             var resultSet = ps.executeQuery();
             while (resultSet.next()) {
                 language = SQLTextHandler.Language.valueOf(resultSet.getString("language").toUpperCase());

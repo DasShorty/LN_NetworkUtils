@@ -1,4 +1,4 @@
-package de.shortexception.networkutils.api.item.itembuilder;
+package com.laudynetwork.networkutils.api.item.itembuilder;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.NamespacedKey;
