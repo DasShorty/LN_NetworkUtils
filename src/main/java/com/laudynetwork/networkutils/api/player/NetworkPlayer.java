@@ -46,7 +46,7 @@ public class NetworkPlayer {
         SQLTextHandler.Language language = SQLTextHandler.Language.ENGLISH;
 
         try {
-            var ps = connection.getConnection().prepareStatement("SELECT * FROM `playerLanguageStorage` WHERE `uuid` = " + uuid);
+            var ps = connection.getMySQLConnection().prepareStatement("SELECT * FROM `playerLanguageStorage` WHERE `uuid` = " + uuid);
             var resultSet = ps.executeQuery();
             while (resultSet.next()) {
                 language = SQLTextHandler.Language.valueOf(resultSet.getString("language").toUpperCase());

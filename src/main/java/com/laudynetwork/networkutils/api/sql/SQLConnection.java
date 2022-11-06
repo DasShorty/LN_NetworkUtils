@@ -6,7 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SQLConnection {
 
@@ -29,7 +32,7 @@ public class SQLConnection {
         logger.info("Created data source with HikariCP...");
     }
 
-    public Connection getConnection() {
+    public Connection getMySQLConnection() {
         try {
             logger.info("picking connection from pool");
             return source.getConnection();
@@ -50,7 +53,7 @@ public class SQLConnection {
         var tableColumns = columnBuilder.substring(1);
 
         try {
-            var ps = getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS " + table + "(" + tableColumns + ")");
+            var ps = getMySQLConnection().prepareStatement("CREATE TABLE IF NOT EXISTS " + table + "(" + tableColumns + ")");
             ps.executeUpdate();
             ps.close();
             logger.info("sql table was successfully created!");
@@ -65,7 +68,7 @@ public class SQLConnection {
         DataColumn column = null;
 
         try {
-            var ps = getConnection().prepareStatement("SELECT * FROM " + tableName + " WHERE " + key + " = " + keyValue);
+            var ps = getMySQLConnection().prepareStatement("SELECT * FROM " + tableName + " WHERE " + key + " = " + keyValue);
             var resultSet = ps.executeQuery();
             while (resultSet.next()) {
                 column = new DataColumn(key, resultSet.getString(key));
@@ -87,7 +90,7 @@ public class SQLConnection {
         DataColumn column = null;
 
         try {
-            var ps = getConnection().prepareStatement("SELECT * FROM " + tableName + " WHERE " + key + " = " + keyValue);
+            var ps = getMySQLConnection().prepareStatement("SELECT * FROM " + tableName + " WHERE " + key + " = " + keyValue);
             var resultSet = ps.executeQuery();
             while (resultSet.next()) {
                 column = new DataColumn(key, resultSet.getInt(key));
@@ -107,7 +110,7 @@ public class SQLConnection {
     public boolean existsColumn(String tableName, String columnName, Object expectedColumnValue) {
         logger.info("Trying to check if " + columnName + " in " + tableName + " exists...");
         try {
-            var ps = getConnection().prepareStatement("SELECT * FROM " + tableName + " WHERE EXISTS(SELECT " + columnName + " FROM " + tableName + " WHERE " + columnName + " LIKE " + expectedColumnValue + ")");
+            var ps = getMySQLConnection().prepareStatement("SELECT * FROM " + tableName + " WHERE EXISTS(SELECT " + columnName + " FROM " + tableName + " WHERE " + columnName + " LIKE " + expectedColumnValue + ")");
             logger.info("Successfully checked if " + columnName + " exists in " + tableName);
             return ps.executeQuery().next();
         } catch (SQLException e) {
@@ -129,7 +132,7 @@ public class SQLConnection {
         }
 
         try {
-            var ps = getConnection().prepareStatement("INSERT INTO " + tableName + "(" + columnNames.substring(1) + ") VALUES (" + values.substring(1) + ")");
+            var ps = getMySQLConnection().prepareStatement("INSERT INTO " + tableName + "(" + columnNames.substring(1) + ") VALUES (" + values.substring(1) + ")");
             ps.executeUpdate();
             ps.close();
             logger.info("Successfully updated table " + tableName);
@@ -150,7 +153,7 @@ public class SQLConnection {
         }
 
         try {
-            var ps = getConnection()
+            var ps = getMySQLConnection()
                     .prepareStatement("UPDATE " + tableName + " SET " + updateColumns.substring(1) + " WHERE " + conditionKey + " = " + conditionValue);
             ps.executeUpdate();
             ps.close();
@@ -159,6 +162,50 @@ public class SQLConnection {
             throw new RuntimeException(e);
         }
     }
+
+    public void delete(String tableName, String conditionKey, Object conditionValue) {
+        logger.info("Trying to delete " + conditionValue + " in " + tableName + " column: " + conditionKey);
+
+        try {
+            var ps = getMySQLConnection()
+                    .prepareStatement("DELETE FROM " + tableName + " WHERE " + conditionKey + " = " + conditionValue);
+
+            ps.executeUpdate();
+
+            ps.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public List<DataSchema> getAllColumnsFromTable(String table, String columnRow) {
+
+        var list = new ArrayList<DataSchema>();
+
+        try {
+                var ps = getMySQLConnection().prepareStatement("SELECT "+columnRow+" FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = "+table+" ORDER BY ORDINAL_POSITION");
+
+            ResultSet resultSet = ps.executeQuery();
+            while (resultSet.next()) {
+
+                String tableSchema = resultSet.getString("TABLE_SCHEMA");
+                String tableName = resultSet.getString("TABLE_NAME");
+                String columnName = resultSet.getString("COLUMN_NAME");
+                int ordinalPosition = resultSet.getInt("ORDINAL_POSITION");
+                String dataType = resultSet.getString("DATA_TYPE");
+                list.add(new DataSchema(tableSchema, tableName, columnName, ordinalPosition, dataType));
+            }
+
+            ps.close();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return list;
+    }
+
+    public record DataSchema(String tableSchema, String tableName, String columnName, int ordinalPosition, String dataType){}
 
     enum ColumnType {
         VARCHAR,
