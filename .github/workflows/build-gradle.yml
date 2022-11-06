@@ -1,0 +1,31 @@
+name: Build Gradle
+
+on:
+    push:
+        tags:
+            - '*'
+
+jobs:
+    build-gradle-project:
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Checkout project sources
+                uses: actions/checkout@v3
+            -   name: Set env
+                run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+            -   name: Setup Gradle
+                uses: gradle/gradle-build-action@v2
+            -   name: Run build with Gradle Wrapper
+                run: ./gradlew publish
+                env:
+                    USERNAME: ${{secrets.USERNAME}}
+                    TOKEN: ${{secrets.TOKEN}}
+                    RELEASE_VERSION: ${{env.RELEASE_VERSION}}
+            -   name: Upload artifacts
+                uses: actions/upload-artifact@v3
+                with:
+                    name: build-artifacts
+                    path: |
+                        build/libs/*.jar
+                        build/reports/tests/test/index.html
+                        build/reports/jacoco/test/html/index.html

@@ -7,8 +7,20 @@ plugins {
     id("maven-publish")
 }
 
+publishing {
+    repositories {
+        maven {
+            url = uri("https://maven.pkg.github.com/laudy-network/website")
+            credentials {
+                username = System.getenv("USERNAME")
+                password = System.getenv("TOKEN")
+            }
+        }
+    }
+}
+
 group = "de.shortexception.networkutils"
-version = "1.0.0-SNAPSHOT"
+version = System.getenv("RELEASE_VERSION") ?: "1.0.0"
 description = "Utility Plugin for LaudyNetwork"
 
 java {
@@ -38,7 +50,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "de.shortexception"
             artifactId = "networkutils"
-            version = "1.0"
+            version = System.getenv("RELEASE_VERSION") ?: "1.0.0"
 
             from(components["java"])
         }
