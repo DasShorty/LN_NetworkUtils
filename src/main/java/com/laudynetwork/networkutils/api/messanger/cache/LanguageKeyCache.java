@@ -7,6 +7,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 public record LanguageKeyCache(String key, SQLTextHandler.Language language, String raw) {
 
     public Component translateColors() {
+        //test
         return LegacyComponentSerializer.legacyAmpersand().deserialize(raw);
     }
 
