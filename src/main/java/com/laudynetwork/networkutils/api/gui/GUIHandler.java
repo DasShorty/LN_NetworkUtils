@@ -27,6 +27,10 @@ public class GUIHandler<P extends Plugin> implements Listener {
         return true;
     }
 
+    public boolean isPlayerInUI(UUID uuid) {
+        return openGUIs.containsKey(uuid);
+    }
+
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onInventoryClick(InventoryClickEvent event) {
 
