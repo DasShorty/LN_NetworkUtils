@@ -19,7 +19,7 @@ publishing {
     }
 }
 
-group = "de.shortexception.networkutils"
+group = "net.laudynetwork.networkutils"
 version = System.getenv("RELEASE_VERSION") ?: "1.0.0"
 description = "Utility Plugin for LaudyNetwork"
 
@@ -48,7 +48,7 @@ repositories {
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            groupId = "de.shortexception"
+            groupId = "net.laudynetwork"
             artifactId = "networkutils"
             version = System.getenv("RELEASE_VERSION") ?: "1.0.0"
 
