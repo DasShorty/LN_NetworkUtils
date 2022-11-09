@@ -1,6 +1,6 @@
 name: NetworkUtils
 version: 1.0
-main: de.shortexception.networkutils.NetworkUtils
+main: com.laudynetwork.networkutils.NetworkUtils
 api-version: 1.19
 prefix: NU
 authors: [ ShortException ]

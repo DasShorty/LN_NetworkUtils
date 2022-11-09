@@ -31,17 +31,9 @@ java {
 dependencies {
     implementation("org.projectlombok:lombok:1.18.24")
     annotationProcessor("org.projectlombok:lombok:1.18.24")
-
     paperDevBundle("1.19.2-R0.1-SNAPSHOT")
-    // paperweightDevBundle("com.example.paperfork", "1.19.2-R0.1-SNAPSHOT")
-
-    // You will need to manually specify the full dependency if using the groovy gradle dsl
-    // (paperDevBundle and paperweightDevBundle functions do not work in groovy)
-    // paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:1.19.2-R0.1-SNAPSHOT")
-
-    // mongo db sync
-    implementation("org.mongodb:mongodb-driver-sync:4.7.2")
     implementation("biz.paluch.redis:lettuce:4.5.0.Final")
+    implementation("com.zaxxer:HikariCP:5.0.1")
 }
 repositories {
     mavenCentral()
