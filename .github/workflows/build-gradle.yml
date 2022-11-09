@@ -2,10 +2,8 @@ name: Build Gradle
 
 on:
     push:
-        branches: [ "main", "dev" ]
-    pull_request:
-        branches: [ "main", "dev" ]
-
+        tags:
+            - '*'
 
 jobs:
     build-gradle-project:

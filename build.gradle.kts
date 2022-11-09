@@ -19,7 +19,7 @@ publishing {
     }
 }
 
-group = "de.shortexception.networkutils"
+group = "com.laudynetwork.networkutils"
 version = System.getenv("RELEASE_VERSION") ?: "1.0.0"
 description = "Utility Plugin for LaudyNetwork"
 
@@ -39,8 +39,9 @@ dependencies {
     // (paperDevBundle and paperweightDevBundle functions do not work in groovy)
     // paperweightDevelopmentBundle("io.papermc.paper:dev-bundle:1.19.2-R0.1-SNAPSHOT")
 
+    // mongo db sync
+    implementation("org.mongodb:mongodb-driver-sync:4.7.2")
     implementation("biz.paluch.redis:lettuce:4.5.0.Final")
-    implementation("com.zaxxer:HikariCP:5.0.1")
 }
 repositories {
     mavenCentral()
@@ -48,7 +49,7 @@ repositories {
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            groupId = "de.shortexception"
+            groupId = "com.laudynetwork"
             artifactId = "networkutils"
             version = System.getenv("RELEASE_VERSION") ?: "1.0.0"
 
