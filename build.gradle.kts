@@ -10,7 +10,7 @@ plugins {
 publishing {
     repositories {
         maven {
-            url = uri("https://maven.pkg.github.com/laudy-network/website")
+            url = uri("https://maven.pkg.github.com/laudy-network/networkutils")
             credentials {
                 username = System.getenv("USERNAME")
                 password = System.getenv("TOKEN")
