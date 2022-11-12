@@ -53,7 +53,7 @@ public abstract class UI implements InventoryHolder {
 
     @Override
     public @NotNull Inventory getInventory() {
-        return getInventory();
+        return inventory;
     }
 
 }
