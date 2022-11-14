@@ -30,13 +30,15 @@ import java.util.Map;
 @Getter
 public abstract class GUI implements InventoryHolder {
 
+  private Player player;
   private final int size;
   @Getter
   private final Inventory inventory;
   private final Map<Integer, GUIItem> guiItemMap;
   private Material background = Material.GRAY_STAINED_GLASS_PANE;
 
-  public GUI(Component displayName, int size) {
+  public GUI(Player player, Component displayName, int size) {
+    this.player = player;
     this.size = size;
     guiItemMap = new HashMap<>();
     inventory = Bukkit.createInventory(this, size, displayName);
@@ -46,7 +48,7 @@ public abstract class GUI implements InventoryHolder {
     this.background = background;
   }
 
-  public abstract void generateGUI();
+  public abstract void generateGUI(Player player);
 
   protected void generate() {
     for (int i = 0; i < inventory.getSize(); i++) {
@@ -63,14 +65,14 @@ public abstract class GUI implements InventoryHolder {
 
   protected void updateGUI() {
     inventory.clear();
-    generateGUI();
+    generateGUI(player);
     generate();
   }
 
   public abstract void onClose(Player player);
 
   public void open(Player player) {
-    generateGUI();
+    generateGUI(player);
     generate();
     player.openInventory(inventory);
   }
