@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -78,6 +79,18 @@ public class HeadBuilder implements ItemStackBuilder<HeadBuilder> {
 
     public HeadBuilder headOwner(UUID headOwner) {
         meta.setOwningPlayer(Bukkit.getOfflinePlayer(headOwner));
+        return this;
+    }
+
+    @Override
+    public HeadBuilder enchant(Enchantment enchantment, int level) {
+        meta.addEnchant(enchantment, level, true);
+        return this;
+    }
+
+    @Override
+    public HeadBuilder unEnchant(Enchantment enchantment) {
+        meta.removeEnchant(enchantment);
         return this;
     }
 

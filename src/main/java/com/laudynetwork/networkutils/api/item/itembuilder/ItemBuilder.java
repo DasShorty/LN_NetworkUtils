@@ -3,6 +3,7 @@ package com.laudynetwork.networkutils.api.item.itembuilder;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -32,6 +33,18 @@ public class ItemBuilder implements ItemStackBuilder<ItemBuilder> {
     @Override
     public ItemBuilder itemFlags(ItemFlag... flags) {
         meta.addItemFlags(flags);
+        return this;
+    }
+
+    @Override
+    public ItemBuilder enchant(Enchantment enchantment, int level) {
+        meta.addEnchant(enchantment, level, true);
+        return this;
+    }
+
+    @Override
+    public ItemBuilder unEnchant(Enchantment enchantment) {
+        meta.removeEnchant(enchantment);
         return this;
     }
 

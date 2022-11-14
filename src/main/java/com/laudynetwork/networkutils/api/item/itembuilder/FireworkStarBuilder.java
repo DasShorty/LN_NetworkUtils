@@ -5,6 +5,7 @@ import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkEffectMeta;
@@ -72,6 +73,18 @@ public class FireworkStarBuilder implements ItemStackBuilder<FireworkStarBuilder
     @Override
     public FireworkStarBuilder persistentData(NamespacedKey namespacedKey, PersistentDataType type, Object value) {
         meta.getPersistentDataContainer().set(namespacedKey, type, value);
+        return this;
+    }
+
+    @Override
+    public FireworkStarBuilder enchant(Enchantment enchantment, int level) {
+        meta.addEnchant(enchantment, level, true);
+        return this;
+    }
+
+    @Override
+    public FireworkStarBuilder unEnchant(Enchantment enchantment) {
+        meta.removeEnchant(enchantment);
         return this;
     }
 
