@@ -1,6 +1,5 @@
 package com.laudynetwork.networkutils.api.gui;
 
-import com.laudynetwork.networkutils.api.gui.impl.SimpleUI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,15 +15,15 @@ import java.util.UUID;
 
 public class GUIHandler<P extends Plugin> implements Listener {
 
-    private final Map<UUID, UI> openGUIs = new HashMap<>();
+    private final Map<UUID, GUI> openGUIs = new HashMap<>();
 
     public GUIHandler(P plugin) {
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
-    public synchronized void open(Player player, SimpleUI simpleUI) {
-        openGUIs.put(player.getUniqueId(), simpleUI);
-        simpleUI.openUI(player);
+    public synchronized void open(Player player, GUI ui) {
+        openGUIs.put(player.getUniqueId(), ui);
+        ui.open(player);
     }
 
     public boolean isPlayerInUI(UUID uuid) {
@@ -42,7 +41,7 @@ public class GUIHandler<P extends Plugin> implements Listener {
 
         var gui = openGUIs.get(player.getUniqueId());
 
-        var item = gui.getGuiItems().get(event.getSlot());
+        var item = gui.getGuiItemMap().get(event.getSlot());
 
         switch (item.action().onClick(player, event.getCurrentItem())) {
             case CANCEL -> event.setCancelled(true);

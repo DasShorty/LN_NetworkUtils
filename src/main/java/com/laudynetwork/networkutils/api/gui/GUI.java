@@ -1,0 +1,131 @@
+/*
+    --------------------------
+    Project : ServerTechnology
+    Package : de.shortexception.eventsystem.gui
+    Date 27.06.2022
+    @author ShortException
+    --------------------------
+*/
+
+
+package com.laudynetwork.networkutils.api.gui;
+
+import com.laudynetwork.networkutils.api.item.itembuilder.ItemBuilder;
+import com.laudynetwork.networkutils.api.item.itembuilder.ItemStackBuilder;
+import lombok.Getter;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemFlag;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@Getter
+public abstract class GUI implements InventoryHolder {
+
+  private final int size;
+  @Getter
+  private final Inventory inventory;
+  private final Map<Integer, GUIItem> guiItemMap;
+  private Material background = Material.GRAY_STAINED_GLASS_PANE;
+
+  public GUI(Component displayName, int size) {
+    this.size = size;
+    guiItemMap = new HashMap<>();
+    inventory = Bukkit.createInventory(this, size, displayName);
+  }
+
+  public void setBackground(Material background) {
+    this.background = background;
+  }
+
+  public abstract void generateGUI();
+
+  protected void generate() {
+    for (int i = 0; i < inventory.getSize(); i++) {
+      if (!guiItemMap.containsKey(i)) {
+        guiItemMap.put(i, new GUIItem(i, new ItemBuilder(background).displayName(Component.empty()).itemFlags(ItemFlag.values()), (clicker, clickedItem) -> {
+          return GUIItem.GUIAction.NONE;
+        }));
+      }
+    }
+    guiItemMap.forEach((slot, item) -> {
+      inventory.setItem(slot, item.itemStackBuilder().itemFlags(ItemFlag.values()).build());
+    });
+  }
+
+  protected void updateGUI() {
+    inventory.clear();
+    generateGUI();
+    generate();
+  }
+
+  public abstract void onClose(Player player);
+
+  public void open(Player player) {
+    generateGUI();
+    generate();
+    player.openInventory(inventory);
+  }
+
+  public void handleClick(InventoryClickEvent event) {
+    if (event.getClickedInventory() == null) return;
+    if (!(event.getClickedInventory().equals(inventory))) return;
+    if (!(event.getWhoClicked() instanceof Player player)) return;
+
+    int index = event.getSlot();
+
+    GUIItem item = this.guiItemMap.get(index);
+
+    if (item == null) return;
+    if (item.action() == null) {
+      event.setCancelled(true);
+      return;
+    }
+
+    event.setCancelled(true);
+
+    GUIItem.GUIAction action = null;
+    action = item.action().onClick(player, event.getCurrentItem());
+
+    if (action == GUIItem.GUIAction.CLOSE) {
+      player.closeInventory(InventoryCloseEvent.Reason.PLUGIN);
+    }
+  }
+
+  protected void set(int index, @NotNull ItemStackBuilder<?> itemStackBuilder) {
+    set(index, itemStackBuilder, null);
+  }
+
+  protected void set(int index, @NotNull ItemStackBuilder<?> itemStackBuilder, GUIItem.ClickAction itemCompletion) {
+    set(index, new GUIItem(index, itemStackBuilder, itemCompletion));
+  }
+
+  private void set(int index, GUIItem item) {
+    if (index >= size)
+      throw new IllegalArgumentException("invalid index " + index + " the inventory has only " + size + " slots! [" + getClass().getName() + "]");
+
+    this.guiItemMap.remove(index);
+    if (item != null && item.itemStackBuilder().build() != null)
+      this.guiItemMap.put(index, item);
+
+    generate();
+  }
+
+  protected void clearAll() {
+    this.guiItemMap.clear();
+    this.inventory.clear();
+  }
+
+  protected void clear() {
+    this.inventory.clear();
+  }
+
+}
