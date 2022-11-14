@@ -54,7 +54,7 @@ public abstract class GUI implements InventoryHolder {
     for (int i = 0; i < inventory.getSize(); i++) {
       if (!guiItemMap.containsKey(i)) {
         guiItemMap.put(i, new GUIItem(i, new ItemBuilder(background).displayName(Component.empty()).itemFlags(ItemFlag.values()), (clicker, clickedItem) -> {
-          return GUIItem.GUIAction.NONE;
+          return GUIItem.GUIAction.CANCEL;
         }));
       }
     }
