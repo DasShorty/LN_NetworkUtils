@@ -1,8 +1,4 @@
 language:
-  jdbc: 'jdbc:mysql//localhost:3306/laudynetwork'
-  user: 'language'
-  pwd: 'test123'
-playerLanguageData:
-  jdbc: 'jdbc:mysql//localhost:3306/laudynetwork'
-  user: 'playerLanguage'
-  pwd: 'test123'
+  jdbc: 'jdbc:mariadb//localhost:40000/laudynetwork-translations'
+  user: 'networkutils'
+  pwd: 'code'

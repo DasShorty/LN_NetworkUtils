@@ -9,6 +9,8 @@ public final class NetworkUtils extends JavaPlugin {
 
     @Getter
     private static NetworkUtils instance;
+    @Getter
+    private NetworkHandler networkHandler;
 
     @Override
     public void onEnable() {
@@ -18,6 +20,8 @@ public final class NetworkUtils extends JavaPlugin {
         var pm = Bukkit.getPluginManager();
 
         pm.registerEvents(new Base64Listener(), this);
+
+        networkHandler = new NetworkHandler();
 
         getSLF4JLogger().info("loaded!");
     }

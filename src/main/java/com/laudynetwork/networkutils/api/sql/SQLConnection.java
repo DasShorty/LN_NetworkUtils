@@ -23,6 +23,7 @@ public class SQLConnection {
         config.setJdbcUrl(jdbcUrl);
         config.setUsername(user);
         config.setPassword(pwd);
+        config.setDriverClassName("org.mariadb.jdbc.MariaDbDataSource");
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
@@ -32,6 +33,9 @@ public class SQLConnection {
         logger.info("Created data source with HikariCP...");
     }
 
+    /**
+     * @return current sql connection
+     */
     public Connection getMySQLConnection() {
         try {
             logger.info("picking connection from pool");
@@ -42,7 +46,14 @@ public class SQLConnection {
         return null;
     }
 
-    public boolean createTableWithPrimaryKey(String table, String primaryKey, TableColumn... columns) {
+    /**
+     * creates a table with specified params
+     *
+     * @param table      table name to create
+     * @param primaryKey key that is used to search
+     * @param columns    columns in the table (also primaryKey!)
+     */
+    public void createTableWithPrimaryKey(String table, String primaryKey, TableColumn... columns) {
         logger.info("Trying to create sql table " + table);
         var columnBuilder = new StringBuilder();
 
@@ -60,9 +71,16 @@ public class SQLConnection {
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
-        return false;
     }
 
+    /**
+     * get the DataColumn(compact ResultSet) from sql db with the specified params
+     *
+     * @param tableName table to search in
+     * @param key       key that contains keyValue (table header)
+     * @param keyValue  value from key (table data)
+     * @return DataColumn with the keyValue and key from given params as string
+     */
     public DataColumn getStringResultColumn(String tableName, String key, String keyValue) {
         logger.info("Trying to get StringResult from " + tableName + " key: " + key + " ...");
         DataColumn column = null;
@@ -85,6 +103,14 @@ public class SQLConnection {
         return column;
     }
 
+    /**
+     * get the DataColumn(compact ResultSet) from sql db with the specified params
+     *
+     * @param tableName table to search in
+     * @param key       key that contains keyValue (table header)
+     * @param keyValue  value from key (table data)
+     * @return DataColumn with the keyValue and key from given params as integer
+     */
     public DataColumn getIntResultColumn(String tableName, String key, int keyValue) {
         logger.info("Trying to get IntResult from " + tableName + " key: " + key + " ...");
         DataColumn column = null;
@@ -107,6 +133,14 @@ public class SQLConnection {
         return column;
     }
 
+    /**
+     * checks if given column exist
+     *
+     * @param tableName           name that contains columnName and the expected value
+     * @param columnName          key that contains keyValue (table header)
+     * @param expectedColumnValue value from key (table data)
+     * @return if column exists in db
+     */
     public boolean existsColumn(String tableName, String columnName, Object expectedColumnValue) {
         logger.info("Trying to check if " + columnName + " in " + tableName + " exists...");
         try {
@@ -119,6 +153,12 @@ public class SQLConnection {
         return false;
     }
 
+    /**
+     * creates the given data in db
+     *
+     * @param tableName the table name that contains the new data
+     * @param columns   keys and values that where created in the table
+     */
     public void insert(String tableName, DataColumn... columns) {
 
         logger.info("Trying to insert DataColumns in " + tableName + " ...");
@@ -142,6 +182,14 @@ public class SQLConnection {
 
     }
 
+    /**
+     * updates given columns that all have the same conditionValue
+     *
+     * @param tableName      the table name where all data where updated
+     * @param conditionKey   key that says at wich row the data should update
+     * @param conditionValue value that is expected to be similar to other key value so it can be updated
+     * @param columns        columns with key and value that should be updated
+     */
     public void update(String tableName, String conditionKey, Object conditionValue, DataColumn... columns) {
 
         logger.info("Trying to update DataColumns in " + tableName + " ...");
@@ -163,6 +211,12 @@ public class SQLConnection {
         }
     }
 
+    /**
+     * row that should be deleted
+     * @param tableName      the table name where the row where deleted
+     * @param conditionKey key that says at wich row the data should deleted
+     * @param conditionValue value that is expected to be similar to other key value so it can be deleted
+     */
     public void delete(String tableName, String conditionKey, Object conditionValue) {
         logger.info("Trying to delete " + conditionValue + " in " + tableName + " column: " + conditionKey);
 
@@ -179,6 +233,12 @@ public class SQLConnection {
 
     }
 
+    /**
+     * help will be later added!
+     * @param table later
+     * @param columnRow later
+     * @return pls wait later
+     */
     public List<DataSchema> getAllColumnsFromTable(String table, String columnRow) {
 
         var list = new ArrayList<DataSchema>();
@@ -205,11 +265,13 @@ public class SQLConnection {
         return list;
     }
 
-    public record DataSchema(String tableSchema, String tableName, String columnName, int ordinalPosition, String dataType){}
-
-    enum ColumnType {
+    public enum ColumnType {
         VARCHAR,
         INTEGER
+    }
+
+    public record DataSchema(String tableSchema, String tableName, String columnName, int ordinalPosition,
+                             String dataType) {
     }
 
     public record DataColumn(String name, Object value) {
