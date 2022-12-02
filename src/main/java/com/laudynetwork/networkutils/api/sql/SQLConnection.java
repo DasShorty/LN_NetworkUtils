@@ -23,7 +23,7 @@ public class SQLConnection {
         config.setJdbcUrl(jdbcUrl);
         config.setUsername(user);
         config.setPassword(pwd);
-        config.setDriverClassName("org.mariadb.jdbc.MariaDbDataSource");
+        config.setDriverClassName("org.mariadb.jdbc.Driver");
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");

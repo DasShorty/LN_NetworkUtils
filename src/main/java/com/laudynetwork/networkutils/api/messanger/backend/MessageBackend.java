@@ -23,7 +23,7 @@ public class MessageBackend {
         logger.info("Starting MessageBackend...");
 
         Arrays.stream(TranslatedLanguage.values()).toList().forEach(translatedLanguage -> {
-            connection.createTableWithPrimaryKey("translation-" + translatedLanguage.name().toLowerCase(), "languageKey",
+            connection.createTableWithPrimaryKey("translation_" + translatedLanguage.name().toLowerCase(), "languageKey",
                     new SQLConnection.TableColumn("languageKey", SQLConnection.ColumnType.VARCHAR, 20),
                     new SQLConnection.TableColumn("translation", SQLConnection.ColumnType.VARCHAR, 999));
         });
