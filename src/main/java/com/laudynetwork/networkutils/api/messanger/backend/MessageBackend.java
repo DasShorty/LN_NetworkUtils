@@ -1,91 +1,78 @@
 package com.laudynetwork.networkutils.api.messanger.backend;
 
-import com.laudynetwork.networkutils.api.messanger.api.TranslatedLanguage;
+import com.laudynetwork.networkutils.api.messanger.api.TranslationLanguage;
 import com.laudynetwork.networkutils.api.messanger.api.Translation;
 import com.laudynetwork.networkutils.api.sql.SQLConnection;
+import lombok.val;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MessageBackend {
 
     private final SQLConnection connection;
     private final Logger logger;
+    private Map<TranslationLanguage, Map<String, Translation>> translationMap;
 
-    public MessageBackend(SQLConnection connection) {
+    public MessageBackend(@NotNull SQLConnection connection, @NotNull String project) {
         this.connection = connection;
 
         logger = LoggerFactory.getLogger(getClass());
 
         logger.info("Starting MessageBackend...");
 
-        Arrays.stream(TranslatedLanguage.values()).toList().forEach(translatedLanguage -> {
-            connection.createTableWithPrimaryKey("translation_" + translatedLanguage.name().toLowerCase(), "languageKey",
-                    new SQLConnection.TableColumn("languageKey", SQLConnection.ColumnType.VARCHAR, 20),
-                    new SQLConnection.TableColumn("translation", SQLConnection.ColumnType.VARCHAR, 999));
-        });
+        connection.createTableWithPrimaryKey("translations", "key", new SQLConnection.TableColumn("key", SQLConnection.ColumnType.VARCHAR, 255),
+                new SQLConnection.TableColumn("project", SQLConnection.ColumnType.VARCHAR, 255), new SQLConnection.TableColumn("de", SQLConnection.ColumnType.VARCHAR,
+                        255), new SQLConnection.TableColumn("en", SQLConnection.ColumnType.VARCHAR, 255), new SQLConnection.TableColumn("ru",
+                        SQLConnection.ColumnType.VARCHAR, 255), new SQLConnection.TableColumn("jp", SQLConnection.ColumnType.VARCHAR, 255));
 
         logger.info("MessageBackend started!");
+
+        updateMessages(project);
     }
 
-    /**
-     *
-     * @param languageKey Key to get the message
-     * @param language selected language from player
-     * @return DataColumn from ResultSet
-     */
-    public SQLConnection.DataColumn makeMessageRequest(@NotNull String languageKey, @Nullable TranslatedLanguage language) {
-
-        if (language == null) {
-            logger.warn("language is null! | makeMessageRequest <MessageBackend.java:36> -> NetworkUtils.jar");
-            language = TranslatedLanguage.ENGLISH;
-        }
-
-        SQLConnection.DataColumn msgResponse = connection.getStringResultColumn("translation-" + language.name().toLowerCase(), "languageKey", languageKey);
-
-        if (msgResponse == null) {
-            logger.error(languageKey + " not found! <MessageBackend.java:43> -> NetworkUtils.jar");
-            msgResponse = new SQLConnection.DataColumn(languageKey, languageKey + " not found! | makeMessageRequest <MessageBackend.java:43> -> NetworkUtils.jar");
-        }
-
-        return msgResponse;
+    public Translation getTranslation(TranslationLanguage language, @NotNull String key) {
+        return translationMap.get(language).get(key);
     }
 
-    /**
-     *
-     * @param translation Translation to insert
-     * @return if translation already existed (overwrites if exists)
-     */
-    public boolean insertMessageRequest(Translation translation) {
+    public void updateMessages(@NotNull String project) {
+        logger.info("Loading all Messages into Cache ...");
+        translationMap = new HashMap<>();
 
-        if (connection.existsColumn("translation-" + translation.language().name().toLowerCase(), "languageKey", translation.key())) {
-            connection.update("translation-" + translation.language().name().toLowerCase(), "languageKey", translation.key(),
-                    new SQLConnection.DataColumn(translation.key(), translation.language()));
-            return true;
-        } else {
-            connection.insert("translation-" + translation.language().name().toLowerCase(),
-                    new SQLConnection.DataColumn(translation.key(), translation.raw()));
-            return false;
+        var german = new HashMap<String, Translation>();
+        var english = new HashMap<String, Translation>();
+        var japanese = new HashMap<String, Translation>();
+        var russian = new HashMap<String, Translation>();
+
+        try {
+            val prepareStatement = connection.getMySQLConnection().prepareStatement("SELECT * FROM `translations` WHERE `project` = '" + project + "'");
+
+            val resultSet = prepareStatement.executeQuery();
+
+            while (resultSet.next()) {
+
+                val key = resultSet.getString("key");
+                german.put(key, new Translation(key, TranslationLanguage.GERMAN, resultSet.getString("de")));
+                english.put(key, new Translation(key, TranslationLanguage.ENGLISH, resultSet.getString("en")));
+                japanese.put(key, new Translation(key, TranslationLanguage.JAPANESE, resultSet.getString("jp")));
+                russian.put(key, new Translation(key, TranslationLanguage.RUSSIAN, resultSet.getString("ru")));
+
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
 
-    }
 
-    /**
-     *
-     * @param translationKey Key to get the message
-     * @param language selected language from player
-     * @return if key is deleted
-     */
-    public boolean deleteMessageRequest(String translationKey, TranslatedLanguage language) {
+        translationMap.put(TranslationLanguage.GERMAN, german);
+        translationMap.put(TranslationLanguage.ENGLISH, english);
+        translationMap.put(TranslationLanguage.JAPANESE, japanese);
+        translationMap.put(TranslationLanguage.RUSSIAN, russian);
 
-        if (connection.existsColumn("translation-" + language.name().toLowerCase(), "translationKey", translationKey)) {
-            connection.delete("translation-" + language.name().toLowerCase(), "languageKey", translationKey);
-            return true;
-        }
-
-        return false;
+        logger.info("Messages where updated!");
     }
 }

@@ -28,6 +28,6 @@ public final class NetworkUtils extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        // ignore
     }
 }

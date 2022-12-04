@@ -5,7 +5,7 @@ import org.bukkit.ChatColor;
 
 import java.util.Arrays;
 
-public record Translation(String key, TranslatedLanguage language, String raw) {
+public record Translation(String key, TranslationLanguage language, String raw) {
 
     public static class MsgBuilder {
 

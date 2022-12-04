@@ -64,7 +64,7 @@ public class SQLConnection {
         var tableColumns = columnBuilder.substring(1);
 
         try {
-            var ps = getMySQLConnection().prepareStatement("CREATE TABLE IF NOT EXISTS " + table + "(" + tableColumns + ")");
+            var ps = getMySQLConnection().prepareStatement("CREATE TABLE IF NOT EXISTS " + table + "(" + tableColumns + ", PRIMARY KEY '" + primaryKey + "')");
             ps.executeUpdate();
             ps.close();
             logger.info("sql table was successfully created!");
@@ -76,17 +76,17 @@ public class SQLConnection {
     /**
      * get the DataColumn(compact ResultSet) from sql db with the specified params
      *
-     * @param tableName table to search in
-     * @param key       key that contains keyValue (table header)
-     * @param keyValue  value from key (table data)
+     * @param tableName      table to search in
+     * @param conditionKey   key that contains keyValue (table header)
+     * @param conditionValue value from key (table data)
      * @return DataColumn with the keyValue and key from given params as string
      */
-    public DataColumn getStringResultColumn(String tableName, String key, String keyValue) {
+    public DataColumn getStringResultColumn(String tableName, String conditionKey, String conditionValue, String key) {
         logger.info("Trying to get StringResult from " + tableName + " key: " + key + " ...");
         DataColumn column = null;
 
         try {
-            var ps = getMySQLConnection().prepareStatement("SELECT * FROM " + tableName + " WHERE " + key + " = " + keyValue);
+            var ps = getMySQLConnection().prepareStatement("SELECT * FROM " + tableName + " WHERE " + conditionKey + " = " + conditionValue);
             var resultSet = ps.executeQuery();
             while (resultSet.next()) {
                 column = new DataColumn(key, resultSet.getString(key));
