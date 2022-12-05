@@ -1,0 +1,29 @@
+stages:
+  - build
+  - deploy
+
+build:
+  image: gradle:jdk17
+  stage: build
+  only:
+    - tags
+  artifacts:
+    paths:
+      - ./build/libs
+  variables:
+    USERNAME: $NEXUS_USER
+    PASSWORD: $NEXUS_PASSWORD
+    VERSION: $CI_COMMIT_REF_NAME
+  script:
+    - ./gradlew publish
+
+deploy:
+  image: justtreme/lftp:4.8.1
+  stage: deploy
+  only:
+    - tags
+  dependencies:
+    - build
+  script:
+    - echo Deploying Plugin
+    - echo Deployed ...
