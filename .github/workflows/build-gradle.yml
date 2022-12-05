@@ -21,11 +21,3 @@ jobs:
                     USERNAME: ${{secrets.USERNAME}}
                     TOKEN: ${{secrets.TOKEN}}
                     RELEASE_VERSION: ${{env.RELEASE_VERSION}}
-            -   name: Upload artifacts
-                uses: actions/upload-artifact@v3
-                with:
-                    name: build-artifacts
-                    path: |
-                        build/libs/*.jar
-                        build/reports/tests/test/index.html
-                        build/reports/jacoco/test/html/index.html
