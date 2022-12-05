@@ -12,10 +12,10 @@ public class NetworkHandler {
     @Getter
     private final SQLConnection dbConnection;
 
-    public NetworkHandler() {
+    public NetworkHandler(NetworkUtils networkUtils) {
 
         logger.info("Loading config!");
-        var utilsConfig = NetworkUtils.getInstance().getConfig();
+        var utilsConfig = networkUtils.getConfig();
 
         logger.info("Creating Connection Pool...");
         dbConnection = new SQLConnection(utilsConfig.getString("language.jdbc"), utilsConfig.getString("language.user"), utilsConfig.getString("language.pwd"));
