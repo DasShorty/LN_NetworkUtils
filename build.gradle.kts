@@ -1,5 +1,3 @@
-
-
 plugins {
     `java-library`
     id("io.papermc.paperweight.userdev") version "1.3.8"
@@ -10,17 +8,17 @@ plugins {
 publishing {
     repositories {
         maven {
-            url = uri("https://maven.pkg.github.com/laudy-network/networkutils")
+            url = uri("https://repo.rimsha.eu/repository/maven-private")
             credentials {
                 username = System.getenv("USERNAME")
-                password = System.getenv("TOKEN")
+                password = System.getenv("PASSWORD")
             }
         }
     }
 }
 
 group = "com.laudynetwork.networkutils"
-version = System.getenv("RELEASE_VERSION") ?: "1.0.0"
+version = System.getenv("VERSION") ?: "1.0.0"
 description = "Utility Plugin for LaudyNetwork"
 
 java {
@@ -44,7 +42,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "com.laudynetwork"
             artifactId = "networkutils"
-            version = System.getenv("RELEASE_VERSION") ?: "1.0.0"
+            version = System.getenv("VERSION") ?: "1.0.0"
 
             from(components["java"])
         }
