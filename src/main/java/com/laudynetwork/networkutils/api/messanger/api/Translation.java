@@ -7,6 +7,9 @@ import java.util.Arrays;
 
 public record Translation(String key, TranslationLanguage language, String raw) {
 
+    public MsgBuilder createBuilder() {
+        return new MsgBuilder(this);
+    }
     public static class MsgBuilder {
 
         private final Translation translation;
