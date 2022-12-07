@@ -8,22 +8,24 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class NetworkUtils extends JavaPlugin {
     @Getter
-    private SQLConnection dbConnection;
-    private static NetworkUtils INSTANCE;
+    private static SQLConnection DB_CONNECTION;
+
 
     @Override
-    public void onEnable() {
-
-        INSTANCE = this;
+    public void onLoad() {
 
         getSLF4JLogger().info("Loading config!");
         var utilsConfig = this.getConfig();
 
         getSLF4JLogger().info("Creating Connection Pool...");
-        dbConnection = new SQLConnection(utilsConfig.getString("language.jdbc"), utilsConfig.getString("language.user"), utilsConfig.getString("language.pwd"));
+        DB_CONNECTION = new SQLConnection(utilsConfig.getString("language.jdbc"), utilsConfig.getString("language.user"), utilsConfig.getString("language.pwd"));
 
         getSLF4JLogger().info("Finished creating connection pool!");
         getSLF4JLogger().info("Ready for Db Handling!");
+    }
+
+    @Override
+    public void onEnable() {
 
         var pm = Bukkit.getPluginManager();
         pm.registerEvents(new Base64Listener(), this);
@@ -33,9 +35,5 @@ public final class NetworkUtils extends JavaPlugin {
     @Override
     public void onDisable() {
         // ignore
-    }
-
-    public static NetworkUtils getINSTANCE() {
-        return INSTANCE;
     }
 }
