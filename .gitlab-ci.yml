@@ -15,7 +15,7 @@ build:
         PASSWORD: $NEXUS_PWD
         VERSION: $CI_COMMIT_SHORT_SHA
     script:
-        - ./gradlew publish
+        - ./gradlew build
 
 deploy:
     image: justtreme/lftp:4.8.1
@@ -26,3 +26,18 @@ deploy:
         - build
     script:
         - lftp -e "set sftp:auto-confirm yes; mirror -X .* -X .*/ --reverse --verbose ./build/dist /home/laudynetwork/prod/local/templates/Global/server/plugins; bye" -u $SFTP_USER,$SFTP_PWD sftp://89.163.129.221
+
+publish:
+    image: gradle:jdk17
+    stage: build
+    only:
+        - main
+    artifacts:
+        paths:
+            - ./build/dist
+    variables:
+        USERNAME: $NEXUS_USER
+        PASSWORD: $NEXUS_PWD
+        VERSION: $CI_COMMIT_SHORT_SHA
+    script:
+        - ./gradlew publish
