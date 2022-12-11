@@ -8,7 +8,7 @@ plugins {
 publishing {
     repositories {
         maven {
-            url = uri("https://repo.rimsha.eu/repository/maven-private")
+            url = uri("https://repo.laudynetwork.com/repository/maven")
             credentials {
                 username = System.getenv("USERNAME")
                 password = System.getenv("PASSWORD")
