@@ -2,6 +2,18 @@ stages:
     - build
     - deploy
 
+publish:
+    image: gradle:jdk17
+    stage: build
+    only:
+        - main
+    variables:
+        USERNAME: $NEXUS_USER
+        PASSWORD: $NEXUS_PWD
+        VERSION: $CI_COMMIT_SHORT_SHA
+    script:
+        - ./gradlew publish
+
 build:
     image: gradle:jdk17
     stage: build
@@ -26,15 +38,3 @@ deploy:
         - build
     script:
         - lftp -e "set sftp:auto-confirm yes; mirror -X .* -X .*/ --reverse --verbose ./build/dist /home/laudynetwork/prod/local/templates/Global/server/plugins; bye" -u $SFTP_USER,$SFTP_PWD sftp://89.163.129.221
-
-publish:
-    image: gradle:jdk17
-    stage: deploy
-    only:
-        - main
-    variables:
-        USERNAME: $NEXUS_USER
-        PASSWORD: $NEXUS_PWD
-        VERSION: $CI_COMMIT_SHORT_SHA
-    script:
-        - ./gradlew publish
