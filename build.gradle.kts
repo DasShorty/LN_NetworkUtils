@@ -10,15 +10,15 @@ publishing {
         maven {
             url = uri("https://repo.laudynetwork.com/repository/maven")
             credentials {
-                username = System.getenv("USERNAME")
-                password = System.getenv("PASSWORD")
+                username = "root"
+                password = "2mo6LYMV4zMXsNsJ6xExZLabFdgMbV"
             }
         }
     }
 }
 
 group = "com.laudynetwork.networkutils"
-version = System.getenv("VERSION") ?: "1.0.0"
+version = "latest"
 description = "Utility Plugin for LaudyNetwork"
 
 java {
@@ -42,7 +42,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "com.laudynetwork"
             artifactId = "networkutils"
-            version = System.getenv("VERSION") ?: "1.0.0"
+            version = "latest"
 
             from(components["java"])
         }

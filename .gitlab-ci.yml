@@ -10,7 +10,6 @@ publish:
     variables:
         USERNAME: $NEXUS_USER
         PASSWORD: $NEXUS_PWD
-        VERSION: $CI_COMMIT_SHORT_SHA
     script:
         - ./gradlew publish
 
@@ -25,7 +24,6 @@ build:
     variables:
         USERNAME: $NEXUS_USER
         PASSWORD: $NEXUS_PWD
-        VERSION: $CI_COMMIT_SHORT_SHA
     script:
         - ./gradlew build
 
