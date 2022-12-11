@@ -9,7 +9,7 @@ build:
         - main
     artifacts:
         paths:
-            - ./build/libs
+            - ./build/dist
     variables:
         USERNAME: $NEXUS_USER
         PASSWORD: $NEXUS_PWD
@@ -25,4 +25,4 @@ deploy:
     dependencies:
         - build
     script:
-        - lftp -e "set sftp:auto-confirm yes; mirror -X .* -X .*/ --reverse --verbose ./build/libs /home; bye" -u $SFTP_USER,$SFTP_PWD sftp://89.163.129.221
+        - lftp -e "set sftp:auto-confirm yes; mirror -X .* -X .*/ --reverse --verbose ./build/dist /home/laudynetwork/prod/local/templates/Global/server/plugins; bye" -u $SFTP_USER,$SFTP_PWD sftp://89.163.129.221
