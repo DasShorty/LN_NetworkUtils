@@ -93,4 +93,9 @@ public class ItemBuilder implements ItemStackBuilder<ItemBuilder> {
         itemStack.setItemMeta(meta);
         return itemStack;
     }
+
+    public ItemBuilder customModelData(int data) {
+        meta.setCustomModelData(data);
+        return this;
+    }
 }
