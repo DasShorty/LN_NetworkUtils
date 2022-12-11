@@ -29,12 +29,9 @@ deploy:
 
 publish:
     image: gradle:jdk17
-    stage: build
+    stage: deploy
     only:
         - main
-    artifacts:
-        paths:
-            - ./build/dist
     variables:
         USERNAME: $NEXUS_USER
         PASSWORD: $NEXUS_PWD
