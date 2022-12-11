@@ -1,5 +1,9 @@
 package com.laudynetwork.networkutils.api.item.itembuilder;
 
+import com.laudynetwork.networkutils.api.player.TextureFetcher;
+import com.laudynetwork.networkutils.api.player.UUIDFetcher;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -9,9 +13,12 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.UUID;
 
 public class HeadBuilder implements ItemStackBuilder<HeadBuilder> {
@@ -81,6 +88,40 @@ public class HeadBuilder implements ItemStackBuilder<HeadBuilder> {
         meta.setOwningPlayer(Bukkit.getOfflinePlayer(headOwner));
         return this;
     }
+
+
+    public HeadBuilder skullOwner(@NotNull String url) {
+        String finalUrl = "";
+        try {
+            UUID uuid = UUID.fromString(url);
+            finalUrl = TextureFetcher.getSkinUrl(uuid.toString());
+        } catch (Exception ignored) {
+        }
+        if (url.length() <= 16) {
+            UUID uuid = UUIDFetcher.getUUID(url);
+            if (uuid == null)
+                finalUrl = "https://textures.minecraft.net/texture/" +
+                        "647cf0f3b9ec9df2485a9cd4795b60a391c8e6ebac96354de06e3357a9a88607";
+            else finalUrl = TextureFetcher.getSkinUrl(uuid.toString());
+        } else if (finalUrl.isEmpty()) {
+            finalUrl = "https://textures.minecraft.net/texture/" + url;
+        }
+
+        GameProfile gameProfile = new GameProfile(UUID.randomUUID(), null);
+        byte[] data = Base64.getEncoder().encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", finalUrl).getBytes());
+        gameProfile.getProperties().put("textures", new Property("textures", new String(data)));
+        try{
+            Field field = meta.getClass().getDeclaredField("profile");
+            field.setAccessible(true);
+            field.set(meta, gameProfile);
+            field.setAccessible(false);
+        }catch (Exception ignored){
+        }
+        return this;
+    }
+
+
+
 
     @Override
     public HeadBuilder enchant(Enchantment enchantment, int level) {
