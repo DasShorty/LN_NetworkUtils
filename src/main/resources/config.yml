@@ -1,4 +1,4 @@
 language:
-  jdbc: 'jdbc:mariadb://localhost:40000/laudynetwork'
+  jdbc: 'jdbc:mariadb://localhost:3306/laudynetwork'
   user: 'laudynetwork'
-  pwd: 'gU6LEEmOKl!924DV'
+  pwd: 'M8-)opnbhrn/z]kD'
