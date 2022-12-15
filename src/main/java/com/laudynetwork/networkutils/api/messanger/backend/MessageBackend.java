@@ -1,9 +1,10 @@
 package com.laudynetwork.networkutils.api.messanger.backend;
 
-import com.laudynetwork.networkutils.api.messanger.api.TranslationLanguage;
 import com.laudynetwork.networkutils.api.messanger.api.Translation;
+import com.laudynetwork.networkutils.api.messanger.api.TranslationLanguage;
 import com.laudynetwork.networkutils.api.sql.SQLConnection;
 import lombok.val;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,12 +19,17 @@ public class MessageBackend {
     private final Logger logger;
     private Map<TranslationLanguage, Map<String, Translation>> translationMap;
 
-    public MessageBackend(@NotNull SQLConnection connection, @NotNull String project) {
+    public MessageBackend(SQLConnection connection, @NotNull String project) {
         this.connection = connection;
 
         logger = LoggerFactory.getLogger(getClass());
 
         logger.info("Starting MessageBackend...");
+
+        if (connection == null) {
+            Bukkit.getServer().shutdown();
+            throw new NullPointerException("connection is null!  <MessageBackend.java:29");
+        }
 
         connection.createTableWithPrimaryKey("translations", "key", new SQLConnection.TableColumn("key", SQLConnection.ColumnType.VARCHAR, 255),
                 new SQLConnection.TableColumn("project", SQLConnection.ColumnType.VARCHAR, 255), new SQLConnection.TableColumn("de", SQLConnection.ColumnType.VARCHAR,
