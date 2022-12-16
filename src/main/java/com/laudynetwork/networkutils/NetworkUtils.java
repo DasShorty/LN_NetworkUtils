@@ -4,24 +4,24 @@ import com.laudynetwork.networkutils.api.sql.SQLConnection;
 import com.laudynetwork.networkutils.listeners.Base64Listener;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+@Getter
 public final class NetworkUtils extends JavaPlugin {
-    @Getter
-    private static SQLConnection DB_CONNECTION;
-
+    private static NetworkUtils INSTANCE;
+    private SQLConnection dbConnection;
 
     @Override
     public void onLoad() {
+        INSTANCE = this;
 
         getSLF4JLogger().info("Loading config!");
-        var utilsConfig = this.getConfig();
+        saveDefaultConfig();
+        FileConfiguration config = this.getConfig();
 
-        getSLF4JLogger().info("Creating Connection Pool...");
-        DB_CONNECTION = new SQLConnection(utilsConfig.getString("language.jdbc"), utilsConfig.getString("language.user"), utilsConfig.getString("language.pwd"));
+        dbConnection = new SQLConnection(config.getString("db.jdbc"), config.getString("db.user"), config.getString("db.pwd"));
 
-        getSLF4JLogger().info("Finished creating connection pool!");
-        getSLF4JLogger().info("Ready for Db Handling!");
     }
 
     @Override
