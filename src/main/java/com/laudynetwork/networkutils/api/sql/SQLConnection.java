@@ -2,6 +2,7 @@ package com.laudynetwork.networkutils.api.sql;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,13 +59,13 @@ public class SQLConnection {
         var columnBuilder = new StringBuilder();
 
         for (TableColumn tableColumn : columns) {
-            columnBuilder.append(",").append(tableColumn.name).append(" ").append(tableColumn.type).append("(").append(tableColumn.length).append(")");
+            columnBuilder.append(", ").append("`").append(tableColumn.name).append("`").append(" ").append(tableColumn.type).append("(").append(tableColumn.length).append(")");
         }
 
         var tableColumns = columnBuilder.substring(1);
 
         try {
-            var ps = getMySQLConnection().prepareStatement("CREATE TABLE IF NOT EXISTS " + table + "(" + tableColumns + ", PRIMARY KEY '" + primaryKey + "')");
+            var ps = getMySQLConnection().prepareStatement("CREATE TABLE IF NOT EXISTS " + table + "(" + tableColumns + ", PRIMARY KEY (`" + primaryKey + "`))");
             ps.executeUpdate();
             ps.close();
             logger.info("sql table was successfully created!");
