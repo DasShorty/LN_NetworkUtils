@@ -30,7 +30,7 @@ import java.util.Map;
 @Getter
 public abstract class GUI implements InventoryHolder {
 
-  private Player player;
+  private final Player player;
   private final int size;
   @Getter
   private final Inventory inventory;
