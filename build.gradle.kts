@@ -31,7 +31,6 @@ dependencies {
     implementation("org.mariadb.jdbc:mariadb-java-client:3.0.6")
     annotationProcessor("org.projectlombok:lombok:1.18.24")
     paperDevBundle("1.19.2-R0.1-SNAPSHOT")
-    implementation("biz.paluch.redis:lettuce:4.5.0.Final")
     implementation("com.zaxxer:HikariCP:5.0.1")
 }
 repositories {
