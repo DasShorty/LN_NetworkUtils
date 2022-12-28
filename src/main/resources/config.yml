@@ -1,4 +1,4 @@
-db:
-  jdbc: 'jdbc:mariadb://89.163.129.221:3306/laudynetwork?allowPublicKeyRetrieval=true&useSSL=false'
+language:
+  jdbc: 'jdbc:mariadb://localhost:3306/laudynetwork'
   user: 'laudynetwork'
   pwd: 'M8-)opnbhrn/z]kD'

@@ -41,13 +41,7 @@ public class GUIHandler<P extends Plugin> implements Listener {
 
         var gui = openGUIs.get(player.getUniqueId());
 
-        var item = gui.getGuiItemMap().get(event.getSlot());
-
-        switch (item.action().onClick(player, event.getCurrentItem())) {
-            case CANCEL -> event.setCancelled(true);
-            case CLOSE -> player.closeInventory();
-            case NONE -> {}
-        }
+        gui.handleClick(event);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)

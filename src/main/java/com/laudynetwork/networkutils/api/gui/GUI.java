@@ -53,7 +53,7 @@ public abstract class GUI implements InventoryHolder {
   protected void generate() {
     for (int i = 0; i < inventory.getSize(); i++) {
       if (!guiItemMap.containsKey(i)) {
-        guiItemMap.put(i, new GUIItem(i, new ItemBuilder(background).displayName(Component.empty()).itemFlags(ItemFlag.values()), (clicker, clickedItem) -> {
+        guiItemMap.put(i, new GUIItem(i, new ItemBuilder(background).displayName(Component.empty()).itemFlags(ItemFlag.values()), (clicker, clickedItem, clickType) -> {
           return GUIItem.GUIAction.CANCEL;
         }));
       }
@@ -94,8 +94,8 @@ public abstract class GUI implements InventoryHolder {
 
     event.setCancelled(true);
 
-    GUIItem.GUIAction action = null;
-    action = item.action().onClick(player, event.getCurrentItem());
+    GUIItem.GUIAction action;
+    action = item.action().onClick(player, event.getCurrentItem(), event.getClick());
 
     if (action == GUIItem.GUIAction.CLOSE) {
       player.closeInventory(InventoryCloseEvent.Reason.PLUGIN);
