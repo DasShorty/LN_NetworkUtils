@@ -17,6 +17,7 @@ public record Translation(String key, TranslationLanguage language, String raw) 
 
         public MsgBuilder(Translation translation) {
             this.translation = translation;
+            this.rawData = translation.key();
         }
 
         public MsgBuilder replaceString(Replacement... replacements) {

@@ -58,13 +58,16 @@ public class SQLConnection {
         var columnBuilder = new StringBuilder();
 
         for (TableColumn tableColumn : columns) {
-            columnBuilder.append(",").append(tableColumn.name).append(" ").append(tableColumn.type).append("(").append(tableColumn.length).append(")");
+            columnBuilder.append(",`").append(tableColumn.name).append("` ").append(tableColumn.type).append("(").append(tableColumn.length).append(")");
         }
 
         var tableColumns = columnBuilder.substring(1);
 
         try {
-            var ps = getMySQLConnection().prepareStatement("CREATE TABLE IF NOT EXISTS " + table + "(" + tableColumns + ", PRIMARY KEY '" + primaryKey + "')");
+
+            var prepareStmt= "CREATE TABLE IF NOT EXISTS " + table + "(" + tableColumns + ", PRIMARY KEY (" + primaryKey + "))";
+
+            var ps = getMySQLConnection().prepareStatement(prepareStmt);
             ps.executeUpdate();
             ps.close();
             logger.info("sql table was successfully created!");

@@ -1,7 +1,9 @@
 package com.laudynetwork.networkutils;
 
+import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
 import com.laudynetwork.networkutils.api.sql.SQLConnection;
 import com.laudynetwork.networkutils.listeners.Base64Listener;
+import com.laudynetwork.networkutils.listeners.CommandProtectionListener;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -27,8 +29,11 @@ public final class NetworkUtils extends JavaPlugin {
     @Override
     public void onEnable() {
 
+        MessageBackend backend = new MessageBackend(DB_CONNECTION, "networkutils");
+
         var pm = Bukkit.getPluginManager();
         pm.registerEvents(new Base64Listener(), this);
+        pm.registerEvents(new CommandProtectionListener(backend), this);
         getSLF4JLogger().info("loaded!");
     }
 
