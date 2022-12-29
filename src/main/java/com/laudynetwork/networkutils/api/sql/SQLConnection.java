@@ -2,6 +2,7 @@ package com.laudynetwork.networkutils.api.sql;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +17,12 @@ public class SQLConnection {
     private final HikariDataSource source;
     private final Logger logger;
 
+    @SneakyThrows
+
     public SQLConnection(String jdbcUrl, String user, String pwd) {
+
+        Class.forName("org.mariadb.jdbc.Driver").getDeclaredConstructor().newInstance();
+
         logger = LoggerFactory.getLogger("SQLConnection");
         logger.info("Creating data source to db with user " + user);
         HikariConfig config = new HikariConfig();

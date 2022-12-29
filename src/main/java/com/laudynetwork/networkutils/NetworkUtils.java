@@ -22,7 +22,7 @@ public final class NetworkUtils extends JavaPlugin {
         saveDefaultConfig();
         FileConfiguration config = this.getConfig();
 
-        dbConnection = new SQLConnection(config.getString("db.jdbc"), config.getString("db.user"), config.getString("db.pwd"));
+        this.dbConnection = new SQLConnection(config.getString("db.jdbc"), config.getString("db.user"), config.getString("db.pwd"));
 
     }
 
