@@ -41,6 +41,8 @@ public class GUIHandler<P extends Plugin> implements Listener {
 
         var gui = openGUIs.get(player.getUniqueId());
 
+        event.setCancelled(true);
+
         gui.handleClick(event);
     }
 
