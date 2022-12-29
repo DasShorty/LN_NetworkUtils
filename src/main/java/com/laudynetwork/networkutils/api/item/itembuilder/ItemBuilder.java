@@ -22,7 +22,12 @@ public class ItemBuilder implements ItemStackBuilder<ItemBuilder> {
 
     public ItemBuilder(Material material) {
         this.itemStack = new ItemStack(material);
-        meta = itemStack.getItemMeta();
+        this.meta = itemStack.getItemMeta();
+    }
+
+    public ItemBuilder() {
+        this.itemStack = new ItemStack(Material.AIR);
+        this.meta = null;
     }
 
     public ItemBuilder(ItemStack itemStack) {
@@ -90,7 +95,9 @@ public class ItemBuilder implements ItemStackBuilder<ItemBuilder> {
 
     @Override
     public ItemStack build() {
-        itemStack.setItemMeta(meta);
+
+        if (this.meta != null)
+            itemStack.setItemMeta(meta);
         return itemStack;
     }
 
