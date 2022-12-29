@@ -29,7 +29,7 @@ public final class NetworkUtils extends JavaPlugin {
     @Override
     public void onEnable() {
 
-        MessageBackend backend = new MessageBackend(DB_CONNECTION, "networkutils");
+        MessageBackend backend = new MessageBackend(this.dbConnection, "networkutils");
 
         var pm = Bukkit.getPluginManager();
         pm.registerEvents(new Base64Listener(), this);
