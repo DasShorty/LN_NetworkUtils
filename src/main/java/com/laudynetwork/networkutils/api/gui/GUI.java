@@ -59,6 +59,12 @@ public abstract class GUI implements InventoryHolder {
       }
     }
     guiItemMap.forEach((slot, item) -> {
+
+      if (item.itemStackBuilder().build().getType() == Material.AIR) {
+        inventory.setItem(slot, item.itemStackBuilder().build());
+        return;
+      }
+
       inventory.setItem(slot, item.itemStackBuilder().itemFlags(ItemFlag.values()).build());
     });
   }
