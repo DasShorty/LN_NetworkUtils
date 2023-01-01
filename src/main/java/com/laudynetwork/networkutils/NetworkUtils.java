@@ -1,16 +1,25 @@
 package com.laudynetwork.networkutils;
 
+import com.laudynetwork.networkutils.api.location.commandimpl.LocationCommand;
 import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
 import com.laudynetwork.networkutils.api.sql.SQLConnection;
 import com.laudynetwork.networkutils.listeners.Base64Listener;
-import com.laudynetwork.networkutils.listeners.CommandProtectionListener;
-import lombok.Getter;
+import com.laudynetwork.networkutils.utils.commands.PingCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-@Getter
+import java.util.Objects;
+
 public final class NetworkUtils extends JavaPlugin {
+    public static NetworkUtils getINSTANCE() {
+        return INSTANCE;
+    }
+
+    public SQLConnection getDbConnection() {
+        return dbConnection;
+    }
+
     private static NetworkUtils INSTANCE;
     private SQLConnection dbConnection;
 
@@ -33,8 +42,13 @@ public final class NetworkUtils extends JavaPlugin {
 
         var pm = Bukkit.getPluginManager();
         pm.registerEvents(new Base64Listener(), this);
-        pm.registerEvents(new CommandProtectionListener(backend), this);
+
+        Objects.requireNonNull(getCommand("location")).setExecutor(new LocationCommand(backend));
+        Objects.requireNonNull(getCommand("ping")).setExecutor(new PingCommand(backend));
+
         getSLF4JLogger().info("loaded!");
+
+
     }
 
     @Override
