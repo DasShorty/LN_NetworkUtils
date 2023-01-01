@@ -1,4 +1,4 @@
-language:
+db:
   jdbc: 'jdbc:mariadb://localhost:3306/laudynetwork'
   user: 'laudynetwork'
   pwd: 'M8-)opnbhrn/z]kD'
