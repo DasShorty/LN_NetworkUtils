@@ -1,6 +1,6 @@
 package com.laudynetwork.networkutils.api.player;
 
-import com.laudynetwork.networkutils.api.messanger.api.TranslationLanguage;
+import com.laudynetwork.networkutils.api.messanger.backend.TranslationLanguage;
 import com.laudynetwork.networkutils.api.sql.SQLConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +24,12 @@ public class NetworkPlayer {
     }
 
     public TranslationLanguage getLanguage() {
+
+        if (!connection.existsColumn("playerData", "uid", uuid)) {
+            setLanguage(TranslationLanguage.ENGLISH);
+            return TranslationLanguage.ENGLISH;
+        }
+
         return TranslationLanguage.valueOf(connection.getStringResultColumn("playerData", "uid", uuid.toString(), "language").value().toString().toUpperCase());
     }
 
