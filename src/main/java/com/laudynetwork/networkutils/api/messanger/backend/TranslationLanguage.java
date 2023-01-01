@@ -1,4 +1,4 @@
-package com.laudynetwork.networkutils.api.messanger.api;
+package com.laudynetwork.networkutils.api.messanger.backend;
 
 import lombok.Getter;
 
