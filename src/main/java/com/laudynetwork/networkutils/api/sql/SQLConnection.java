@@ -3,6 +3,7 @@ package com.laudynetwork.networkutils.api.sql;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.SneakyThrows;
+import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +19,6 @@ public class SQLConnection {
     private final Logger logger;
 
     @SneakyThrows
-
     public SQLConnection(String jdbcUrl, String user, String pwd) {
 
         Class.forName("org.mariadb.jdbc.Driver").getDeclaredConstructor().newInstance();
@@ -33,6 +33,7 @@ public class SQLConnection {
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+        config.setMaximumPoolSize(100);
 
         source = new HikariDataSource(config);
 
@@ -71,7 +72,30 @@ public class SQLConnection {
 
         try {
 
-            var prepareStmt= "CREATE TABLE IF NOT EXISTS " + table + "(" + tableColumns + ", PRIMARY KEY (" + primaryKey + "))";
+            var prepareStmt = "CREATE TABLE IF NOT EXISTS " + table + "(" + tableColumns + ", PRIMARY KEY (" + primaryKey + "))";
+
+            var ps = getMySQLConnection().prepareStatement(prepareStmt);
+            ps.executeUpdate();
+            ps.close();
+            logger.info("sql table was successfully created!");
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    public void createTable(String table, TableColumn... columns) {
+        logger.info("Trying to create sql table " + table);
+        var columnBuilder = new StringBuilder();
+
+        for (TableColumn tableColumn : columns) {
+            columnBuilder.append(",`").append(tableColumn.name).append("` ").append(tableColumn.type).append("(").append(tableColumn.length).append(")");
+        }
+
+        var tableColumns = columnBuilder.substring(1);
+
+        try {
+
+            var prepareStmt = "CREATE TABLE IF NOT EXISTS `" + table + "`(" + tableColumns + ")";
 
             var ps = getMySQLConnection().prepareStatement(prepareStmt);
             ps.executeUpdate();
@@ -91,14 +115,17 @@ public class SQLConnection {
      * @return DataColumn with the keyValue and key from given params as string
      */
     public DataColumn getStringResultColumn(String tableName, String conditionKey, String conditionValue, String key) {
-        logger.info("Trying to get StringResult from " + tableName + " key: " + key + " ...");
+        logger.info("Trying to get StringResult from " + tableName + " key: " + conditionValue + " ...");
         DataColumn column = null;
 
         try {
-            var ps = getMySQLConnection().prepareStatement("SELECT * FROM " + tableName + " WHERE " + conditionKey + " = " + conditionValue);
-            var resultSet = ps.executeQuery();
+            var ps = getMySQLConnection().createStatement();
+            ps.setQueryTimeout(30);
+            var resultSet = ps.executeQuery("SELECT * FROM `" + tableName + "` WHERE `" + conditionKey + "`='" + conditionValue + "'");
             while (resultSet.next()) {
-                column = new DataColumn(key, resultSet.getString(key));
+                val string = resultSet.getString(key);
+                logger.warn(string);
+                column = new DataColumn(key, string);
             }
         } catch (SQLException e) {
             logger.error(e.getMessage());
@@ -125,7 +152,7 @@ public class SQLConnection {
         DataColumn column = null;
 
         try {
-            var ps = getMySQLConnection().prepareStatement("SELECT * FROM " + tableName + " WHERE " + key + " = " + keyValue);
+            var ps = getMySQLConnection().prepareStatement("SELECT * FROM `" + tableName + "` WHERE `" + key + "` = '" + keyValue + "'");
             var resultSet = ps.executeQuery();
             while (resultSet.next()) {
                 column = new DataColumn(key, resultSet.getInt(key));
@@ -176,13 +203,19 @@ public class SQLConnection {
         var values = new StringBuilder();
 
         for (DataColumn column : columns) {
-            columnNames.append(",").append(column.name());
-            values.append(",").append(column.value());
+            columnNames.append(",").append("`").append(column.name()).append("`");
+            values.append(",").append("'").append(column.value()).append("'");
         }
 
         try {
-            var ps = getMySQLConnection().prepareStatement("INSERT INTO " + tableName + "(" + columnNames.substring(1) + ") VALUES (" + values.substring(1) + ")");
-            ps.executeUpdate();
+
+            val string = "INSERT INTO " + tableName + "(" + columnNames.substring(1) + ") VALUES (" + values.substring(1) + ")";
+
+            logger.warn(string);
+
+            var ps = getMySQLConnection().createStatement();
+            ps.setQueryTimeout(30);
+            ps.executeUpdate(string);
             ps.close();
             logger.info("Successfully updated table " + tableName);
         } catch (SQLException e) {
