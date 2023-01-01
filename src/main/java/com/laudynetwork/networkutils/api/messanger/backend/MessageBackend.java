@@ -1,8 +1,7 @@
 package com.laudynetwork.networkutils.api.messanger.backend;
 
-import com.laudynetwork.networkutils.api.messanger.api.Translation;
-import com.laudynetwork.networkutils.api.messanger.api.TranslationLanguage;
 import com.laudynetwork.networkutils.api.sql.SQLConnection;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
@@ -14,6 +13,7 @@ import java.util.Map;
 
 public class MessageBackend {
 
+    @Getter
     private final SQLConnection connection;
     private final Logger logger;
     private Map<TranslationLanguage, Map<String, Translation>> translationMap;
@@ -36,8 +36,11 @@ public class MessageBackend {
     }
 
     public Translation getTranslation(TranslationLanguage language, @NotNull String key) {
-        if (!translationMap.get(language).containsKey(key))
+
+        if (!translationMap.get(language).containsKey(key)) {
             return new Translation(key, TranslationLanguage.ENGLISH, key);
+        }
+
         return translationMap.get(language).get(key);
     }
 
@@ -56,10 +59,8 @@ public class MessageBackend {
         val resultSet = prepareStatement.executeQuery();
 
         while (resultSet.next()) {
-
             val key = resultSet.getString("translationKey");
             val germanTranslation = resultSet.getString("de");
-            logger.info(germanTranslation);
             german.put(key, new Translation(key, TranslationLanguage.GERMAN, germanTranslation));
             val englishTranslation = resultSet.getString("en");
             english.put(key, new Translation(key, TranslationLanguage.ENGLISH, englishTranslation));
