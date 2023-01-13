@@ -1,12 +1,15 @@
 stages:
     - build
     - deploy
+    - update-dependencies
 
 publish:
     image: gradle:jdk17
     stage: build
     only:
         - main
+    except:
+        - schedules
     variables:
         USERNAME: $NEXUS_USER
         PASSWORD: $NEXUS_PWD
@@ -18,6 +21,8 @@ build:
     stage: build
     only:
         - main
+    except:
+        - schedules
     artifacts:
         paths:
             - ./build/dist
@@ -32,7 +37,17 @@ deploy:
     stage: deploy
     only:
         - main
+    except:
+        - schedules
     dependencies:
         - build
     script:
         - lftp -e "set sftp:auto-confirm yes; mirror -X .* -X .*/ --reverse --verbose ./build/dist /home/laudynetwork/prod/local/templates/Global/server/plugins; bye" -u $SFTP_USER,$SFTP_PWD sftp://89.163.129.221
+
+renovate:
+    image: renovate/renovate
+    stage: update-dependencies
+    only:
+        - schedules
+    script:
+        - renovate --platform gitlab --token $RENOVATE_TOKEN $CI_PROJECT_PATH
