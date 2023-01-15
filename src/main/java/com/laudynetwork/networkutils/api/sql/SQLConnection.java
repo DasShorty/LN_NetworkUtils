@@ -12,6 +12,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class SQLConnection {
 
@@ -45,7 +47,6 @@ public class SQLConnection {
      */
     public Connection getMySQLConnection() {
         try {
-            logger.info("picking connection from pool");
             return source.getConnection();
         } catch (SQLException e) {
             logger.error(e.getMessage());
@@ -179,14 +180,26 @@ public class SQLConnection {
      */
     public boolean existsColumn(String tableName, String columnName, Object expectedColumnValue) {
         logger.info("Trying to check if " + columnName + " in " + tableName + " exists...");
+
+        val future = new CompletableFuture<Boolean>();
+
         try {
-            var ps = getMySQLConnection().prepareStatement("SELECT * FROM " + tableName + " WHERE EXISTS(SELECT " + columnName + " FROM " + tableName + " WHERE " + columnName + " LIKE " + expectedColumnValue + ")");
+            var ps = getMySQLConnection().createStatement();
+            val resultSet = ps.executeQuery("SELECT * FROM " + tableName + " WHERE " + columnName + " IS NOT NULL AND " + columnName + " LIKE '" + expectedColumnValue + "'");
             logger.info("Successfully checked if " + columnName + " exists in " + tableName);
-            return ps.executeQuery().next();
+
+            future.complete(resultSet.next());
+
+            ps.close();
+
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
-        return false;
+        try {
+            return future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -264,7 +277,7 @@ public class SQLConnection {
 
         try {
             var ps = getMySQLConnection()
-                    .prepareStatement("DELETE FROM " + tableName + " WHERE " + conditionKey + " = " + conditionValue);
+                    .prepareStatement("DELETE FROM `" + tableName + "` WHERE `" + conditionKey + "`='" + conditionValue+"'");
 
             ps.executeUpdate();
 
