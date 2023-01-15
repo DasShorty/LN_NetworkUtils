@@ -8,5 +8,3 @@ description: Network Management (chat, ui, tablist, scoreboard)
 commands:
   location:
     permission: networkutils.location
-  ping:
-    permission: networkutils.ping

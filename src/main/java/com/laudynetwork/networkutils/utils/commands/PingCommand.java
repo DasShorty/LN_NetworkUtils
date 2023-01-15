@@ -5,7 +5,8 @@ import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
 import com.laudynetwork.networkutils.api.messanger.backend.Replacement;
 import com.laudynetwork.networkutils.api.messanger.backend.TranslationLanguage;
 import lombok.val;
-import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -17,7 +18,7 @@ public class PingCommand implements CommandExecutor {
     private final MessageAPI msgAPI;
 
     public PingCommand(MessageBackend msgBackend) {
-        this.msgAPI = new MessageAPI(msgBackend, "system");
+        this.msgAPI = new MessageAPI(msgBackend, MessageAPI.PrefixType.SYSTEM);
     }
 
     @Override
@@ -28,9 +29,17 @@ public class PingCommand implements CommandExecutor {
             return true;
         }
 
+        var color = NamedTextColor.GREEN;
+        val ping = player.getPing();
+
+        if (ping >= 60)
+            color = NamedTextColor.YELLOW;
+        if (ping >= 90)
+            color = NamedTextColor.RED;
+
         val translation = this.msgAPI.getTranslation(TranslationLanguage.ENGLISH, "layout.ping", new Replacement("%ping%", player.getPing()));
-        val message = this.msgAPI.getMessage(TranslationLanguage.ENGLISH, "command.ping");
-        player.sendMessage(message.append(Component.text(" ").append(this.msgAPI.asHighlight(translation))));
+        val message = this.msgAPI.getMessage(TranslationLanguage.ENGLISH, "command.ping", new Replacement("%ping%", LegacyComponentSerializer.legacyAmpersand().serialize(translation.color(color))));
+        player.sendMessage(message);
 
         return true;
     }
