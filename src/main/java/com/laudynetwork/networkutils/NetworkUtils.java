@@ -4,6 +4,7 @@ import com.laudynetwork.networkutils.api.location.commandimpl.LocationCommand;
 import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
 import com.laudynetwork.networkutils.api.sql.SQLConnection;
 import com.laudynetwork.networkutils.listeners.Base64Listener;
+import com.laudynetwork.networkutils.listeners.CommandProtectionListener;
 import com.laudynetwork.networkutils.utils.commands.PingCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -42,6 +43,7 @@ public final class NetworkUtils extends JavaPlugin {
 
         var pm = Bukkit.getPluginManager();
         pm.registerEvents(new Base64Listener(), this);
+        pm.registerEvents(new CommandProtectionListener(backend), this);
 
         Objects.requireNonNull(getCommand("location")).setExecutor(new LocationCommand(backend));
 
