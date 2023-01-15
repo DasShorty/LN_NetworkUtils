@@ -9,10 +9,16 @@ import com.laudynetwork.networkutils.api.sql.SQLConnection;
 import lombok.val;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundRespawnPacket;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.storage.WorldData;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
+import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,7 +31,7 @@ public class LocationCommand implements CommandExecutor, TabCompleter {
     private final MessageAPI msgAPI;
 
     public LocationCommand(MessageBackend msgBackend) {
-        this.msgAPI = new MessageAPI(msgBackend, "system");
+        this.msgAPI = new MessageAPI(msgBackend, MessageAPI.PrefixType.SYSTEM);
         this.connection = msgBackend.getConnection();
     }
 
@@ -63,16 +69,10 @@ public class LocationCommand implements CommandExecutor, TabCompleter {
                     case "list" -> {
                         val locationNames = SQLLocation.getAllLocationNames(this.connection);
 
-                        player.sendMessage(this.msgAPI.getMessage(TranslationLanguage.ENGLISH, "location-command-list"));
+                        player.sendMessage(this.msgAPI.getMessage(TranslationLanguage.ENGLISH, "location.command.list"));
 
                         locationNames.forEach(s -> {
-
-                            val sqlLocation = SQLLocation.fromSQL(s, connection);
-                            val storedLocation = sqlLocation.getStoredLocation();
-                            if (storedLocation == null)
-                                return;
-
-                            player.sendMessage(msgAPI.asHighlight(Component.text(s)).clickEvent(ClickEvent.suggestCommand("/tp " + storedLocation.getBlockX() + " " + storedLocation.getBlockY() + " " + storedLocation.getBlockZ())));
+                            player.sendMessage(msgAPI.asHighlight(Component.text(s)).clickEvent(ClickEvent.suggestCommand("/location get " + s)));
                         });
 
                     }
@@ -84,15 +84,52 @@ public class LocationCommand implements CommandExecutor, TabCompleter {
 
                         val location = player.getLocation();
 
-                        if (SQLLocation.existsLocation(args[1], this.connection)) {
-                            player.sendMessage(this.msgAPI.getMessage(TranslationLanguage.ENGLISH, "location-command-add-exist"));
+                        val key = args[1];
+                        if (SQLLocation.existsLocation(key, this.connection)) {
+                            player.sendMessage(this.msgAPI.getMessage(TranslationLanguage.ENGLISH, "command.location.exist"));
                             return true;
                         }
 
-                        SQLLocation.createLocation(args[1], location, this.connection);
+                        SQLLocation.createLocation(key, location, this.connection);
 
-                        player.sendMessage(this.msgAPI.getMessage(TranslationLanguage.ENGLISH, "location-command-add"));
+                        player.sendMessage(this.msgAPI.getMessage(TranslationLanguage.ENGLISH, "command.location.add"));
 
+
+                    }
+
+                    case "remove" -> {
+
+                        if (!SQLLocation.existsLocation(args[1], this.connection)) {
+                            player.sendMessage(this.msgAPI.getMessage(TranslationLanguage.ENGLISH, "command.location.not.exist"));
+                            return true;
+                        }
+
+                        val sqlLocation = SQLLocation.fromSQL(args[1], this.connection);
+                        sqlLocation.deleteLocation();
+
+                        player.sendMessage(this.msgAPI.getMessage(TranslationLanguage.ENGLISH, "command.location.remove"));
+
+                    }
+
+                    case "get" -> {
+
+                        player.sendMessage(args[1]);
+
+                        if (!SQLLocation.existsLocation(args[1], this.connection)) {
+                            player.sendMessage(this.msgAPI.getMessage(TranslationLanguage.ENGLISH, "command.location.not.exist"));
+                            return true;
+                        }
+
+                        val sqlLocation = SQLLocation.fromSQL(args[1], this.connection);
+                        val storageLocation = sqlLocation.getStoredLocation();
+
+                        val tpTranslation = this.msgAPI.getTranslation(TranslationLanguage.ENGLISH, "layout.tp").clickEvent(
+                                ClickEvent.suggestCommand("/teleport " + storageLocation.getBlockX() + " " + storageLocation.getBlockY() + " " + storageLocation.getBlockZ())
+                        );
+                        val locationName = this.msgAPI.asHighlight(Component.text(args[1]));
+                        val message = this.msgAPI.getMessage(TranslationLanguage.ENGLISH, "location.command.get");
+
+                        player.sendMessage(message.append(locationName).append(Component.text(" ")).append(tpTranslation));
 
                     }
                 }

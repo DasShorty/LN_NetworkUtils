@@ -44,7 +44,6 @@ public final class NetworkUtils extends JavaPlugin {
         pm.registerEvents(new Base64Listener(), this);
 
         Objects.requireNonNull(getCommand("location")).setExecutor(new LocationCommand(backend));
-        Objects.requireNonNull(getCommand("ping")).setExecutor(new PingCommand(backend));
 
         getSLF4JLogger().info("loaded!");
 
