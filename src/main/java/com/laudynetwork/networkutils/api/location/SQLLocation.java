@@ -77,7 +77,6 @@ public class SQLLocation {
 
     public void deleteLocation() {
         checkTable(this.connection);
-
         this.connection.delete("minecraft_general_locations", "locationKey", this.locationKey);
     }
 
