@@ -27,7 +27,7 @@ java {
 }
 
 dependencies {
-    implementation("org.mariadb.jdbc:mariadb-java-client:3.1.1")
+    implementation("org.mariadb.jdbc:mariadb-java-client:3.1.2")
     implementation("org.projectlombok:lombok:1.18.24")
     annotationProcessor("org.projectlombok:lombok:1.18.24")
     paperDevBundle("1.19.2-R0.1-SNAPSHOT")
