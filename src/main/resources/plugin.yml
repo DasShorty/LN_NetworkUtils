@@ -5,6 +5,8 @@ api-version: 1.19
 prefix: NU
 authors: [ ShortException ]
 description: Network Management (chat, ui, tablist, scoreboard)
+depend:
+  - LuckPerms
 commands:
   location:
     permission: networkutils.location
