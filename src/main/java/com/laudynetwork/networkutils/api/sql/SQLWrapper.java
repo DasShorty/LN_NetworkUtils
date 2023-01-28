@@ -4,8 +4,13 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class SQLWrapper {
 
@@ -33,16 +38,19 @@ public class SQLWrapper {
   }
 
   public static String fromLocationToString(Location loc) {
-    return loc.getWorld().getUID()+";"+loc.getBlockX()+";"+loc.getBlockY()+";"+loc.getBlockZ();
+    return loc.getWorld().getName() + ";" + loc.getBlockX() + ";" + loc.getBlockY() + ";" + loc.getBlockZ() + ";" + loc.getYaw() + ";" + loc.getPitch();
   }
 
   public static Location fromStringToLocation(String str) {
+
     String[] split = str.split(";");
-    var world = Bukkit.getWorld(UUID.fromString(split[0]));
+    var world = Bukkit.getWorld(split[0]);
     var x = Integer.parseInt(split[1]);
     var y = Integer.parseInt(split[2]);
     var z = Integer.parseInt(split[3]);
-    return new Location(world, x, y, z);
+    var yaw = Float.parseFloat(split[4]);
+    var pitch = Float.parseFloat(split[5]);
+    return new Location(world, x, y, z, yaw, pitch);
   }
 
 }
