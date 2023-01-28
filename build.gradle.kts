@@ -3,6 +3,7 @@ plugins {
     id("io.papermc.paperweight.userdev") version "1.4.1"
     id("com.github.johnrengelman.shadow") version("7.1.2")
     id("maven-publish")
+    id("xyz.jpenilla.run-paper") version "2.0.1"
 }
 
 publishing {
@@ -32,6 +33,7 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:1.18.24")
     paperDevBundle("1.19.2-R0.1-SNAPSHOT")
     implementation("com.zaxxer:HikariCP:5.0.1")
+    compileOnly("net.luckperms:api:5.4")
 }
 repositories {
     mavenCentral()
