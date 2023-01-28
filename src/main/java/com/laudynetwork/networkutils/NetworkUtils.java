@@ -3,11 +3,13 @@ package com.laudynetwork.networkutils;
 import com.laudynetwork.networkutils.api.location.commandimpl.LocationCommand;
 import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
 import com.laudynetwork.networkutils.api.sql.SQLConnection;
+import com.laudynetwork.networkutils.api.tablist.TablistManager;
 import com.laudynetwork.networkutils.listeners.Base64Listener;
 import com.laudynetwork.networkutils.listeners.CommandProtectionListener;
-import com.laudynetwork.networkutils.utils.commands.PingCommand;
+import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
@@ -46,6 +48,21 @@ public final class NetworkUtils extends JavaPlugin {
         pm.registerEvents(new CommandProtectionListener(backend), this);
 
         Objects.requireNonNull(getCommand("location")).setExecutor(new LocationCommand(backend));
+
+        RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
+
+        LuckPerms luckPerms = null;
+
+        if (provider != null) {
+            luckPerms = provider.getProvider();
+        }
+
+        if (luckPerms == null) {
+            getSLF4JLogger().error("LuckPerms instance is null!");
+            return;
+        }
+
+        new TablistManager(this, luckPerms);
 
         getSLF4JLogger().info("loaded!");
 
