@@ -14,6 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
 
+@SuppressWarnings("unused")
 public final class NetworkUtils extends JavaPlugin {
     public static NetworkUtils getINSTANCE() {
         return INSTANCE;
@@ -65,8 +66,6 @@ public final class NetworkUtils extends JavaPlugin {
         new TablistManager(this, luckPerms);
 
         getSLF4JLogger().info("loaded!");
-
-
     }
 
     @Override
