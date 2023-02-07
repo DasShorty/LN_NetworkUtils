@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import java.util.concurrent.ExecutionException;
 
 public class SQLConnection {
 
-    private final HikariDataSource source;
+    private final Connection connection;
     private final Logger logger;
 
     @SneakyThrows
@@ -25,19 +26,23 @@ public class SQLConnection {
 
         Class.forName("org.mariadb.jdbc.Driver").getDeclaredConstructor().newInstance();
 
+
         logger = LoggerFactory.getLogger("SQLConnection");
         logger.info("Creating data source to db with user " + user);
-        HikariConfig config = new HikariConfig();
-        config.setJdbcUrl(jdbcUrl);
-        config.setUsername(user);
-        config.setPassword(pwd);
-        config.setDriverClassName("org.mariadb.jdbc.Driver");
-        config.addDataSourceProperty("cachePrepStmts", "true");
-        config.addDataSourceProperty("prepStmtCacheSize", "250");
-        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-        config.setMaximumPoolSize(1);
 
-        source = new HikariDataSource(config);
+        connection = DriverManager.getConnection(jdbcUrl, user, pwd);
+
+//        HikariConfig config = new HikariConfig();
+//        config.setJdbcUrl(jdbcUrl);
+//        config.setUsername(user);
+//        config.setPassword(pwd);
+//        config.setDriverClassName("org.mariadb.jdbc.Driver");
+//        config.addDataSourceProperty("cachePrepStmts", "false");
+//        config.addDataSourceProperty("prepStmtCacheSize", "250");
+//        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+//        config.setMaximumPoolSize(1);
+//
+//        source = new HikariDataSource(config);
 
         logger.info("Created data source with HikariCP...");
     }
@@ -46,12 +51,7 @@ public class SQLConnection {
      * @return current sql connection
      */
     public Connection getMySQLConnection() {
-        try {
-            return source.getConnection();
-        } catch (SQLException e) {
-            logger.error(e.getMessage());
-        }
-        return null;
+        return connection;
     }
 
     /**
