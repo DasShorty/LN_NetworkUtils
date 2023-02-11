@@ -13,7 +13,6 @@ package com.laudynetwork.networkutils.api.tablist;
 import lombok.val;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.luckperms.api.LuckPerms;
-import net.luckperms.api.model.group.Group;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,11 +23,11 @@ import org.bukkit.scoreboard.Team;
 
 public class TablistManager implements Listener {
   private final Scoreboard scoreboard;
-  private final Plugin plugin;
+  //private final Plugin plugin;
   private final LuckPerms luckPerms;
 
   public TablistManager(Plugin plugin, LuckPerms luckPerms) {
-    this.plugin = plugin;
+    //this.plugin = plugin;
     this.luckPerms = luckPerms;
     this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
 
