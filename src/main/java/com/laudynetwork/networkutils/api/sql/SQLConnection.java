@@ -1,7 +1,5 @@
 package com.laudynetwork.networkutils.api.sql;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.slf4j.Logger;
@@ -44,7 +42,7 @@ public class SQLConnection {
 //
 //        source = new HikariDataSource(config);
 
-        logger.info("Created data source with HikariCP...");
+        logger.info("Created db connection to mysql database");
     }
 
     /**
@@ -115,7 +113,7 @@ public class SQLConnection {
      * @param conditionValue value from key (table data)
      * @return DataColumn with the keyValue and key from given params as string
      */
-    public DataColumn getStringResultColumn(String tableName, String conditionKey, String conditionValue, String key) {
+    public DataColumn getStringResultColumn(String tableName, String conditionKey, Object conditionValue, String key) {
         logger.info("Trying to get StringResult from " + tableName + " key: " + conditionValue + " ...");
         DataColumn column = null;
 
