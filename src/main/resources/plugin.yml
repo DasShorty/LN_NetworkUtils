@@ -10,3 +10,5 @@ depend:
 commands:
   location:
     permission: networkutils.location
+  dev:
+
