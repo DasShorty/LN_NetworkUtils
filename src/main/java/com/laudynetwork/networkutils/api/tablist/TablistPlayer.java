@@ -2,19 +2,14 @@ package com.laudynetwork.networkutils.api.tablist;
 
 import lombok.val;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.Color;
 import org.bukkit.entity.Player;
 
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+@SuppressWarnings("unused")
 public record TablistPlayer(Player player, net.luckperms.api.LuckPerms luckPerms) {
-    private static Pattern pattern = Pattern.compile("/\\\\[uU][0-9A-Fa-f]{4}/g");
-
     public boolean isInGroup(String groupName) {
         return this.player.hasPermission("group." + groupName);
     }
