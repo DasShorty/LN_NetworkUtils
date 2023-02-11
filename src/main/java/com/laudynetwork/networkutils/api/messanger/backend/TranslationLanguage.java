@@ -9,8 +9,17 @@ public enum TranslationLanguage {
     @Getter
     private final String dbName;
 
-    TranslationLanguage(String dbName) {
+    public static TranslationLanguage getFromDBName(String dbName) {
 
+        for (TranslationLanguage language : TranslationLanguage.values()) {
+            if (language.dbName.equals(dbName))
+                return language;
+        }
+
+        return TranslationLanguage.ENGLISH;
+    }
+
+    TranslationLanguage(String dbName) {
         this.dbName = dbName;
     }
 }
