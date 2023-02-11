@@ -1,7 +1,12 @@
 package com.laudynetwork.networkutils.api.player;
 
 import com.laudynetwork.networkutils.api.messanger.backend.TranslationLanguage;
+import com.laudynetwork.networkutils.api.player.texturepack.TexturePack;
 import com.laudynetwork.networkutils.api.sql.SQLConnection;
+import com.viaversion.viaversion.api.Via;
+import lombok.val;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,27 +24,48 @@ public class NetworkPlayer {
         this.uuid = uuid;
         this.logger = LoggerFactory.getLogger("NetworkPlayer");
 
-        connection.createTableWithPrimaryKey("playerData", "uid", new SQLConnection.TableColumn("uid", SQLConnection.ColumnType.VARCHAR, 35),
+        connection.createTableWithPrimaryKey("minecraft_general_playerData", "uuid", new SQLConnection.TableColumn("uid", SQLConnection.ColumnType.VARCHAR, 35),
                 new SQLConnection.TableColumn("language", SQLConnection.ColumnType.VARCHAR, 20));
+    }
+
+    public ProtocolVersion getPlayerVersion() {
+        return ProtocolVersion.getByProtocolVersion(Via.getAPI().getPlayerVersion(uuid));
+    }
+
+    public void loadTexturePack(ProtocolVersion protocolVersion) {
+
+        val texturePack = new TexturePack(this.connection);
+
+        val texturePackUrl = texturePack.getTexturePackFromVersion(protocolVersion);
+
+        logger.info("Url: " + texturePackUrl.toString());
+
+        val hashCode = texturePack.getHashCodeFromUrl(texturePackUrl);
+
+        val player = Bukkit.getPlayer(this.uuid);
+
+        assert player != null;
+        player.setResourcePack(texturePackUrl.toString(), hashCode, true, Component.text("Willst du nicht runterladen? Spielst du nicht hier!"));
+
     }
 
     public TranslationLanguage getLanguage() {
 
-        if (!connection.existsColumn("playerData", "uid", uuid)) {
+        if (!connection.existsColumn("minecraft_general_playerData", "uuid", uuid)) {
             setLanguage(TranslationLanguage.ENGLISH);
             return TranslationLanguage.ENGLISH;
         }
 
-        return TranslationLanguage.valueOf(connection.getStringResultColumn("playerData", "uid", uuid.toString(), "language").value().toString().toUpperCase());
+        return TranslationLanguage.getFromDBName(connection.getStringResultColumn("minecraft_general_playerData", "uuid", uuid.toString(), "language").value().toString().toUpperCase());
     }
 
     public void setLanguage(TranslationLanguage language) {
-        if (connection.existsColumn("playerData", "uid", uuid.toString())) {
-            logger.info("Updating language for ["+uuid+"] to " + language.name());
-            connection.update("playerData", "uid", uuid.toString(), new SQLConnection.DataColumn("language", language.name()));
+        if (connection.existsColumn("minecraft_general_playerData", "uuid", uuid.toString())) {
+            logger.info("Updating language for [" + uuid + "] to " + language.name());
+            connection.update("minecraft_general_playerData", "uuid", uuid.toString(), new SQLConnection.DataColumn("language", language.getDbName()));
         } else {
-            logger.info("Creating language for ["+uuid+"] with language " + language.name());
-            connection.insert("playerData", new SQLConnection.DataColumn("uid", uuid.toString()), new SQLConnection.DataColumn("language", language.name()));
+            logger.info("Creating language for [" + uuid + "] with language " + language.name());
+            connection.insert("minecraft_general_playerData", new SQLConnection.DataColumn("uuid", uuid.toString()), new SQLConnection.DataColumn("language", language.getDbName()));
         }
     }
 }

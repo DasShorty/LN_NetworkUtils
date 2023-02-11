@@ -6,6 +6,8 @@ import com.laudynetwork.networkutils.api.sql.SQLConnection;
 import com.laudynetwork.networkutils.api.tablist.TablistManager;
 import com.laudynetwork.networkutils.listeners.Base64Listener;
 import com.laudynetwork.networkutils.listeners.CommandProtectionListener;
+import com.laudynetwork.networkutils.listeners.PlayerJoinListener;
+import com.laudynetwork.networkutils.utils.commands.ProtocolCommand;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;

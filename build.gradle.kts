@@ -28,15 +28,17 @@ java {
 }
 
 dependencies {
+    implementation("mysql:mysql-connector-java:8.0.30")
     implementation("org.mariadb.jdbc:mariadb-java-client:3.1.2")
     implementation("org.projectlombok:lombok:1.18.26")
     annotationProcessor("org.projectlombok:lombok:1.18.26")
     paperDevBundle("1.19.2-R0.1-SNAPSHOT")
-    implementation("com.zaxxer:HikariCP:5.0.1")
     compileOnly("net.luckperms:api:5.4")
+    compileOnly("com.viaversion:viaversion-api:4.5.1")
 }
 repositories {
     mavenCentral()
+    maven("https://repo.viaversion.com")
 }
 publishing {
     publications {
