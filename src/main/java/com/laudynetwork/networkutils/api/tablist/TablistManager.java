@@ -11,6 +11,7 @@
 package com.laudynetwork.networkutils.api.tablist;
 
 import lombok.val;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.model.group.Group;
