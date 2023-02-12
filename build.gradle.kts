@@ -28,7 +28,7 @@ java {
 }
 
 dependencies {
-    implementation("mysql:mysql-connector-java:8.0.30")
+    implementation("mysql:mysql-connector-java:8.0.32")
     implementation("org.mariadb.jdbc:mariadb-java-client:3.1.2")
     implementation("org.projectlombok:lombok:1.18.26")
     annotationProcessor("org.projectlombok:lombok:1.18.26")
