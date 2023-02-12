@@ -10,5 +10,12 @@ depend:
 commands:
   location:
     permission: networkutils.location
-  dev:
-
+  gamemode:
+    permission: networkutils.gamemode
+    aliases: [ gm ]
+  fly:
+    permission: networkutils.fly
+    aliases: [ merkel-lass-mich-fliegen ]
+  vanish:
+    permission: networkutils.vanish
+    aliases: [ v ]
