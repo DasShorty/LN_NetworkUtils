@@ -146,7 +146,7 @@ public class SQLConnection {
      * @param keyValue  value from key (table data)
      * @return DataColumn with the keyValue and key from given params as integer
      */
-    public DataColumn getIntResultColumn(String tableName, String key, int keyValue) {
+    public DataColumn getIntResultColumn(String tableName, String key, Object keyValue) {
         logger.info("Trying to get IntResult from " + tableName + " key: " + key + " ...");
         DataColumn column = null;
 
