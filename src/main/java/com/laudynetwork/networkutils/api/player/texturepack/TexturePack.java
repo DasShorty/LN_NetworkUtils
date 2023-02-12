@@ -2,7 +2,6 @@ package com.laudynetwork.networkutils.api.player.texturepack;
 
 import com.google.common.hash.Hashing;
 import com.laudynetwork.networkutils.api.player.ProtocolVersion;
-import com.laudynetwork.networkutils.api.sql.SQLConnection;
 import lombok.SneakyThrows;
 import lombok.val;
 
@@ -10,20 +9,11 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Path;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class TexturePack {
-
-    private final SQLConnection sqlConnection;
-
-    public TexturePack(SQLConnection sqlConnection) {
-        this.sqlConnection = sqlConnection;
-        createTable();
-    }
 
     @SneakyThrows
     public String getHashCodeFromUrl(URL url) {
@@ -61,39 +51,9 @@ public class TexturePack {
         bis.close();
     }
 
-    private void createTable() {
-        this.sqlConnection.createTableWithPrimaryKey("minecraft_networkutils_resource_pack", "texturePackVersion",
-                new SQLConnection.TableColumn("texturePackVersion", SQLConnection.ColumnType.INTEGER, 5),
-                new SQLConnection.TableColumn("texturePackUrl", SQLConnection.ColumnType.VARCHAR, 255));
-    }
-
     @SneakyThrows
     public URL getTexturePackFromVersion(ProtocolVersion protocolVersion) {
-
-        val resultColumn = this.sqlConnection
-                .getStringResultColumn("minecraft_networkutils_resource_pack", "texturePackVersion", protocolVersion.getProtocolVersion(), "texturePackUrl");
-
-        return new URL(resultColumn.value().toString());
+        return new URL("https://cdn.laudynetwork.com/rp-"+protocolVersion.getVersionName()+".zip");
     }
-
-//    @SneakyThrows
-//    public List<URL> getListedTexturePacksFromDb() {
-//
-//        createTable();
-//
-//        val statement = this.sqlConnection.getMySQLConnection().createStatement();
-//        statement.setQueryTimeout(30);
-//
-//        val resultSet = statement.executeQuery("SELECT * FROM `minecraft_networkutils_resource_pack`");
-//
-//        List<URL> storedTexturePacks = new ArrayList<>();
-//        while (resultSet.next()) {
-//            storedTexturePacks.add(new URL(resultSet.getString("texturePackUrl")));
-//        }
-//
-//        statement.close();
-//
-//        return storedTexturePacks;
-//    }
 
 }

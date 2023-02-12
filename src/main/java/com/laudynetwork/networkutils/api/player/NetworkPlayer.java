@@ -34,7 +34,7 @@ public class NetworkPlayer {
 
     public void loadTexturePack(ProtocolVersion protocolVersion) {
 
-        val texturePack = new TexturePack(this.connection);
+        val texturePack = new TexturePack();
 
         val texturePackUrl = texturePack.getTexturePackFromVersion(protocolVersion);
 
