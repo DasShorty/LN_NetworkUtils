@@ -1,7 +1,7 @@
 package com.laudynetwork.networkutils.api.player;
 
+import com.laudynetwork.networkutils.NetworkUtils;
 import com.laudynetwork.networkutils.api.messanger.backend.TranslationLanguage;
-import com.laudynetwork.networkutils.api.player.texturepack.TexturePack;
 import com.laudynetwork.networkutils.api.sql.SQLConnection;
 import com.viaversion.viaversion.api.Via;
 import lombok.val;
@@ -34,13 +34,10 @@ public class NetworkPlayer {
 
     public void loadTexturePack(ProtocolVersion protocolVersion) {
 
-        val texturePack = new TexturePack();
+        val texturePackHandler = NetworkUtils.getINSTANCE().getResourcePackHandler();
 
-        val texturePackUrl = texturePack.getTexturePackFromVersion(protocolVersion);
-
-        logger.info("Url: " + texturePackUrl.toString());
-
-        val hashCode = texturePack.getHashCodeFromUrl(texturePackUrl);
+        val hashCode = texturePackHandler.getResourcePackHash().get(protocolVersion);
+        val texturePackUrl = texturePackHandler.getTexturePackFromVersion(protocolVersion);
 
         val player = Bukkit.getPlayer(this.uuid);
 

@@ -1,22 +1,50 @@
-package com.laudynetwork.networkutils.api.player.texturepack;
+package com.laudynetwork.networkutils.api.player.resourcepack;
 
 import com.google.common.hash.Hashing;
 import com.laudynetwork.networkutils.api.player.ProtocolVersion;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.val;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class TexturePack {
+public class ResourcePackHandler {
+
+    private final Plugin plugin;
+    @Getter
+    private HashMap<ProtocolVersion, String> resourcePackHash = new HashMap<>();
+
+    public ResourcePackHandler(Plugin plugin) {
+        this.plugin = plugin;
+
+        run();
+    }
+
+    private void run() {
+
+        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+
+            for (ProtocolVersion value : ProtocolVersion.values()) {
+                val url = getTexturePackFromVersion(value);
+                val hashCodeFromUrl = getHashCodeFromUrl(url);
+                resourcePackHash.put(value, hashCodeFromUrl);
+            }
+
+        }, 0, 72000);
+
+    }
 
     @SneakyThrows
-    public String getHashCodeFromUrl(URL url) {
+    private String getHashCodeFromUrl(URL url) {
 
         val path = Path.of(System.getProperty("user.home") + "/resource_pack/" + System.currentTimeMillis() + ".zip");
 
@@ -28,7 +56,7 @@ public class TexturePack {
 
         downloadedFile.createNewFile();
 
-        downloadUsingStream(url, path.toString());
+        downloadFile(url, path.toString());
 
         Executors.newSingleThreadScheduledExecutor().schedule(() -> {
             downloadedFile.delete();
@@ -38,7 +66,7 @@ public class TexturePack {
     }
 
     @SneakyThrows
-    private static void downloadUsingStream(URL url, String file){
+    private static void downloadFile(URL url, String file){
         BufferedInputStream bis = new BufferedInputStream(url.openStream());
         FileOutputStream fis = new FileOutputStream(file);
         byte[] buffer = new byte[1024];

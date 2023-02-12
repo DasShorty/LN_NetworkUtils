@@ -2,6 +2,7 @@ package com.laudynetwork.networkutils;
 
 import com.laudynetwork.networkutils.api.location.commandimpl.LocationCommand;
 import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
+import com.laudynetwork.networkutils.api.player.resourcepack.ResourcePackHandler;
 import com.laudynetwork.networkutils.api.sql.SQLConnection;
 import com.laudynetwork.networkutils.api.tablist.TablistManager;
 import com.laudynetwork.networkutils.essentials.FlyCommand;
@@ -10,6 +11,7 @@ import com.laudynetwork.networkutils.essentials.vanish.VanishCommand;
 import com.laudynetwork.networkutils.listeners.Base64Listener;
 import com.laudynetwork.networkutils.listeners.CommandProtectionListener;
 import com.laudynetwork.networkutils.listeners.PlayerJoinListener;
+import lombok.Getter;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -30,6 +32,8 @@ public final class NetworkUtils extends JavaPlugin {
 
     private static NetworkUtils INSTANCE;
     private SQLConnection dbConnection;
+    @Getter
+    private ResourcePackHandler resourcePackHandler;
 
     @Override
     public void onLoad() {
@@ -40,12 +44,12 @@ public final class NetworkUtils extends JavaPlugin {
         FileConfiguration config = this.getConfig();
 
         this.dbConnection = new SQLConnection(config.getString("db.jdbc"), config.getString("db.user"), config.getString("db.pwd"));
-
     }
 
     @Override
     public void onEnable() {
 
+        this.resourcePackHandler = new ResourcePackHandler(this);
         MessageBackend backend = new MessageBackend(this.dbConnection, "networkutils");
 
         var pm = Bukkit.getPluginManager();
