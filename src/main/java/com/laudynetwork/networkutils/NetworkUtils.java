@@ -34,6 +34,8 @@ public final class NetworkUtils extends JavaPlugin {
     private SQLConnection dbConnection;
     @Getter
     private ResourcePackHandler resourcePackHandler;
+    @Getter
+    private TablistManager tablistManager;
 
     @Override
     public void onLoad() {
@@ -60,7 +62,10 @@ public final class NetworkUtils extends JavaPlugin {
         Objects.requireNonNull(getCommand("location")).setExecutor(new LocationCommand(backend));
         Objects.requireNonNull(getCommand("gamemode")).setExecutor(new GamemodeCommand(backend));
         Objects.requireNonNull(getCommand("fly")).setExecutor(new FlyCommand(backend));
-        Objects.requireNonNull(getCommand("vanish")).setExecutor(new VanishCommand(backend));
+
+        VanishCommand vanishCommand = new VanishCommand(backend);
+        pm.registerEvents(vanishCommand, this);
+        Objects.requireNonNull(getCommand("vanish")).setExecutor(vanishCommand);
 
         RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
 
@@ -75,7 +80,7 @@ public final class NetworkUtils extends JavaPlugin {
             return;
         }
 
-        new TablistManager(this, luckPerms);
+        this.tablistManager = new TablistManager(this, luckPerms);
 
         getSLF4JLogger().info("loaded!");
     }
