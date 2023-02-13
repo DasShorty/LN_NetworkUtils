@@ -20,6 +20,53 @@ public record TablistPlayer(Player player, net.luckperms.api.LuckPerms luckPerms
         return lpUser.getPrimaryGroup();
     }
 
+    public String getVanishWeight(String groupName) {
+        switch (groupName) {
+            case "admin" -> {
+                return "aVANISH";
+            }
+            case "developer" -> {
+                return "bVANISH";
+            }
+
+            case "staff" -> {
+                return "cVANISH";
+            }
+
+            case "content" -> {
+                return "dVANISH";
+            }
+
+            case "builder" -> {
+                return "eVANISH";
+            }
+
+            case "creator" -> {
+                return "fVANISH";
+            }
+
+            case "vip" -> {
+                return "gVANISH";
+            }
+
+            case "spark" -> {
+                return "hVANISH";
+            }
+
+            case "prime" -> {
+                return "iVANISH";
+            }
+
+            case "premium" -> {
+                return "jVANISH";
+            }
+
+            default -> {
+                return "kVANISH";
+            }
+        }
+    }
+
     public Component getGroupPrefix(String groupName) {
         val group = this.luckPerms.getGroupManager().getGroup(groupName);
 
