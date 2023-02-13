@@ -141,17 +141,17 @@ public class SQLConnection {
     /**
      * get the DataColumn(compact ResultSet) from sql db with the specified params
      *
-     * @param tableName table to search in
-     * @param key       key that contains keyValue (table header)
-     * @param keyValue  value from key (table data)
+     * @param tableName      table to search in
+     * @param conditionKey   key that contains keyValue (table header)
+     * @param conditionValue value from key (table data)
      * @return DataColumn with the keyValue and key from given params as integer
      */
-    public DataColumn getIntResultColumn(String tableName, String key, Object keyValue) {
+    public DataColumn getIntResultColumn(String tableName, String conditionKey, Object conditionValue, String key) {
         logger.info("Trying to get IntResult from " + tableName + " key: " + key + " ...");
         DataColumn column = null;
 
         try {
-            var ps = getMySQLConnection().prepareStatement("SELECT * FROM `" + tableName + "` WHERE `" + key + "` = '" + keyValue + "'");
+            var ps = getMySQLConnection().prepareStatement("SELECT * FROM `" + tableName + "` WHERE `" + conditionKey + "` = '" + conditionValue + "'");
             var resultSet = ps.executeQuery();
             while (resultSet.next()) {
                 column = new DataColumn(key, resultSet.getInt(key));
@@ -250,12 +250,12 @@ public class SQLConnection {
         var updateColumns = new StringBuilder();
 
         for (DataColumn column : columns) {
-            updateColumns.append(",").append(column.name).append(" = ").append(column.value);
+            updateColumns.append(",`").append(column.name).append("` = '").append(column.value).append("'");
         }
 
         try {
             var ps = getMySQLConnection()
-                    .prepareStatement("UPDATE " + tableName + " SET " + updateColumns.substring(1) + " WHERE " + conditionKey + " = " + conditionValue);
+                    .prepareStatement("UPDATE " + tableName + " SET " + updateColumns.substring(1) + " WHERE `" + conditionKey + "` = '" + conditionValue + "'");
             ps.executeUpdate();
             ps.close();
             logger.info("Successfully updated table " + tableName);
