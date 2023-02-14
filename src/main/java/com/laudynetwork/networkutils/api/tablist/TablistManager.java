@@ -96,7 +96,6 @@ public class TablistManager implements Listener {
           rankTeam.removePlayer(player);
 
         if (!vanishedTeam.hasPlayer(player)) {
-          player.playerListName(Component.text(player.getName()).decorate(TextDecoration.ITALIC));
           vanishedTeam.addPlayer(player);
         }
 
@@ -107,7 +106,6 @@ public class TablistManager implements Listener {
           vanishedTeam.removePlayer(player);
 
         if (!rankTeam.hasPlayer(player)) {
-          player.playerListName(Component.text(player.getName()));
           rankTeam.addPlayer(player);
         }
       }
