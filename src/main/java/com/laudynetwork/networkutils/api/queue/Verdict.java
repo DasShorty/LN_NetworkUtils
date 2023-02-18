@@ -1,5 +1,8 @@
 package com.laudynetwork.networkutils.api.queue;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @SuppressWarnings("unused")
 public enum Verdict {
   OK(true, "Accepted"),
@@ -10,15 +13,14 @@ public enum Verdict {
   UNKNOWN(false, "Unknown");
 
   public final boolean ok;
-  public String desc;
+  /**
+   * you can set a custom message if you want
+   * */
+  @Setter @Getter
+  public String description;
 
-  Verdict(boolean ok, String desc) {
+  Verdict(boolean ok, String description) {
     this.ok = ok;
-    this.desc = desc;
-  }
-
-  // Set custom description of verdict
-  public void setDesc(String desc) {
-    this.desc = desc;
+    this.description = description;
   }
 }
