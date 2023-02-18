@@ -26,6 +26,10 @@ public class LocationCache {
 
     }
 
+    public boolean existLocation(String locationName) {
+        return locationMap.containsKey(locationName);
+    }
+
     public Location getLocationFromCache(String locationKey) {
         return locationMap.get(locationKey);
     }
