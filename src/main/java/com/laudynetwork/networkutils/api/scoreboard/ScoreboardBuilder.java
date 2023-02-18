@@ -1,5 +1,6 @@
 package com.laudynetwork.networkutils.api.scoreboard;
 
+import lombok.Getter;
 import lombok.val;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -10,6 +11,7 @@ import java.util.Objects;
 
 public abstract class ScoreboardBuilder {
 
+    @Getter
     private final Scoreboard playerBoard;
     private final Objective objective;
 
