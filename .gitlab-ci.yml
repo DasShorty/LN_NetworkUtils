@@ -41,6 +41,8 @@ deploy:
         - build
     script:
         - lftp -e "set sftp:auto-confirm yes; mirror -X .* -X .*/ --reverse --verbose ./build/dist /home/simplecloud/templates/EVERY_SERVER/plugins; bye" -u $SFTP_USER,$SFTP_PWD sftp://89.163.129.221
+        - lftp -e "set sftp:auto-confirm yes; mirror -X .* -X .*/ --reverse --verbose ./build/dist /home/simplecloud/static/Build-1/plugins; bye" -u $SFTP_USER,$SFTP_PWD sftp://89.163.129.221
+        - lftp -e "set sftp:auto-confirm yes; mirror -X .* -X .*/ --reverse --verbose ./build/dist /home/simplecloud/static/BuilderPlots-1/plugins; bye" -u $SFTP_USER,$SFTP_PWD sftp://89.163.129.221
 
 renovate:
     image: renovate/renovate
