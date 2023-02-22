@@ -35,9 +35,13 @@ dependencies {
     paperDevBundle("1.19.2-R0.1-SNAPSHOT")
     compileOnly("net.luckperms:api:5.4")
     compileOnly("com.viaversion:viaversion-api:4.5.1")
+
+    api("com.laudynetwork:networkutils:latest")
+    api("eu.thesimplecloud.simplecloud:simplecloud-api:2.4.1")
 }
 repositories {
     mavenCentral()
+    maven("https://repo.thesimplecloud.eu/artifactory/list/gradle-release-local/")
     maven("https://repo.viaversion.com")
 }
 publishing {
