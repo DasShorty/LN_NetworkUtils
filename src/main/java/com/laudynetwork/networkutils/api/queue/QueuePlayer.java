@@ -25,12 +25,25 @@ public class QueuePlayer {
 
     public int getID() {
         checkTable();
-        if (this.sqlConnection.existsColumn("minecraft_networkutils_queue_player", "uuid", uuid.toString())) {
-            return ((int) this.sqlConnection.getIntResultColumn("minecraft_networkutils_queue_player", "uuid", uuid.toString(), "id")
+        if (this.sqlConnection.existsColumn("minecraft_networkutils_queue_player", "uuid", this.uuid.toString())) {
+            return ((int) this.sqlConnection.getIntResultColumn("minecraft_networkutils_queue_player", "uuid", this.uuid.toString(), "id")
                     .value());
         }
         return -1;
 
+    }
+
+    public String getQueueName() {
+        checkTable();
+        if (!this.isPlayerInQueue())
+            return null;
+
+        return (String) this.sqlConnection.getStringResultColumn("minecraft_networkutils_queue_player", "uuid", this.uuid.toString(), "queue").value();
+    }
+
+    public boolean isPlayerInQueue() {
+        checkTable();
+        return this.sqlConnection.existsColumn("minecraft_networkutils_queue_player", "uuid", this.uuid.toString());
     }
 
     private void checkTable() {
