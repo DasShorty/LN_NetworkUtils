@@ -1,104 +1,46 @@
 package com.laudynetwork.networkutils.api.queue;
 
-import java.util.Collection;
-import java.util.UUID;
+import com.laudynetwork.networkutils.api.queue.event.PlayerQueueJoinEvent;
+import com.laudynetwork.networkutils.api.queue.event.PlayerQueueLeaveEvent;
+import lombok.val;
+import org.bukkit.Bukkit;
+import org.bukkit.boss.BossBar;
 
-@SuppressWarnings("unused")
-public interface Queue {
-  /**
-   * Get name of the queue
-   *
-   * @return name
-   */
-  String getName();
+import java.util.List;
+import java.util.Objects;
 
-  /**
-   * Players there are
-   *
-   * @return players
-   */
-  Collection<UUID> getPlayers();
+public record Queue(String name, int id, List<QueuePlayer> waitingPlayers, String destinationServer, BossBar bossBar, int maxSlots, int minSlots) {
+    public void removePlayer(QueuePlayer queuePlayer) {
 
-  /**
-   * Remove player from the queue
-   *
-   * @param player to remove
-   */
-  void remove(UUID player);
+        val event = new PlayerQueueLeaveEvent(this, queuePlayer);
+        Bukkit.getPluginManager().callEvent(event);
 
-  /**
-   * Add player to the queue
-   *
-   * @param player to add
-   */
-  void add(UUID player);
+        if (event.isCancelled())
+            return;
 
-  /**
-   * Get priorities container
-   *
-   * @return priorities
-   */
-  QueueMappedContainer<UUID, Integer> getPriorities();
+        this.waitingPlayers.remove(queuePlayer);
+        this.bossBar.setProgress(getProgress(Double.parseDouble(String.valueOf(waitingPlayers.size()))));
+        this.bossBar.addPlayer(Objects.requireNonNull(Bukkit.getPlayer(queuePlayer.getUuid())));
+    }
 
-  /**
-   * Set priority container
-   *
-   * @param priorities to set
-   */
-  void setPriorities(QueueMappedContainer<UUID, Integer> priorities);
+    public boolean addPlayer(QueuePlayer queuePlayer) {
+        if (waitingPlayers.size() < minSlots)
+            return false;
 
-  /**
-   * Get handlers container
-   *
-   * @return handlers container
-   */
-  QueueMappedContainer<String, QueueHandler> getHandlers();
+        val event = new PlayerQueueJoinEvent(this, queuePlayer);
+        Bukkit.getPluginManager().callEvent(event);
 
-  /**
-   * Set handlers container
-   *
-   * @param handlers to set
-   */
-  void setHandlers(QueueMappedContainer<String, QueueHandler> handlers);
+        if (event.isCancelled())
+            return false;
 
-  /**
-   * Get destinations container
-   *
-   * @return destinations container
-   */
-  QueueMappedContainer<String, Destination> getDestinations();
+        this.waitingPlayers.add(queuePlayer);
+        this.bossBar.setProgress(getProgress(Double.parseDouble(String.valueOf(waitingPlayers.size()))));
+        this.bossBar.addPlayer(Objects.requireNonNull(Bukkit.getPlayer(queuePlayer.getUuid())));
 
-  /**
-   * Set destinations container
-   *
-   * @param destinations to set
-   */
-  void setDestinations(QueueMappedContainer<String, Destination> destinations);
+        return true;
+    }
 
-  /**
-   * Get position of player in queue
-   *
-   * @param player to get position for
-   * @return position
-   */
-  int getPosition(UUID player);
-
-  /**
-   * Get delay of queue
-   *
-   * @return delay of actions
-   */
-  int getDelay();
-
-  /**
-   * Set delay of a queue
-   *
-   * @param millis milliseconds
-   */
-  void setDelay(int millis);
-
-  /**
-   * Close queue
-   */
-  void close();
+    private double getProgress(double current) {
+        return (current * 100D) / maxSlots;
+    }
 }

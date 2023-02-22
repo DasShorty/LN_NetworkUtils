@@ -1,42 +1,26 @@
 package com.laudynetwork.networkutils.api.queue;
 
-import java.util.UUID;
+import com.laudynetwork.networkutils.api.sql.SQLConnection;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
-@SuppressWarnings("unused")
-public interface QueueHandler {
-  /**
-   * Apply verdict
-   *
-   * @param player      who received
-   * @param destination that has given verdict
-   * @param verdict     target
-   * @return True if there is no need to proceed with a player to other handlers otherwise false
-   */
-  default boolean onApply(UUID player, Destination destination, Verdict verdict) {
-    return false;
-  }
+public class QueueHandler implements Listener {
 
-  /**
-   * On join handler
-   *
-   * @param player joined
-   */
-  default void onJoin(UUID player) {
-  }
+    private final SQLConnection connection;
 
-  /**
-   * On leave handler
-   *
-   * @param player left
-   */
-  default void onLeave(UUID player) {
-  }
+    public QueueHandler(SQLConnection connection) {
+        this.connection = connection;
+    }
 
-  /**
-   * Get name of handler
-   *
-   * @return name
-   */
-  String getName();
 
+    @EventHandler(priority = EventPriority.LOW)
+    public void onPlayerQuit(PlayerQuitEvent event) {
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onPlayerJoin(PlayerJoinEvent event) {
+    }
 }
