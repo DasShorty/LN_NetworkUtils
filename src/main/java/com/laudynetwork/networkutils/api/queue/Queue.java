@@ -19,7 +19,6 @@ public record Queue(String name, int id, List<QueuePlayer> waitingPlayers, Strin
             return;
 
         this.waitingPlayers.remove(queuePlayer);
-        this.bossBar.setProgress(getProgress(Double.parseDouble(String.valueOf(waitingPlayers.size()))));
         this.bossBar.addPlayer(Objects.requireNonNull(Bukkit.getPlayer(queuePlayer.getUuid())));
     }
 
@@ -34,13 +33,8 @@ public record Queue(String name, int id, List<QueuePlayer> waitingPlayers, Strin
             return false;
 
         this.waitingPlayers.add(queuePlayer);
-        this.bossBar.setProgress(getProgress(Double.parseDouble(String.valueOf(waitingPlayers.size()))));
         this.bossBar.addPlayer(Objects.requireNonNull(Bukkit.getPlayer(queuePlayer.getUuid())));
 
         return true;
-    }
-
-    private double getProgress(double current) {
-        return (current * 100D) / maxSlots;
     }
 }
