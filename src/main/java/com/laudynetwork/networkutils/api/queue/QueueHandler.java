@@ -1,42 +1,61 @@
 package com.laudynetwork.networkutils.api.queue;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.laudynetwork.networkutils.api.sql.SQLConnection;
+import lombok.val;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
-@SuppressWarnings("unused")
-public interface QueueHandler {
-  /**
-   * Apply verdict
-   *
-   * @param player      who received
-   * @param destination that has given verdict
-   * @param verdict     target
-   * @return True if there is no need to proceed with a player to other handlers otherwise false
-   */
-  default boolean onApply(UUID player, Destination destination, Verdict verdict) {
-    return false;
-  }
+public class QueueHandler implements Listener {
 
-  /**
-   * On join handler
-   *
-   * @param player joined
-   */
-  default void onJoin(UUID player) {
-  }
+    private final SQLConnection connection;
+    private final QueueManager queueManager;
+    private final Cache<UUID, String> playerQuitQueueCache = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.MINUTES).build();
 
-  /**
-   * On leave handler
-   *
-   * @param player left
-   */
-  default void onLeave(UUID player) {
-  }
+    public QueueHandler(SQLConnection connection, QueueManager queueManager) {
+        this.connection = connection;
+        this.queueManager = queueManager;
+    }
 
-  /**
-   * Get name of handler
-   *
-   * @return name
-   */
-  String getName();
 
+    @EventHandler(priority = EventPriority.LOW)
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        val player = event.getPlayer();
+
+        QueuePlayer queuePlayer = new QueuePlayer(player.getUniqueId(), this.connection);
+
+        if (queuePlayer.isPlayerInQueue())
+            return;
+
+        val queueName = queuePlayer.getQueueName();
+        playerQuitQueueCache.put(player.getUniqueId(), queueName);
+
+        this.queueManager.getQueueFromName(queueName).removePlayer(queuePlayer);
+
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        val player = event.getPlayer();
+
+        QueuePlayer queuePlayer = new QueuePlayer(player.getUniqueId(), this.connection);
+
+        val queueName = playerQuitQueueCache.getIfPresent(player.getUniqueId());
+
+        if (queueName == null)
+            return;
+
+        if (this.queueManager.getQueueFromName(queueName).addPlayer(queuePlayer)) {
+            player.sendMessage("joined");
+        } else
+            player.sendMessage("can't join");
+
+    }
 }
