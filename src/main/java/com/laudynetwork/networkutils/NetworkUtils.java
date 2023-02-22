@@ -57,7 +57,7 @@ public final class NetworkUtils extends JavaPlugin {
 
         var pm = Bukkit.getPluginManager();
 
-        getServer().getMessenger().registerIncomingPluginChannel(this, "proxybar", new ProxyBarListener());
+        getServer().getMessenger().registerIncomingPluginChannel(this, "channel:proxybar", new ProxyBarListener());
 
         pm.registerEvents(new Base64Listener(), this);
         pm.registerEvents(new CommandProtectionListener(backend), this);
