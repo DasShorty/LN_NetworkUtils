@@ -3,6 +3,7 @@ package com.laudynetwork.networkutils;
 import com.laudynetwork.networkutils.api.location.commandimpl.LocationCommand;
 import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
 import com.laudynetwork.networkutils.api.player.resourcepack.ResourcePackHandler;
+import com.laudynetwork.networkutils.api.proxybar.ProxyBarListener;
 import com.laudynetwork.networkutils.api.sql.SQLConnection;
 import com.laudynetwork.networkutils.api.tablist.TablistManager;
 import com.laudynetwork.networkutils.essentials.FlyCommand;
@@ -55,6 +56,9 @@ public final class NetworkUtils extends JavaPlugin {
         MessageBackend backend = new MessageBackend(this.dbConnection, "networkutils");
 
         var pm = Bukkit.getPluginManager();
+
+        getServer().getMessenger().registerIncomingPluginChannel(this, "proxybar", new ProxyBarListener());
+
         pm.registerEvents(new Base64Listener(), this);
         pm.registerEvents(new CommandProtectionListener(backend), this);
         pm.registerEvents(new PlayerJoinListener(this.dbConnection), this);
