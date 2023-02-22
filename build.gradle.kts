@@ -36,7 +36,6 @@ dependencies {
     compileOnly("net.luckperms:api:5.4")
     compileOnly("com.viaversion:viaversion-api:4.5.1")
 
-    api("com.laudynetwork:networkutils:latest")
     api("eu.thesimplecloud.simplecloud:simplecloud-api:2.4.1")
 }
 repositories {
