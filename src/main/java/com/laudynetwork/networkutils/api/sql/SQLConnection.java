@@ -5,14 +5,12 @@ import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
 
 public class SQLConnection {
 
@@ -29,18 +27,6 @@ public class SQLConnection {
         logger.info("Creating data source to db with user " + user);
 
         connection = DriverManager.getConnection(jdbcUrl, user, pwd);
-
-//        HikariConfig config = new HikariConfig();
-//        config.setJdbcUrl(jdbcUrl);
-//        config.setUsername(user);
-//        config.setPassword(pwd);
-//        config.setDriverClassName("org.mariadb.jdbc.Driver");
-//        config.addDataSourceProperty("cachePrepStmts", "false");
-//        config.addDataSourceProperty("prepStmtCacheSize", "250");
-//        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-//        config.setMaximumPoolSize(1);
-//
-//        source = new HikariDataSource(config);
 
         logger.info("Created db connection to mysql database");
     }
@@ -70,16 +56,26 @@ public class SQLConnection {
         var tableColumns = columnBuilder.substring(1);
 
         try {
-
-            var prepareStmt = "CREATE TABLE IF NOT EXISTS " + table + "(" + tableColumns + ", PRIMARY KEY (" + primaryKey + "))";
-
-            var ps = getMySQLConnection().prepareStatement(prepareStmt);
-            ps.executeUpdate();
-            ps.close();
+            val statement = prepareStatement();
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + table + "(" + tableColumns + ", PRIMARY KEY (" + primaryKey + "))");
+            statement.close();
             logger.info("sql table was successfully created!");
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    public void resultSet(String sql, Consumer<ResultSet> consumer) {
+
+        try {
+            val statement = prepareStatement();
+            consumer.accept(statement.executeQuery(sql));
+            statement.close();
+            logger.info("sql table was successfully created!");
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+        }
+
     }
 
     public void createTable(String table, TableColumn... columns) {
@@ -93,12 +89,12 @@ public class SQLConnection {
         var tableColumns = columnBuilder.substring(1);
 
         try {
+            val statement = prepareStatement();
 
-            var prepareStmt = "CREATE TABLE IF NOT EXISTS `" + table + "`(" + tableColumns + ")";
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS `" + table + "`(" + tableColumns + ")");
 
-            var ps = getMySQLConnection().prepareStatement(prepareStmt);
-            ps.executeUpdate();
-            ps.close();
+            statement.close();
+
             logger.info("sql table was successfully created!");
         } catch (SQLException e) {
             logger.error(e.getMessage());
@@ -129,14 +125,16 @@ public void createTableFromSQL(String sql) {
         DataColumn column = null;
 
         try {
-            var ps = getMySQLConnection().createStatement();
-            ps.setQueryTimeout(30);
-            var resultSet = ps.executeQuery("SELECT * FROM `" + tableName + "` WHERE `" + conditionKey + "`='" + conditionValue + "'");
+            val statement = prepareStatement();
+
+            val resultSet = statement.executeQuery("SELECT * FROM `" + tableName + "` WHERE `" + conditionKey + "` = '" + conditionValue + "'");
             while (resultSet.next()) {
                 val string = resultSet.getString(key);
                 logger.warn(string);
                 column = new DataColumn(key, string);
             }
+
+            statement.close();
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
@@ -162,11 +160,16 @@ public void createTableFromSQL(String sql) {
         DataColumn column = null;
 
         try {
-            var ps = getMySQLConnection().prepareStatement("SELECT * FROM `" + tableName + "` WHERE `" + conditionKey + "` = '" + conditionValue + "'");
-            var resultSet = ps.executeQuery();
+            val statement = prepareStatement();
+
+            val resultSet = statement.executeQuery("SELECT * FROM `" + tableName + "` WHERE `" + conditionKey + "` = '" + conditionValue + "'");
+
             while (resultSet.next()) {
                 column = new DataColumn(key, resultSet.getInt(key));
             }
+
+            statement.close();
+
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
@@ -193,7 +196,7 @@ public void createTableFromSQL(String sql) {
         val future = new CompletableFuture<Boolean>();
 
         try {
-            var ps = getMySQLConnection().createStatement();
+            var ps = prepareStatement();
             val resultSet = ps.executeQuery("SELECT * FROM " + tableName + " WHERE " + columnName + " IS NOT NULL AND " + columnName + " LIKE '" + expectedColumnValue + "'");
             logger.info("Successfully checked if " + columnName + " exists in " + tableName);
 
@@ -231,14 +234,11 @@ public void createTableFromSQL(String sql) {
 
         try {
 
-            val string = "INSERT INTO " + tableName + "(" + columnNames.substring(1) + ") VALUES (" + values.substring(1) + ")";
+            val statement = prepareStatement();
 
-            logger.warn(string);
+            statement.executeUpdate("INSERT INTO " + tableName + "(" + columnNames.substring(1) + ") VALUES (" + values.substring(1) + ")");
 
-            var ps = getMySQLConnection().createStatement();
-            ps.setQueryTimeout(30);
-            ps.executeUpdate(string);
-            ps.close();
+            statement.close();
             logger.info("Successfully updated table " + tableName);
         } catch (SQLException e) {
             logger.error(e.getMessage());
@@ -265,10 +265,11 @@ public void createTableFromSQL(String sql) {
         }
 
         try {
-            var ps = getMySQLConnection()
-                    .prepareStatement("UPDATE " + tableName + " SET " + updateColumns.substring(1) + " WHERE `" + conditionKey + "` = '" + conditionValue + "'");
-            ps.executeUpdate();
-            ps.close();
+            val statement = prepareStatement();
+
+            statement.executeUpdate("UPDATE " + tableName + " SET " + updateColumns.substring(1) + " WHERE `" + conditionKey + "` = '" + conditionValue + "'");
+
+            statement.close();
             logger.info("Successfully updated table " + tableName);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -285,12 +286,13 @@ public void createTableFromSQL(String sql) {
         logger.info("Trying to delete " + conditionValue + " in " + tableName + " column: " + conditionKey);
 
         try {
-            var ps = getMySQLConnection()
-                    .prepareStatement("DELETE FROM `" + tableName + "` WHERE `" + conditionKey + "`='" + conditionValue+"'");
 
-            ps.executeUpdate();
+            val statement = prepareStatement();
 
-            ps.close();
+            statement.executeUpdate("DELETE FROM `" + tableName + "` WHERE `" + conditionKey + "`='" + conditionValue + "'");
+
+            statement.close();
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -308,9 +310,9 @@ public void createTableFromSQL(String sql) {
         var list = new ArrayList<DataSchema>();
 
         try {
-                var ps = getMySQLConnection().prepareStatement("SELECT "+columnRow+" FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = "+table+" ORDER BY ORDINAL_POSITION");
+            val statement = prepareStatement();
 
-            ResultSet resultSet = ps.executeQuery();
+            var resultSet = statement.executeQuery("SELECT " + columnRow + " FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = " + table + " ORDER BY ORDINAL_POSITION");
             while (resultSet.next()) {
 
                 String tableSchema = resultSet.getString("TABLE_SCHEMA");
@@ -321,12 +323,19 @@ public void createTableFromSQL(String sql) {
                 list.add(new DataSchema(tableSchema, tableName, columnName, ordinalPosition, dataType));
             }
 
-            ps.close();
+            statement.close();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return list;
+    }
+
+    @SneakyThrows
+    private Statement prepareStatement() {
+        val statement = getMySQLConnection().createStatement();
+        statement.setQueryTimeout(30);
+        return statement;
     }
 
     public enum ColumnType {
