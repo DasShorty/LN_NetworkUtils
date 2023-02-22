@@ -104,6 +104,17 @@ public class SQLConnection {
             logger.error(e.getMessage());
         }
     }
+public void createTableFromSQL(String sql) {
+
+        try {
+            var ps = getMySQLConnection().prepareStatement(sql);
+            ps.setQueryTimeout(30);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+        }
+    }
 
     /**
      * get the DataColumn(compact ResultSet) from sql db with the specified params
