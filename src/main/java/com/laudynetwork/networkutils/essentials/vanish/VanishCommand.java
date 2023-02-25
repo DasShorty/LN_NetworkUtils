@@ -77,15 +77,16 @@ public class VanishCommand implements CommandExecutor, Listener {
 
                 val target = Bukkit.getPlayerExact(args[0]);
 
+                assert target != null;
                 VanishedPlayer vanishedPlayer = new VanishedPlayer(target.getUniqueId());
 
-                if (isInVanish(player.getUniqueId())) {
-                    this.vanishCache.put(player.getUniqueId(), false);
+                if (isInVanish(target.getUniqueId())) {
+                    this.vanishCache.put(target.getUniqueId(), false);
                     vanishedPlayer.update(false);
                     target.sendMessage(msgApi.getMessage(language, "command.vanish.self.off"));
                     player.sendMessage(msgApi.getMessage(language, "command.vanish.other.off"));
                 } else {
-                    this.vanishCache.put(player.getUniqueId(), true);
+                    this.vanishCache.put(target.getUniqueId(), true);
                     vanishedPlayer.update(true);
                     target.sendMessage(msgApi.getMessage(language, "command.vanish.self.on"));
                     player.sendMessage(msgApi.getMessage(language, "command.vanish.other.on"));
