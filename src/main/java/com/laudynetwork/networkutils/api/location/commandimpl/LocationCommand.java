@@ -8,6 +8,7 @@ import com.laudynetwork.networkutils.api.sql.SQLConnection;
 import lombok.val;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -45,19 +46,19 @@ public class LocationCommand implements CommandExecutor, TabCompleter {
             case 0, 1 -> {
 
                 if (args.length == 0) {
-                    player.sendMessage(this.msgAPI.getMessage(TranslationLanguage.ENGLISH, "command.use", new Replacement("%command%", "/location <add/remove/list/get>")));
+                    player.sendMessage(this.msgAPI.getMessage(TranslationLanguage.ENGLISH, "command.use", Placeholder.unparsed("command", "/location <add/remove/list/get>")));
                     return true;
                 }
 
                 switch (args[0].toLowerCase()) {
                     case "add" -> {
-                        player.sendMessage(this.msgAPI.getMessage(TranslationLanguage.ENGLISH, "command.use", new Replacement("%command%", "/location add <location-key>")));
+                        player.sendMessage(this.msgAPI.getMessage(TranslationLanguage.ENGLISH, "command.use", Placeholder.unparsed("command", "/location add <location-key>")));
                     }
                     case "remove" -> {
-                        player.sendMessage(this.msgAPI.getMessage(TranslationLanguage.ENGLISH, "command.use", new Replacement("%command%", "/location remove <location-key>")));
+                        player.sendMessage(this.msgAPI.getMessage(TranslationLanguage.ENGLISH, "command.use", Placeholder.unparsed("command", "/location remove <location-key>")));
                     }
                     case "get" -> {
-                        player.sendMessage(this.msgAPI.getMessage(TranslationLanguage.ENGLISH, "command.use", new Replacement("%command%", "/location get <location-key>")));
+                        player.sendMessage(this.msgAPI.getMessage(TranslationLanguage.ENGLISH, "command.use", Placeholder.unparsed("command", "/location get <location-key>")));
                     }
                     case "list" -> {
                         val locationNames = SQLLocation.getAllLocationNames(this.connection);
