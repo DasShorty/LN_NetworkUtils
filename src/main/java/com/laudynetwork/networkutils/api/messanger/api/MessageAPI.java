@@ -1,11 +1,11 @@
 package com.laudynetwork.networkutils.api.messanger.api;
 
 import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
-import com.laudynetwork.networkutils.api.messanger.backend.Replacement;
 import com.laudynetwork.networkutils.api.messanger.backend.TranslationLanguage;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 public class MessageAPI {
@@ -41,18 +41,18 @@ public class MessageAPI {
     }
 
     public Component getTranslation(TranslationLanguage language, String key) {
-        return this.messageBackend.getTranslation(language, key).createBuilder().build();
+        return this.messageBackend.getTranslation(language, key).createBuilder().getData();
     }
 
-    public Component getTranslation(TranslationLanguage language, String key, Replacement... replacements) {
-        return this.messageBackend.getTranslation(language, key).createBuilder().replaceString(replacements).build();
+    public Component getTranslation(TranslationLanguage language, String key, TagResolver... replacements) {
+        return this.messageBackend.getTranslation(language, key).createBuilder().replaceString(replacements).getData();
     }
 
     public Component getMessage(TranslationLanguage language, String key) {
-        return this.prefix.append(this.messageBackend.getTranslation(language, key).createBuilder().build());
+        return this.prefix.append(this.messageBackend.getTranslation(language, key).createBuilder().getData());
     }
 
-    public Component getMessage(TranslationLanguage language, String key, Replacement... replacements) {
-        return this.prefix.append(this.messageBackend.getTranslation(language, key).createBuilder().replaceString(replacements).build());
+    public Component getMessage(TranslationLanguage language, String key, TagResolver... replacements) {
+        return this.prefix.append(this.messageBackend.getTranslation(language, key).createBuilder().replaceString(replacements).getData());
     }
 }
