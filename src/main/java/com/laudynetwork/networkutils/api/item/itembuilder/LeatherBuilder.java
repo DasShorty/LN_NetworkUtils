@@ -1,12 +1,12 @@
 package com.laudynetwork.networkutils.api.item.itembuilder;
 
 import net.kyori.adventure.text.Component;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -84,6 +84,15 @@ public class LeatherBuilder implements ItemStackBuilder<LeatherBuilder> {
     public LeatherBuilder unEnchant(Enchantment enchantment) {
         meta.removeEnchant(enchantment);
         return this;
+    }
+
+    public LeatherBuilder color(Color color) {
+        meta.setColor(color);
+        return this;
+    }
+
+    public Color color() {
+        return meta.getColor();
     }
 
     @Override
