@@ -94,7 +94,7 @@ public class VanishCommand implements CommandExecutor, Listener {
             }
 
             default -> {
-                player.sendMessage(this.msgApi.getMessage(language, "command.usage", Placeholder.parsed("command", "/vanish [player]")));
+                player.sendMessage(this.msgApi.getMessage(language, "command.usage", Placeholder.unparsed("command", "/vanish [player]")));
             }
 
         }
