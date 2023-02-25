@@ -5,10 +5,10 @@ import com.google.common.cache.CacheBuilder;
 import com.laudynetwork.networkutils.NetworkUtils;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
 import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
-import com.laudynetwork.networkutils.api.messanger.backend.Replacement;
 import com.laudynetwork.networkutils.api.messanger.backend.TranslationLanguage;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
 import lombok.val;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -94,7 +94,7 @@ public class VanishCommand implements CommandExecutor, Listener {
             }
 
             default -> {
-                player.sendMessage(this.msgApi.getMessage(language, "command.usage", new Replacement("%command%", "/vanish [Player]")));
+                player.sendMessage(this.msgApi.getMessage(language, "command.usage", Placeholder.parsed("command", "/vanish [player]")));
             }
 
         }
