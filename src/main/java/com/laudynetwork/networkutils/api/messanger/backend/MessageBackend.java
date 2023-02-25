@@ -38,7 +38,7 @@ public class MessageBackend {
     public Translation getTranslation(TranslationLanguage language, @NotNull String key) {
 
         if (!translationMap.get(language).containsKey(key)) {
-            return new Translation(key, TranslationLanguage.ENGLISH, key);
+            return new Translation(key, language, key);
         }
 
         return translationMap.get(language).get(key);
