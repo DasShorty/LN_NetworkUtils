@@ -1,33 +1,51 @@
 package com.laudynetwork.networkutils.api.messanger.backend;
 
 import lombok.Getter;
+import lombok.val;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public record Translation(String key, TranslationLanguage language, String raw) {
 
     public MsgBuilder createBuilder() {
         return new MsgBuilder(this);
     }
-    public static class MsgBuilder {
-        @Getter
-        private Component data;
-        private final Translation translation;
-        private final MiniMessage miniMessage;
 
-        public MsgBuilder(Translation translation) {
-            this.translation = translation;
-            this.miniMessage = MiniMessage.miniMessage();
-            this.data = this.miniMessage.deserialize(translation.raw);
+    public MsgBuilder createBuilder(TagResolver... placeholder) {
+        return new MsgBuilder(this, placeholder);
+    }
+
+    public static class MsgBuilder {
+
+        private final List<Component> componentList = new ArrayList<>();
+
+        public MsgBuilder(Translation translation, TagResolver... placeholder) {
+            MiniMessage miniMessage = MiniMessage.miniMessage();
+            val split = translation.raw.split("<br>");
+            for (String s : split) {
+                if (this.componentList.isEmpty()) {
+                    this.componentList.add(miniMessage.deserialize(s, placeholder));
+                } else {
+                    this.componentList.add(Component.newline());
+                    this.componentList.add(miniMessage.deserialize(s, placeholder));
+                }
+            }
         }
 
-        public MsgBuilder replaceString(TagResolver... placeholder) {
-            this.data = this.miniMessage.deserialize(translation.raw, placeholder);
-            return this;
+        public Component getData() {
+
+            AtomicReference<Component> main = new AtomicReference<>(Component.empty());
+
+            this.componentList.forEach(component -> {
+                main.set(main.get().append(component));
+            });
+
+            return main.get();
         }
     }
 

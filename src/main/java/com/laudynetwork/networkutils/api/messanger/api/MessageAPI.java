@@ -45,7 +45,7 @@ public class MessageAPI {
     }
 
     public Component getTranslation(TranslationLanguage language, String key, TagResolver... replacements) {
-        return this.messageBackend.getTranslation(language, key).createBuilder().replaceString(replacements).getData();
+        return this.messageBackend.getTranslation(language, key).createBuilder(replacements).getData();
     }
 
     public Component getMessage(TranslationLanguage language, String key) {
@@ -53,6 +53,6 @@ public class MessageAPI {
     }
 
     public Component getMessage(TranslationLanguage language, String key, TagResolver... replacements) {
-        return this.prefix.append(this.messageBackend.getTranslation(language, key).createBuilder().replaceString(replacements).getData());
+        return this.prefix.append(this.messageBackend.getTranslation(language, key).createBuilder(replacements).getData());
     }
 }
