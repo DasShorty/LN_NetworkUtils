@@ -24,11 +24,8 @@ public class SQLConnection {
 
 
         logger = LoggerFactory.getLogger("SQLConnection");
-        logger.info("Creating data source to db with user " + user);
 
         connection = DriverManager.getConnection(jdbcUrl, user, pwd);
-
-        logger.info("Created db connection to mysql database");
     }
 
     /**
@@ -46,7 +43,6 @@ public class SQLConnection {
      * @param columns    columns in the table (also primaryKey!)
      */
     public void createTableWithPrimaryKey(String table, String primaryKey, TableColumn... columns) {
-        logger.info("Trying to create sql table " + table);
         var columnBuilder = new StringBuilder();
 
         for (TableColumn tableColumn : columns) {
@@ -59,7 +55,6 @@ public class SQLConnection {
             val statement = prepareStatement();
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + table + "(" + tableColumns + ", PRIMARY KEY (" + primaryKey + "))");
             statement.close();
-            logger.info("sql table was successfully created!");
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
@@ -71,7 +66,6 @@ public class SQLConnection {
             val statement = prepareStatement();
             consumer.accept(statement.executeQuery(sql));
             statement.close();
-            logger.info("sql table was successfully created!");
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
@@ -79,7 +73,6 @@ public class SQLConnection {
     }
 
     public void createTable(String table, TableColumn... columns) {
-        logger.info("Trying to create sql table " + table);
         var columnBuilder = new StringBuilder();
 
         for (TableColumn tableColumn : columns) {
@@ -95,7 +88,6 @@ public class SQLConnection {
 
             statement.close();
 
-            logger.info("sql table was successfully created!");
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
@@ -121,7 +113,6 @@ public void createTableFromSQL(String sql) {
      * @return DataColumn with the keyValue and key from given params as string
      */
     public DataColumn getStringResultColumn(String tableName, String conditionKey, Object conditionValue, String key) {
-        logger.info("Trying to get StringResult from " + tableName + " key: " + conditionValue + " ...");
         DataColumn column = null;
 
         try {
@@ -143,7 +134,6 @@ public void createTableFromSQL(String sql) {
             logger.error("Something went wrong! returning empty DataColumn");
             column = new DataColumn("empty", "empty");
         }
-        logger.info("Data Column was successfully got from db");
         return column;
     }
 
@@ -156,7 +146,6 @@ public void createTableFromSQL(String sql) {
      * @return DataColumn with the keyValue and key from given params as integer
      */
     public DataColumn getIntResultColumn(String tableName, String conditionKey, Object conditionValue, String key) {
-        logger.info("Trying to get IntResult from " + tableName + " key: " + key + " ...");
         DataColumn column = null;
 
         try {
@@ -178,7 +167,6 @@ public void createTableFromSQL(String sql) {
             logger.error("Something went wrong! returning empty DataColumn");
             column = new DataColumn("empty", -1);
         }
-        logger.info("Data Column was successfully got from db");
         return column;
     }
 
@@ -191,14 +179,12 @@ public void createTableFromSQL(String sql) {
      * @return if column exists in db
      */
     public boolean existsColumn(String tableName, String columnName, Object expectedColumnValue) {
-        logger.info("Trying to check if " + columnName + " in " + tableName + " exists...");
 
         val future = new CompletableFuture<Boolean>();
 
         try {
             var ps = prepareStatement();
             val resultSet = ps.executeQuery("SELECT * FROM " + tableName + " WHERE " + columnName + " IS NOT NULL AND " + columnName + " LIKE '" + expectedColumnValue + "'");
-            logger.info("Successfully checked if " + columnName + " exists in " + tableName);
 
             future.complete(resultSet.next());
 
@@ -221,9 +207,6 @@ public void createTableFromSQL(String sql) {
      * @param columns   keys and values that where created in the table
      */
     public void insert(String tableName, DataColumn... columns) {
-
-        logger.info("Trying to insert DataColumns in " + tableName + " ...");
-
         var columnNames = new StringBuilder();
         var values = new StringBuilder();
 
@@ -239,7 +222,6 @@ public void createTableFromSQL(String sql) {
             statement.executeUpdate("INSERT INTO " + tableName + "(" + columnNames.substring(1) + ") VALUES (" + values.substring(1) + ")");
 
             statement.close();
-            logger.info("Successfully updated table " + tableName);
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
@@ -256,8 +238,6 @@ public void createTableFromSQL(String sql) {
      */
     public void update(String tableName, String conditionKey, Object conditionValue, DataColumn... columns) {
 
-        logger.info("Trying to update DataColumns in " + tableName + " ...");
-
         var updateColumns = new StringBuilder();
 
         for (DataColumn column : columns) {
@@ -270,7 +250,6 @@ public void createTableFromSQL(String sql) {
             statement.executeUpdate("UPDATE " + tableName + " SET " + updateColumns.substring(1) + " WHERE `" + conditionKey + "` = '" + conditionValue + "'");
 
             statement.close();
-            logger.info("Successfully updated table " + tableName);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -283,7 +262,6 @@ public void createTableFromSQL(String sql) {
      * @param conditionValue value that is expected to be similar to other key value so it can be deleted
      */
     public void delete(String tableName, String conditionKey, Object conditionValue) {
-        logger.info("Trying to delete " + conditionValue + " in " + tableName + " column: " + conditionKey);
 
         try {
 
@@ -294,7 +272,7 @@ public void createTableFromSQL(String sql) {
             statement.close();
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            logger.error(e.getMessage());
         }
 
     }
@@ -326,7 +304,7 @@ public void createTableFromSQL(String sql) {
             statement.close();
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            logger.error(e.getMessage());
         }
         return list;
     }
