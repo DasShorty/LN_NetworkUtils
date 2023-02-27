@@ -165,6 +165,10 @@ public class GamemodeCommand implements CommandExecutor, TabCompleter {
             list.add("1");
             list.add("2");
             list.add("3");
+            list.add("survival");
+            list.add("creative");
+            list.add("adventure");
+            list.add("spectator");
         }
 
         if (args.length == 2) {
