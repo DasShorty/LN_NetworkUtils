@@ -4,7 +4,9 @@ import com.laudynetwork.networkutils.api.player.TextureFetcher;
 import com.laudynetwork.networkutils.api.player.UUIDFetcher;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import lombok.val;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -46,18 +48,21 @@ public class HeadBuilder implements ItemStackBuilder<HeadBuilder> {
 
     @Override
     public HeadBuilder displayName(Component component) {
-        meta.displayName(component);
+        meta.displayName(Component.empty().decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE).append(component));
         return this;
     }
 
     @Override
     public HeadBuilder lore(Component... components) {
-        meta.lore(Arrays.asList(components));
+        val lore = Arrays.asList(components);
+        lore.add(Component.empty().decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE));
+        meta.lore(lore);
         return this;
     }
 
     @Override
     public HeadBuilder lore(ArrayList<Component> components) {
+        components.add(Component.empty().decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE));
         meta.lore(components);
         return this;
     }

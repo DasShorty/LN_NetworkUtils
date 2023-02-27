@@ -1,6 +1,8 @@
 package com.laudynetwork.networkutils.api.item.itembuilder;
 
+import lombok.val;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
@@ -38,18 +40,21 @@ public class FireworkStarBuilder implements ItemStackBuilder<FireworkStarBuilder
 
     @Override
     public FireworkStarBuilder displayName(Component component) {
-        meta.displayName(component);
+        meta.displayName(Component.empty().decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE).append(component));
         return this;
     }
 
     @Override
     public FireworkStarBuilder lore(Component... components) {
-        meta.lore(Arrays.asList(components));
+        val lore = Arrays.asList(components);
+        lore.add(Component.empty().decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE));
+        meta.lore(lore);
         return this;
     }
 
     @Override
     public FireworkStarBuilder lore(ArrayList<Component> components) {
+        components.add(Component.empty().decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE));
         meta.lore(components);
         return this;
     }

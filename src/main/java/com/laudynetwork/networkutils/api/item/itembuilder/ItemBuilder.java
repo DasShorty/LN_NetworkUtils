@@ -1,6 +1,8 @@
 package com.laudynetwork.networkutils.api.item.itembuilder;
 
+import lombok.val;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
@@ -33,6 +35,7 @@ public class ItemBuilder implements ItemStackBuilder<ItemBuilder> {
     public ItemBuilder(ItemStack itemStack) {
         this.itemStack = itemStack;
         this.meta = this.itemStack.getItemMeta();
+
     }
 
     @Override
@@ -55,18 +58,21 @@ public class ItemBuilder implements ItemStackBuilder<ItemBuilder> {
 
     @Override
     public ItemBuilder displayName(Component component) {
-        meta.displayName(component);
+        meta.displayName(Component.empty().decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE).append(component));
         return this;
     }
 
     @Override
     public ItemBuilder lore(Component... components) {
-        meta.lore(Arrays.asList(components));
+        val lore = Arrays.asList(components);
+        lore.add(Component.empty().decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE));
+        meta.lore(lore);
         return this;
     }
 
     @Override
     public ItemBuilder lore(ArrayList<Component> components) {
+        components.add(Component.empty().decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE));
         meta.lore(components);
         return this;
     }

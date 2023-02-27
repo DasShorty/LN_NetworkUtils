@@ -1,6 +1,8 @@
 package com.laudynetwork.networkutils.api.item.itembuilder;
 
+import lombok.val;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -27,21 +29,24 @@ public class LeatherBuilder implements ItemStackBuilder<LeatherBuilder> {
         this.itemStack = itemStack;
         this.meta = (LeatherArmorMeta) this.itemStack.getItemMeta();
     }
-    
+
     @Override
     public LeatherBuilder displayName(Component component) {
-        meta.displayName(component);
+        meta.displayName(Component.empty().decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE).append(component));
         return this;
     }
 
     @Override
     public LeatherBuilder lore(Component... components) {
-        meta.lore(Arrays.stream(components).toList());
+        val lore = Arrays.asList(components);
+        lore.add(Component.empty().decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE));
+        meta.lore(lore);
         return this;
     }
 
     @Override
     public LeatherBuilder lore(ArrayList<Component> components) {
+        components.add(Component.empty().decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE));
         meta.lore(components);
         return this;
     }
