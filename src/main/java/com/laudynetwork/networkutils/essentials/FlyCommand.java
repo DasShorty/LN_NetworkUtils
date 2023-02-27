@@ -6,6 +6,7 @@ import com.laudynetwork.networkutils.api.messanger.backend.TranslationLanguage;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
 import com.laudynetwork.networkutils.api.sql.SQLConnection;
 import lombok.val;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -81,12 +82,12 @@ public class FlyCommand implements CommandExecutor, TabCompleter {
             if (target.getAllowFlight()) {
                 target.setAllowFlight(false);
                 target.setFlying(false);
-                player.sendMessage(msgApi.getMessage(language, "command.fly.other.off"));
+                player.sendMessage(msgApi.getMessage(language, "command.fly.other.off", Placeholder.unparsed("player", target.getName())));
                 target.sendMessage(msgApi.getMessage(language, "command.fly.self.off"));
             } else {
                 target.setAllowFlight(true);
                 target.setFlying(true);
-                player.sendMessage(msgApi.getMessage(language, "command.fly.other.on"));
+                player.sendMessage(msgApi.getMessage(language, "command.fly.other.on", Placeholder.unparsed("player", target.getName())));
                 target.sendMessage(msgApi.getMessage(language, "command.fly.self.on"));
             }
 

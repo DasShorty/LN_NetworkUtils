@@ -84,12 +84,12 @@ public class VanishCommand implements CommandExecutor, Listener {
                     this.vanishCache.put(target.getUniqueId(), false);
                     vanishedPlayer.update(false);
                     target.sendMessage(msgApi.getMessage(language, "command.vanish.self.off"));
-                    player.sendMessage(msgApi.getMessage(language, "command.vanish.other.off"));
+                    player.sendMessage(msgApi.getMessage(language, "command.vanish.other.off", Placeholder.unparsed("player", target.getName())));
                 } else {
                     this.vanishCache.put(target.getUniqueId(), true);
                     vanishedPlayer.update(true);
                     target.sendMessage(msgApi.getMessage(language, "command.vanish.self.on"));
-                    player.sendMessage(msgApi.getMessage(language, "command.vanish.other.on"));
+                    player.sendMessage(msgApi.getMessage(language, "command.vanish.other.on", Placeholder.unparsed("player", target.getName())));
                 }
 
             }

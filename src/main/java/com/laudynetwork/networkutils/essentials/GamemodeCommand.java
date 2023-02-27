@@ -111,27 +111,27 @@ public class GamemodeCommand implements CommandExecutor, TabCompleter {
                         target.setGameMode(GameMode.SURVIVAL);
                         val gamemode = LegacyComponentSerializer.legacyAmpersand().serialize(msgApi.getTranslation(language, "command.gamemode.gm.survival"));
                         target.sendMessage(msgApi.getMessage(language, "command.gamemode.change.self", Placeholder.unparsed("gamemode", gamemode)));
-                        player.sendMessage(msgApi.getMessage(language, "command.gamemode.change.other", Placeholder.unparsed("gamemode", gamemode)));
+                        player.sendMessage(msgApi.getMessage(language, "command.gamemode.change.other", Placeholder.unparsed("gamemode", gamemode), Placeholder.unparsed("player", target.getName())));
                     }
                     case "1", "creative" -> {
                         target.setGameMode(GameMode.CREATIVE);
                         val gamemode = LegacyComponentSerializer.legacyAmpersand().serialize(msgApi.getTranslation(language, "command.gamemode.gm.creative"));
                         target.sendMessage(msgApi.getMessage(language, "command.gamemode.change.self", Placeholder.unparsed("gamemode", gamemode)));
-                        player.sendMessage(msgApi.getMessage(language, "command.gamemode.change.other", Placeholder.unparsed("gamemode", gamemode)));
+                        player.sendMessage(msgApi.getMessage(language, "command.gamemode.change.other", Placeholder.unparsed("gamemode", gamemode), Placeholder.unparsed("player", target.getName())));
 
                     }
                     case "2", "adventure" -> {
                         target.setGameMode(GameMode.ADVENTURE);
                         val gamemode = LegacyComponentSerializer.legacyAmpersand().serialize(msgApi.getTranslation(language, "command.gamemode.gm.adventure"));
                         target.sendMessage(msgApi.getMessage(language, "command.gamemode.change.self", Placeholder.unparsed("gamemode", gamemode)));
-                        player.sendMessage(msgApi.getMessage(language, "command.gamemode.change.other", Placeholder.unparsed("gamemode", gamemode)));
+                        player.sendMessage(msgApi.getMessage(language, "command.gamemode.change.other", Placeholder.unparsed("gamemode", gamemode), Placeholder.unparsed("player", target.getName())));
 
                     }
                     case "3", "spectator" -> {
                         target.setGameMode(GameMode.SPECTATOR);
                         val gamemode = LegacyComponentSerializer.legacyAmpersand().serialize(msgApi.getTranslation(language, "command.gamemode.gm.spectator"));
                         target.sendMessage(msgApi.getMessage(language, "command.gamemode.change.self", Placeholder.unparsed("gamemode", gamemode)));
-                        player.sendMessage(msgApi.getMessage(language, "command.gamemode.change.other", Placeholder.unparsed("gamemode", gamemode)));
+                        player.sendMessage(msgApi.getMessage(language, "command.gamemode.change.other", Placeholder.unparsed("gamemode", gamemode), Placeholder.unparsed("player", target.getName())));
 
                     }
 
