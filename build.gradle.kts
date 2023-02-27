@@ -1,6 +1,6 @@
 plugins {
     `java-library`
-    id("io.papermc.paperweight.userdev") version "1.5.1"
+    id("io.papermc.paperweight.userdev") version "1.5.2"
     id("com.github.johnrengelman.shadow") version("7.1.2")
     id("maven-publish")
     id("xyz.jpenilla.run-paper") version "2.0.1"
