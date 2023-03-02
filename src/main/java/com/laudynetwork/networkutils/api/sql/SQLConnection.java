@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 public class SQLConnection {
@@ -43,57 +44,62 @@ public class SQLConnection {
      * @param columns    columns in the table (also primaryKey!)
      */
     public void createTableWithPrimaryKey(String table, String primaryKey, TableColumn... columns) {
-        var columnBuilder = new StringBuilder();
 
-        for (TableColumn tableColumn : columns) {
-            columnBuilder.append(",`").append(tableColumn.name).append("` ").append(tableColumn.type).append("(").append(tableColumn.length).append(")");
-        }
+        Executors.newCachedThreadPool().submit(() -> {
+            var columnBuilder = new StringBuilder();
 
-        var tableColumns = columnBuilder.substring(1);
+            for (TableColumn tableColumn : columns) {
+                columnBuilder.append(",`").append(tableColumn.name).append("` ").append(tableColumn.type).append("(").append(tableColumn.length).append(")");
+            }
 
-        try {
-            val statement = prepareStatement();
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + table + "(" + tableColumns + ", PRIMARY KEY (" + primaryKey + "))");
-            statement.close();
-        } catch (SQLException e) {
-            logger.error(e.getMessage());
-        }
+            var tableColumns = columnBuilder.substring(1);
+
+            try {
+                val statement = prepareStatement();
+                statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + table + "(" + tableColumns + ", PRIMARY KEY (" + primaryKey + "))");
+                statement.close();
+            } catch (SQLException e) {
+                logger.error(e.getMessage());
+            }
+        });
     }
 
     public void resultSet(String sql, Consumer<ResultSet> consumer) {
-
-        try {
-            val statement = prepareStatement();
-            consumer.accept(statement.executeQuery(sql));
-            statement.close();
-        } catch (SQLException e) {
-            logger.error(e.getMessage());
-        }
-
+        Executors.newCachedThreadPool().submit(() -> {
+            try {
+                val statement = prepareStatement();
+                consumer.accept(statement.executeQuery(sql));
+                statement.close();
+            } catch (SQLException e) {
+                logger.error(e.getMessage());
+            }
+        });
     }
 
     public void createTable(String table, TableColumn... columns) {
-        var columnBuilder = new StringBuilder();
+        Executors.newCachedThreadPool().submit(() -> {
+            var columnBuilder = new StringBuilder();
 
-        for (TableColumn tableColumn : columns) {
-            columnBuilder.append(",`").append(tableColumn.name).append("` ").append(tableColumn.type).append("(").append(tableColumn.length).append(")");
-        }
+            for (TableColumn tableColumn : columns) {
+                columnBuilder.append(",`").append(tableColumn.name).append("` ").append(tableColumn.type).append("(").append(tableColumn.length).append(")");
+            }
 
-        var tableColumns = columnBuilder.substring(1);
+            var tableColumns = columnBuilder.substring(1);
 
-        try {
-            val statement = prepareStatement();
+            try {
+                val statement = prepareStatement();
 
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS `" + table + "`(" + tableColumns + ")");
+                statement.executeUpdate("CREATE TABLE IF NOT EXISTS `" + table + "`(" + tableColumns + ")");
 
-            statement.close();
+                statement.close();
 
-        } catch (SQLException e) {
-            logger.error(e.getMessage());
-        }
+            } catch (SQLException e) {
+                logger.error(e.getMessage());
+            }
+        });
     }
 public void createTableFromSQL(String sql) {
-
+    Executors.newCachedThreadPool().submit(() -> {
         try {
             var ps = getMySQLConnection().prepareStatement(sql);
             ps.setQueryTimeout(30);
@@ -102,7 +108,8 @@ public void createTableFromSQL(String sql) {
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
-    }
+    });
+}
 
     /**
      * get the DataColumn(compact ResultSet) from sql db with the specified params
@@ -112,29 +119,35 @@ public void createTableFromSQL(String sql) {
      * @param conditionValue value from key (table data)
      * @return DataColumn with the keyValue and key from given params as string
      */
+    @SneakyThrows
     public DataColumn getStringResultColumn(String tableName, String conditionKey, Object conditionValue, String key) {
-        DataColumn column = null;
+        CompletableFuture<DataColumn> future = new CompletableFuture<>();
 
-        try {
-            val statement = prepareStatement();
+        Executors.newCachedThreadPool().submit(() -> {
+            DataColumn column = null;
+            try {
+                val statement = prepareStatement();
 
-            val resultSet = statement.executeQuery("SELECT * FROM `" + tableName + "` WHERE `" + conditionKey + "` = '" + conditionValue + "'");
-            while (resultSet.next()) {
-                val string = resultSet.getString(key);
-                logger.warn(string);
-                column = new DataColumn(key, string);
+                val resultSet = statement.executeQuery("SELECT * FROM `" + tableName + "` WHERE `" + conditionKey + "` = '" + conditionValue + "'");
+                while (resultSet.next()) {
+                    val string = resultSet.getString(key);
+                    logger.warn(string);
+                    column = new DataColumn(key, string);
+                }
+
+                statement.close();
+            } catch (SQLException e) {
+                logger.error(e.getMessage());
             }
 
-            statement.close();
-        } catch (SQLException e) {
-            logger.error(e.getMessage());
-        }
+            if (column == null) {
+                logger.error("Something went wrong! returning empty DataColumn");
+                column = new DataColumn("empty", "empty");
+            }
 
-        if (column == null) {
-            logger.error("Something went wrong! returning empty DataColumn");
-            column = new DataColumn("empty", "empty");
-        }
-        return column;
+            future.complete(column);
+        });
+        return future.get();
     }
 
     /**
@@ -145,29 +158,33 @@ public void createTableFromSQL(String sql) {
      * @param conditionValue value from key (table data)
      * @return DataColumn with the keyValue and key from given params as integer
      */
+    @SneakyThrows
     public DataColumn getIntResultColumn(String tableName, String conditionKey, Object conditionValue, String key) {
-        DataColumn column = null;
+        CompletableFuture<DataColumn> future = new CompletableFuture<>();
 
-        try {
-            val statement = prepareStatement();
+        Executors.newCachedThreadPool().submit(() -> {
+            DataColumn column = null;
+            try {
+                val statement = prepareStatement();
 
-            val resultSet = statement.executeQuery("SELECT * FROM `" + tableName + "` WHERE `" + conditionKey + "` = '" + conditionValue + "'");
+                val resultSet = statement.executeQuery("SELECT * FROM `" + tableName + "` WHERE `" + conditionKey + "` = '" + conditionValue + "'");
 
-            while (resultSet.next()) {
-                column = new DataColumn(key, resultSet.getInt(key));
+                while (resultSet.next()) {
+                    column = new DataColumn(key, resultSet.getInt(key));
+                }
+
+                statement.close();
+
+            } catch (SQLException e) {
+                logger.error(e.getMessage());
             }
 
-            statement.close();
-
-        } catch (SQLException e) {
-            logger.error(e.getMessage());
-        }
-
-        if (column == null) {
-            logger.error("Something went wrong! returning empty DataColumn");
-            column = new DataColumn("empty", -1);
-        }
-        return column;
+            if (column == null) {
+                logger.error("Something went wrong! returning empty DataColumn");
+                column = new DataColumn("empty", -1);
+            }
+        });
+        return future.get();
     }
 
     /**
@@ -178,26 +195,26 @@ public void createTableFromSQL(String sql) {
      * @param expectedColumnValue value from key (table data)
      * @return if column exists in db
      */
+    @SneakyThrows
     public boolean existsColumn(String tableName, String columnName, Object expectedColumnValue) {
 
         val future = new CompletableFuture<Boolean>();
 
-        try {
-            var ps = prepareStatement();
-            val resultSet = ps.executeQuery("SELECT * FROM " + tableName + " WHERE " + columnName + " IS NOT NULL AND " + columnName + " LIKE '" + expectedColumnValue + "'");
+        Executors.newCachedThreadPool().submit(() -> {
+            try {
+                var ps = prepareStatement();
+                val resultSet = ps.executeQuery("SELECT * FROM " + tableName + " WHERE " + columnName + " IS NOT NULL AND " + columnName + " LIKE '" + expectedColumnValue + "'");
 
-            future.complete(resultSet.next());
+                future.complete(resultSet.next());
 
-            ps.close();
+                ps.close();
 
-        } catch (SQLException e) {
-            logger.error(e.getMessage());
-        }
-        try {
-            return future.get();
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
-        }
+            } catch (SQLException e) {
+                logger.error(e.getMessage());
+            }
+        });
+
+        return future.get();
     }
 
     /**
@@ -207,25 +224,26 @@ public void createTableFromSQL(String sql) {
      * @param columns   keys and values that where created in the table
      */
     public void insert(String tableName, DataColumn... columns) {
-        var columnNames = new StringBuilder();
-        var values = new StringBuilder();
+        Executors.newCachedThreadPool().submit(() -> {
+            var columnNames = new StringBuilder();
+            var values = new StringBuilder();
 
-        for (DataColumn column : columns) {
-            columnNames.append(",").append("`").append(column.name()).append("`");
-            values.append(",").append("'").append(column.value()).append("'");
-        }
+            for (DataColumn column : columns) {
+                columnNames.append(",").append("`").append(column.name()).append("`");
+                values.append(",").append("'").append(column.value()).append("'");
+            }
 
-        try {
+            try {
 
-            val statement = prepareStatement();
+                val statement = prepareStatement();
 
-            statement.executeUpdate("INSERT INTO " + tableName + "(" + columnNames.substring(1) + ") VALUES (" + values.substring(1) + ")");
+                statement.executeUpdate("INSERT INTO " + tableName + "(" + columnNames.substring(1) + ") VALUES (" + values.substring(1) + ")");
 
-            statement.close();
-        } catch (SQLException e) {
-            logger.error(e.getMessage());
-        }
-
+                statement.close();
+            } catch (SQLException e) {
+                logger.error(e.getMessage());
+            }
+        });
     }
 
     /**
@@ -238,21 +256,23 @@ public void createTableFromSQL(String sql) {
      */
     public void update(String tableName, String conditionKey, Object conditionValue, DataColumn... columns) {
 
-        var updateColumns = new StringBuilder();
+        Executors.newCachedThreadPool().submit(() -> {
+            var updateColumns = new StringBuilder();
 
-        for (DataColumn column : columns) {
-            updateColumns.append(",`").append(column.name).append("` = '").append(column.value).append("'");
-        }
+            for (DataColumn column : columns) {
+                updateColumns.append(",`").append(column.name).append("` = '").append(column.value).append("'");
+            }
 
-        try {
-            val statement = prepareStatement();
+            try {
+                val statement = prepareStatement();
 
-            statement.executeUpdate("UPDATE " + tableName + " SET " + updateColumns.substring(1) + " WHERE `" + conditionKey + "` = '" + conditionValue + "'");
+                statement.executeUpdate("UPDATE " + tableName + " SET " + updateColumns.substring(1) + " WHERE `" + conditionKey + "` = '" + conditionValue + "'");
 
-            statement.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+                statement.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     /**
@@ -262,19 +282,19 @@ public void createTableFromSQL(String sql) {
      * @param conditionValue value that is expected to be similar to other key value so it can be deleted
      */
     public void delete(String tableName, String conditionKey, Object conditionValue) {
+        Executors.newCachedThreadPool().submit(() -> {
+            try {
 
-        try {
+                val statement = prepareStatement();
 
-            val statement = prepareStatement();
+                statement.executeUpdate("DELETE FROM `" + tableName + "` WHERE `" + conditionKey + "`='" + conditionValue + "'");
 
-            statement.executeUpdate("DELETE FROM `" + tableName + "` WHERE `" + conditionKey + "`='" + conditionValue + "'");
+                statement.close();
 
-            statement.close();
-
-        } catch (SQLException e) {
-            logger.error(e.getMessage());
-        }
-
+            } catch (SQLException e) {
+                logger.error(e.getMessage());
+            }
+        });
     }
 
     /**
@@ -287,25 +307,28 @@ public void createTableFromSQL(String sql) {
 
         var list = new ArrayList<DataSchema>();
 
-        try {
-            val statement = prepareStatement();
+        Executors.newCachedThreadPool().submit(() -> {
+            try {
+                val statement = prepareStatement();
 
-            var resultSet = statement.executeQuery("SELECT " + columnRow + " FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = " + table + " ORDER BY ORDINAL_POSITION");
-            while (resultSet.next()) {
+                var resultSet = statement.executeQuery("SELECT " + columnRow + " FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = " + table + " ORDER BY ORDINAL_POSITION");
+                while (resultSet.next()) {
 
-                String tableSchema = resultSet.getString("TABLE_SCHEMA");
-                String tableName = resultSet.getString("TABLE_NAME");
-                String columnName = resultSet.getString("COLUMN_NAME");
-                int ordinalPosition = resultSet.getInt("ORDINAL_POSITION");
-                String dataType = resultSet.getString("DATA_TYPE");
-                list.add(new DataSchema(tableSchema, tableName, columnName, ordinalPosition, dataType));
+                    String tableSchema = resultSet.getString("TABLE_SCHEMA");
+                    String tableName = resultSet.getString("TABLE_NAME");
+                    String columnName = resultSet.getString("COLUMN_NAME");
+                    int ordinalPosition = resultSet.getInt("ORDINAL_POSITION");
+                    String dataType = resultSet.getString("DATA_TYPE");
+                    list.add(new DataSchema(tableSchema, tableName, columnName, ordinalPosition, dataType));
+                }
+
+                statement.close();
+
+            } catch (SQLException e) {
+                logger.error(e.getMessage());
             }
+        });
 
-            statement.close();
-
-        } catch (SQLException e) {
-            logger.error(e.getMessage());
-        }
         return list;
     }
 
