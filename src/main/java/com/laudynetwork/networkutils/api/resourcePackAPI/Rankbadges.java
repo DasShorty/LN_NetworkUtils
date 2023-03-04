@@ -1,22 +1,25 @@
 package com.laudynetwork.networkutils.api.resourcePackAPI;
 
-public enum Rankbadges {
-    ADMIN('\uE100'),
-    DEVELOPER('\uE101'),
-    STAFF('\uE102'),
-    CONTENT('\uE103'),
-    BUILDER('\uE104'),
-    CREATOR('\uE105'),
-    VIP('\uE106'),
-    SPARK('\uE107'),
-    PRIME('\uE108'),
-    PREMIUM('\uE109'),
-    PLAYER('\uE10A'),
-    VANISH('\uE10B');
+// Character.toString((char) Integer.parseInt(prefix.split(" ")[0].substring(2), 16))
 
-    private final Character IconChar;
+public class Rankbadges extends ResourcePackImpl {
+    Rankbadges() {
+        items.put("ADMIN", '\uE100');
+        items.put("DEVELOPER", '\uE101');
+        items.put("STAFF", '\uE102');
+        items.put("CONTENT", '\uE103');
+        items.put("BUILDER", '\uE104');
+        items.put("CREATOR", '\uE105');
+        items.put("VIP", '\uE106');
+        items.put("SPARK", '\uE107');
+        items.put("PRIME", '\uE108');
+        items.put("PREMIUM", '\uE109');
+        items.put("PLAYER", '\uE10A');
+        items.put("VANISH", '\uE10B');
+    }
 
-    Rankbadges(Character IconChar) {
-        this.IconChar = IconChar;
+    @Override
+    public String toFind() {
+        return "{rankBadges:";
     }
 }
