@@ -175,7 +175,7 @@ public class GamemodeCommand implements CommandExecutor, TabCompleter {
             list.addAll(Bukkit.getOnlinePlayers().stream().map(Player::name).map(component -> PlainTextComponentSerializer.plainText().serialize(component)).toList());
         }
 
-        String current = args[args.length-1];
+        String current = args[args.length - 1];
         List<String> completer = new ArrayList<>();
 
         for (String s : list) {

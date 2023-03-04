@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+@SuppressWarnings("unused")
 public class ResourcePackHandler {
 
     private final Plugin plugin;
@@ -27,6 +28,19 @@ public class ResourcePackHandler {
         this.plugin = plugin;
 
         run();
+    }
+
+    @SneakyThrows
+    private static void downloadFile(URL url, String file) {
+        BufferedInputStream bis = new BufferedInputStream(url.openStream());
+        FileOutputStream fis = new FileOutputStream(file);
+        byte[] buffer = new byte[1024];
+        int count = 0;
+        while ((count = bis.read(buffer, 0, 1024)) != -1) {
+            fis.write(buffer, 0, count);
+        }
+        fis.close();
+        bis.close();
     }
 
     private void run() {
@@ -66,22 +80,8 @@ public class ResourcePackHandler {
     }
 
     @SneakyThrows
-    private static void downloadFile(URL url, String file){
-        BufferedInputStream bis = new BufferedInputStream(url.openStream());
-        FileOutputStream fis = new FileOutputStream(file);
-        byte[] buffer = new byte[1024];
-        int count=0;
-        while((count = bis.read(buffer,0,1024)) != -1)
-        {
-            fis.write(buffer, 0, count);
-        }
-        fis.close();
-        bis.close();
-    }
-
-    @SneakyThrows
     public URL getTexturePackFromVersion(ProtocolVersion protocolVersion) {
-        return new URL("https://cdn.laudynetwork.com/rp-"+protocolVersion.getVersionName()+".zip");
+        return new URL("https://cdn.laudynetwork.com/rp-" + protocolVersion.getVersionName() + ".zip");
     }
 
 }

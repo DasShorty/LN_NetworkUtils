@@ -17,9 +17,4 @@ public class Rankbadges extends ResourcePackImpl {
         items.put("PLAYER", '\uE10A');
         items.put("VANISH", '\uE10B');
     }
-
-    @Override
-    public String toFind() {
-        return "{rankBadges:";
-    }
 }

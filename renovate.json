@@ -1,6 +1,8 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "platform": "gitlab",
-  "assignees": ["anthony.timmel"],
+  "assignees": [
+    "anthony.timmel"
+  ],
   "reviewers": []
 }

@@ -9,10 +9,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
+@SuppressWarnings("unused")
 public class SQLConnection {
 
     private final Connection connection;
@@ -98,18 +98,19 @@ public class SQLConnection {
             }
         });
     }
-public void createTableFromSQL(String sql) {
-    Executors.newCachedThreadPool().submit(() -> {
-        try {
-            var ps = getMySQLConnection().prepareStatement(sql);
-            ps.setQueryTimeout(30);
-            ps.executeUpdate();
-            ps.close();
-        } catch (SQLException e) {
-            logger.error(e.getMessage());
-        }
-    });
-}
+
+    public void createTableFromSQL(String sql) {
+        Executors.newCachedThreadPool().submit(() -> {
+            try {
+                var ps = getMySQLConnection().prepareStatement(sql);
+                ps.setQueryTimeout(30);
+                ps.executeUpdate();
+                ps.close();
+            } catch (SQLException e) {
+                logger.error(e.getMessage());
+            }
+        });
+    }
 
     /**
      * get the DataColumn(compact ResultSet) from sql db with the specified params
@@ -251,7 +252,7 @@ public void createTableFromSQL(String sql) {
      *
      * @param tableName      the table name where all data where updated
      * @param conditionKey   key that says at wich row the data should update
-     * @param conditionValue value that is expected to be similar to other key value so it can be updated
+     * @param conditionValue value that is expected to be similar to other key value, so it can be updated
      * @param columns        columns with key and value that should be updated
      */
     public void update(String tableName, String conditionKey, Object conditionValue, DataColumn... columns) {
@@ -277,9 +278,10 @@ public void createTableFromSQL(String sql) {
 
     /**
      * row that should be deleted
+     *
      * @param tableName      the table name where the row where deleted
-     * @param conditionKey key that says at wich row the data should deleted
-     * @param conditionValue value that is expected to be similar to other key value so it can be deleted
+     * @param conditionKey   key that says at wich row the data should be deleted
+     * @param conditionValue value that is expected to be similar to other key value, so it can be deleted
      */
     public void delete(String tableName, String conditionKey, Object conditionValue) {
         Executors.newCachedThreadPool().submit(() -> {
@@ -299,7 +301,8 @@ public void createTableFromSQL(String sql) {
 
     /**
      * help will be later added!
-     * @param table later
+     *
+     * @param table     later
      * @param columnRow later
      * @return pls wait later
      */

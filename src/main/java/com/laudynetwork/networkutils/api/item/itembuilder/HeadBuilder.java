@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.UUID;
 
+@SuppressWarnings("unused")
 public class HeadBuilder implements ItemStackBuilder<HeadBuilder> {
 
     private final ItemStack itemStack;
@@ -111,17 +112,15 @@ public class HeadBuilder implements ItemStackBuilder<HeadBuilder> {
         GameProfile gameProfile = new GameProfile(UUID.randomUUID(), null);
         byte[] data = Base64.getEncoder().encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", finalUrl).getBytes());
         gameProfile.getProperties().put("textures", new Property("textures", new String(data)));
-        try{
+        try {
             Field field = meta.getClass().getDeclaredField("profile");
             field.setAccessible(true);
             field.set(meta, gameProfile);
             field.setAccessible(false);
-        }catch (Exception ignored){
+        } catch (Exception ignored) {
         }
         return this;
     }
-
-
 
 
     @Override

@@ -1,6 +1,5 @@
 package com.laudynetwork.networkutils.api.messanger.backend;
 
-import lombok.Getter;
 import lombok.val;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -41,9 +40,7 @@ public record Translation(String key, TranslationLanguage language, String raw) 
 
             AtomicReference<Component> main = new AtomicReference<>(Component.empty());
 
-            this.componentList.forEach(component -> {
-                main.set(main.get().append(component));
-            });
+            this.componentList.forEach(component -> main.set(main.get().append(component)));
 
             return main.get();
         }
