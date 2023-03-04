@@ -5,8 +5,12 @@ import java.util.Map;
 
 public interface ResourcePackInterface {
     Map<String, Character> items = new HashMap<>();
-    String toFind();
+
     String get(Character iconChar);
+
     Character get(String name);
-    String parseName(String input);
+
+    boolean contains(Character character);
+
+    boolean contains(String string);
 }
