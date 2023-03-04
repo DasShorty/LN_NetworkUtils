@@ -11,6 +11,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+@SuppressWarnings("unused")
 public class Base64 {
 
     public static String itemStackToBase64(ItemStack itemStack) throws IllegalStateException {
@@ -35,7 +36,7 @@ public class Base64 {
             BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
 
 
-           var item = ((ItemStack) dataInput.readObject());
+            var item = ((ItemStack) dataInput.readObject());
 
             dataInput.close();
             return item;

@@ -4,10 +4,17 @@ import lombok.Getter;
 
 public enum TranslationLanguage {
 
-    ENGLISH("en"), GERMAN("de"), JAPANESE("jp"), RUSSIAN("ru");
+    ENGLISH("en"),
+    GERMAN("de"),
+    JAPANESE("jp"),
+    RUSSIAN("ru");
 
     @Getter
     private final String dbName;
+
+    TranslationLanguage(String dbName) {
+        this.dbName = dbName;
+    }
 
     public static TranslationLanguage getFromDBName(String dbName) {
 
@@ -17,9 +24,5 @@ public enum TranslationLanguage {
         }
 
         return TranslationLanguage.ENGLISH;
-    }
-
-    TranslationLanguage(String dbName) {
-        this.dbName = dbName;
     }
 }

@@ -19,39 +19,38 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scoreboard.Scoreboard;
 
+@SuppressWarnings("unused")
 public class TablistManager implements Listener {
-  private final Scoreboard scoreboard;
-  private final Plugin plugin;
-  private Tablist activeTablist;
+    private final Scoreboard scoreboard;
+    private final Plugin plugin;
+    private Tablist activeTablist;
 
-  public TablistManager(Plugin plugin, LuckPerms luckPerms) {
-    this.plugin = plugin;
-    this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+    public TablistManager(Plugin plugin, LuckPerms luckPerms) {
+        this.plugin = plugin;
+        this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
 
-    this.activeTablist = new DefaultTablist(luckPerms);
+        this.activeTablist = new DefaultTablist(luckPerms);
 
-    Bukkit.getPluginManager().registerEvents(this, plugin);
-    runTablistUpdater();
-  }
+        Bukkit.getPluginManager().registerEvents(this, plugin);
+        runTablistUpdater();
+    }
 
-  public void setTablist(Tablist tablist) {
-    this.activeTablist = tablist;
-  }
+    public void setTablist(Tablist tablist) {
+        this.activeTablist = tablist;
+    }
 
-  private void runTablistUpdater() {
-    Bukkit.getScheduler().runTaskTimerAsynchronously(this.plugin, this::updateScoreboard, 0, 100);
-  }
+    private void runTablistUpdater() {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(this.plugin, this::updateScoreboard, 0, 100);
+    }
 
-  @EventHandler(ignoreCancelled = true)
-  public void onPlayerJoin(PlayerJoinEvent event) {
-    updateScoreboard();
-  }
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        updateScoreboard();
+    }
 
 
-  public void updateScoreboard() {
-    Bukkit.getOnlinePlayers().forEach(player -> {
-      activeTablist.onUpdate(scoreboard, player);
-    });
-  }
+    public void updateScoreboard() {
+        Bukkit.getOnlinePlayers().forEach(player -> activeTablist.onUpdate(scoreboard, player));
+    }
 
 }

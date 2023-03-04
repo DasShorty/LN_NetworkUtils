@@ -28,115 +28,117 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Getter
+@SuppressWarnings("unused")
 public abstract class GUI implements InventoryHolder {
 
-  private final Player player;
-  private final int size;
-  @Getter
-  private final Inventory inventory;
-  private final Map<Integer, GUIItem> guiItemMap;
-  private Material background = Material.GRAY_STAINED_GLASS_PANE;
+    private final Player player;
+    private final int size;
+    @Getter
+    private final Inventory inventory;
+    private final Map<Integer, GUIItem> guiItemMap;
+    private Material background = Material.GRAY_STAINED_GLASS_PANE;
 
-  public GUI(Player player, Component displayName, int size) {
-    this.player = player;
-    this.size = size;
-    guiItemMap = new HashMap<>();
-    inventory = Bukkit.createInventory(this, size, displayName);
-  }
-
-  public void setBackground(Material background) {
-    this.background = background;
-  }
-
-  public abstract void generateGUI(Player player);
-
-  protected void generate() {
-    for (int i = 0; i < inventory.getSize(); i++) {
-      if (!guiItemMap.containsKey(i)) {
-        guiItemMap.put(i, new GUIItem(i, new ItemBuilder(background).displayName(Component.empty()).itemFlags(ItemFlag.values()), (clicker, clickedItem, clickType) -> {
-          return GUIItem.GUIAction.CANCEL;
-        }));
-      }
-    }
-    guiItemMap.forEach((slot, item) -> {
-
-      if (item.itemStackBuilder().build().getType() == Material.AIR) {
-        inventory.setItem(slot, item.itemStackBuilder().build());
-        return;
-      }
-
-      inventory.setItem(slot, item.itemStackBuilder().itemFlags(ItemFlag.values()).build());
-    });
-  }
-
-  protected void updateGUI() {
-    inventory.clear();
-    generateGUI(player);
-    generate();
-  }
-
-  public abstract void onClose(Player player);
-
-  public void open(Player player) {
-    generateGUI(player);
-    generate();
-    player.openInventory(inventory);
-  }
-
-  public void handleClick(InventoryClickEvent event) {
-    if (event.getClickedInventory() == null) return;
-    if (!(event.getClickedInventory().equals(inventory))) return;
-    if (!(event.getWhoClicked() instanceof Player clicked)) return;
-
-    int index = event.getSlot();
-
-    GUIItem item = this.guiItemMap.get(index);
-
-    if (item == null)
-      return;
-
-    if (item.action() == null)
-      return;
-
-    GUIItem.GUIAction action;
-    action = item.action().onClick(clicked, event.getCurrentItem(), event.getClick());
-
-    if (action == GUIItem.GUIAction.NONE) {
-      event.setCancelled(false);
-      return;
+    public GUI(Player player, Component displayName, int size) {
+        this.player = player;
+        this.size = size;
+        guiItemMap = new HashMap<>();
+        inventory = Bukkit.createInventory(this, size, displayName);
     }
 
-    if (action == GUIItem.GUIAction.CLOSE) {
-      clicked.closeInventory(InventoryCloseEvent.Reason.PLUGIN);
+    public void setBackground(Material background) {
+        this.background = background;
     }
-  }
 
-  protected void set(int index, @NotNull ItemStackBuilder<?> itemStackBuilder) {
-    set(index, itemStackBuilder, null);
-  }
+    public abstract void generateGUI(Player player);
 
-  protected void set(int index, @NotNull ItemStackBuilder<?> itemStackBuilder, GUIItem.ClickAction itemCompletion) {
-    set(index, new GUIItem(index, itemStackBuilder, itemCompletion));
-  }
+    protected void generate() {
+        for (int i = 0; i < inventory.getSize(); i++) {
+            if (!guiItemMap.containsKey(i)) {
+                guiItemMap.put(i, new GUIItem(i, new ItemBuilder(background).displayName(Component.empty()).itemFlags(ItemFlag.values()), (clicker, clickedItem, clickType) -> {
+                    return GUIItem.GUIAction.CANCEL;
+                }));
+            }
+        }
+        guiItemMap.forEach((slot, item) -> {
 
-  private void set(int index, GUIItem item) {
-    if (index >= size)
-      throw new IllegalArgumentException("invalid index " + index + " the inventory has only " + size + " slots! [" + getClass().getName() + "]");
+            if (item.itemStackBuilder().build().getType() == Material.AIR) {
+                inventory.setItem(slot, item.itemStackBuilder().build());
+                return;
+            }
 
-    this.guiItemMap.remove(index);
-    if (item != null && item.itemStackBuilder().build() != null)
-      this.guiItemMap.put(index, item);
+            inventory.setItem(slot, item.itemStackBuilder().itemFlags(ItemFlag.values()).build());
+        });
+    }
 
-    generate();
-  }
+    protected void updateGUI() {
+        inventory.clear();
+        generateGUI(player);
+        generate();
+    }
 
-  protected void clearAll() {
-    this.guiItemMap.clear();
-    this.inventory.clear();
-  }
+    public abstract void onClose(Player player);
 
-  protected void clear() {
-    this.inventory.clear();
-  }
+    public void open(Player player) {
+        generateGUI(player);
+        generate();
+        player.openInventory(inventory);
+    }
+
+    public void handleClick(InventoryClickEvent event) {
+        if (event.getClickedInventory() == null) return;
+        if (!(event.getClickedInventory().equals(inventory))) return;
+        if (!(event.getWhoClicked() instanceof Player clicked)) return;
+
+        int index = event.getSlot();
+
+        GUIItem item = this.guiItemMap.get(index);
+
+        if (item == null)
+            return;
+
+        if (item.action() == null)
+            return;
+
+        GUIItem.GUIAction action;
+        action = item.action().onClick(clicked, event.getCurrentItem(), event.getClick());
+
+        if (action == GUIItem.GUIAction.NONE) {
+            event.setCancelled(false);
+            return;
+        }
+
+        if (action == GUIItem.GUIAction.CLOSE) {
+            clicked.closeInventory(InventoryCloseEvent.Reason.PLUGIN);
+        }
+    }
+
+    protected void set(int index, @NotNull ItemStackBuilder<?> itemStackBuilder) {
+        set(index, itemStackBuilder, null);
+    }
+
+    protected void set(int index, @NotNull ItemStackBuilder<?> itemStackBuilder, GUIItem.ClickAction itemCompletion) {
+        set(index, new GUIItem(index, itemStackBuilder, itemCompletion));
+    }
+
+    private void set(int index, GUIItem item) {
+        if (index >= size)
+            throw new IllegalArgumentException("invalid index " + index + " the inventory has only " + size + " slots! [" + getClass().getName() + "]");
+
+        this.guiItemMap.remove(index);
+        if (item != null && item.itemStackBuilder().build() != null)
+            this.guiItemMap.put(index, item);
+
+        generate();
+    }
+
+    protected void clearAll() {
+        this.guiItemMap.clear();
+        this.inventory.clear();
+    }
+
+    protected void clear() {
+        this.inventory.clear();
+    }
 
 }
+

@@ -22,6 +22,13 @@ import java.util.Objects;
 
 @SuppressWarnings("unused")
 public final class NetworkUtils extends JavaPlugin {
+    private static NetworkUtils INSTANCE;
+    private SQLConnection dbConnection;
+    @Getter
+    private ResourcePackHandler resourcePackHandler;
+    @Getter
+    private TablistManager tablistManager;
+
     public static NetworkUtils getINSTANCE() {
         return INSTANCE;
     }
@@ -29,13 +36,6 @@ public final class NetworkUtils extends JavaPlugin {
     public SQLConnection getDbConnection() {
         return dbConnection;
     }
-
-    private static NetworkUtils INSTANCE;
-    private SQLConnection dbConnection;
-    @Getter
-    private ResourcePackHandler resourcePackHandler;
-    @Getter
-    private TablistManager tablistManager;
 
     @Override
     public void onLoad() {
