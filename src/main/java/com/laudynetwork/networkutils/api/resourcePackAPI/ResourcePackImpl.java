@@ -1,14 +1,17 @@
 package com.laudynetwork.networkutils.api.resourcePackAPI;
 
-public class GUI extends ResourcePackImpl {
-    GUI() {
-        items.put("TEMP", '\uE120');
+public class ResourcePackImpl implements ResourcePackInterface{
+    @Override
+    public String toFind() {
+        return null;
     }
 
+    @Override
     public Character get(String name){
-        return items.get(name);
+        return items.get(name.toUpperCase());
     }
 
+    @Override
     public String get(Character iconChar){
         for (String elm : items.keySet()){
             if (items.get(elm).equals(iconChar)) return elm;
@@ -17,7 +20,7 @@ public class GUI extends ResourcePackImpl {
     }
 
     @Override
-    public String toFind() {
-        return "{gui:";
+    public String parseName(String input){
+        return input.replace(toFind(), "").replace("}", "");
     }
 }

@@ -1,11 +1,15 @@
 package com.laudynetwork.networkutils.api.tablist;
 
+import com.laudynetwork.networkutils.api.resourcePackAPI.ResourcePackAPI;
+import com.laudynetwork.networkutils.api.resourcePackAPI.ResourcePackInterface;
 import lombok.val;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.luckperms.api.model.group.Group;
 import org.bukkit.entity.Player;
 
+import java.util.Map;
 import java.util.Objects;
 
 @SuppressWarnings("unused")
@@ -68,20 +72,30 @@ public record TablistPlayer(Player player, net.luckperms.api.LuckPerms luckPerms
     }
 
     public Component getGroupPrefix(String groupName) {
-        val group = this.luckPerms.getGroupManager().getGroup(groupName);
+        Group group = this.luckPerms.getGroupManager().getGroup(groupName);
 
         if (group == null)
             return Component.empty().color(getRankColor(groupName));
 
-        val prefix = Objects.requireNonNull(group.getCachedData().getMetaData().getPrefix());
+        String prefix = Objects.requireNonNull(group.getCachedData().getMetaData().getPrefix());
+        TextColor rankColor = getRankColor(groupName);
 
-        val rankColor = getRankColor(groupName);
+        Map<String, ResourcePackInterface> data = ResourcePackAPI.parse(prefix);
+        if(data.size() != 0) {
+            String totalPrefix = prefix;
 
+            for (ResourcePackInterface packInterface : data.values()){
+                String toReplace = data.keySet().stream().filter(s -> data.get(s).equals(packInterface)).toList().get(0);
+                totalPrefix = totalPrefix.replace(toReplace, packInterface.parseName(toReplace));
+                data.remove(toReplace);
+            }
 
-        if(prefix.split(" ")[0].contains("\\u"))
-            return Component.text(Character.toString((char) Integer.parseInt(prefix.split(" ")[0].substring(2), 16)))
+            ResourcePackInterface packInterface = data.values().stream().toList().get(0);
+
+            return Component.text(totalPrefix)
                     .color(TextColor.color(0xFFFFFF))
                     .append(Component.space());
+        }
         else
             return LegacyComponentSerializer.legacyAmpersand().deserialize(prefix).color(rankColor);
     }
