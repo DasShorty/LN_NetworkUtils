@@ -86,11 +86,9 @@ public record TablistPlayer(Player player, net.luckperms.api.LuckPerms luckPerms
 
             for (ResourcePackInterface packInterface : data.values()){
                 String toReplace = data.keySet().stream().filter(s -> data.get(s).equals(packInterface)).toList().get(0);
-                totalPrefix = totalPrefix.replace(toReplace, packInterface.parseName(toReplace));
+                totalPrefix = totalPrefix.replace(toReplace, "" + packInterface.get(packInterface.parseName(toReplace)));
                 data.remove(toReplace);
             }
-
-            ResourcePackInterface packInterface = data.values().stream().toList().get(0);
 
             return Component.text(totalPrefix)
                     .color(TextColor.color(0xFFFFFF))
