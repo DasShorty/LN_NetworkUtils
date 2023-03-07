@@ -2,10 +2,13 @@ package com.laudynetwork.networkutils.essentials.vanish;
 
 import com.laudynetwork.networkutils.NetworkUtils;
 import com.laudynetwork.networkutils.api.sql.SQLConnection;
+import lombok.SneakyThrows;
 import lombok.val;
 import org.bukkit.Bukkit;
 
+import java.sql.SQLException;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public record VanishedPlayer(UUID uuid) {
 
@@ -34,6 +37,7 @@ public record VanishedPlayer(UUID uuid) {
         return new VanishedPlayer(this.uuid);
     }
 
+    @SneakyThrows
     public boolean isVanished() {
 
         checkTable();
@@ -44,7 +48,24 @@ public record VanishedPlayer(UUID uuid) {
             return false;
         }
 
-        return Integer.parseInt(sqlConnection.getIntResultColumn("minecraft_networktutils_essentials_vanish", "uuid", uuid.toString(), "vanished").value().toString()) == 1;
+        CompletableFuture<Integer> future = new CompletableFuture<>();
+
+        sqlConnection.resultSet("SELECT * FROM minecraft_networktutils_essentials_vanish WHERE `uuid`='" + this.uuid + "'", resultSet -> {
+
+            try {
+
+                while (resultSet.next()) {
+
+                    future.complete(resultSet.getInt("vanished"));
+
+                }
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        return future.get() == 1;
 
     }
 
