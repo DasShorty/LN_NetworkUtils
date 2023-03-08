@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
 @SuppressWarnings("unused")
@@ -27,6 +28,26 @@ public class SQLConnection {
         logger = LoggerFactory.getLogger("SQLConnection");
 
         connection = DriverManager.getConnection(jdbcUrl, user, pwd);
+    }
+
+    @SneakyThrows
+    public boolean existsTable(String tableName) {
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
+
+        Executors.newCachedThreadPool().submit(() -> {
+            try {
+                var ps = prepareStatement();
+                val resultSet = ps.executeQuery("SELECT * FROM information_schema.tables WHERE table_name = '" + tableName + "'");
+
+                future.complete(resultSet.next());
+
+                ps.close();
+            } catch (SQLException e) {
+                logger.error(e.getMessage());
+            }
+        });
+
+        return future.get();
     }
 
     /**
@@ -198,8 +219,7 @@ public class SQLConnection {
      */
     @SneakyThrows
     public boolean existsColumn(String tableName, String columnName, Object expectedColumnValue) {
-
-        val future = new CompletableFuture<Boolean>();
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
 
         Executors.newCachedThreadPool().submit(() -> {
             try {
