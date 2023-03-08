@@ -1,12 +1,8 @@
 package com.laudynetwork.networkutils.api.player;
 
-import com.laudynetwork.networkutils.NetworkUtils;
 import com.laudynetwork.networkutils.api.messanger.backend.TranslationLanguage;
 import com.laudynetwork.networkutils.api.sql.SQLConnection;
 import com.viaversion.viaversion.api.Via;
-import lombok.val;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,20 +26,6 @@ public class NetworkPlayer {
 
     public ProtocolVersion getPlayerVersion() {
         return ProtocolVersion.getByProtocolVersion(Via.getAPI().getPlayerVersion(uuid));
-    }
-
-    public void loadTexturePack(ProtocolVersion protocolVersion) {
-
-        val texturePackHandler = NetworkUtils.getINSTANCE().getResourcePackHandler();
-
-        val hashCode = texturePackHandler.getResourcePackHash().get(protocolVersion);
-        val texturePackUrl = texturePackHandler.getTexturePackFromVersion(protocolVersion);
-
-        val player = Bukkit.getPlayer(this.uuid);
-
-        assert player != null;
-        player.setResourcePack(texturePackUrl.toString(), hashCode, true, Component.text("Willst du nicht runterladen? Spielst du nicht hier!"));
-
     }
 
     public TranslationLanguage getLanguage() {

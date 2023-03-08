@@ -2,7 +2,6 @@ package com.laudynetwork.networkutils;
 
 import com.laudynetwork.networkutils.api.location.commandimpl.LocationCommand;
 import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
-import com.laudynetwork.networkutils.api.player.resourcepack.ResourcePackHandler;
 import com.laudynetwork.networkutils.api.sql.SQLConnection;
 import com.laudynetwork.networkutils.api.tablist.TablistManager;
 import com.laudynetwork.networkutils.essentials.FlyCommand;
@@ -10,7 +9,6 @@ import com.laudynetwork.networkutils.essentials.GamemodeCommand;
 import com.laudynetwork.networkutils.essentials.vanish.VanishCommand;
 import com.laudynetwork.networkutils.listeners.Base64Listener;
 import com.laudynetwork.networkutils.listeners.CommandProtectionListener;
-import com.laudynetwork.networkutils.listeners.PlayerJoinListener;
 import lombok.Getter;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
@@ -24,8 +22,6 @@ import java.util.Objects;
 public final class NetworkUtils extends JavaPlugin {
     private static NetworkUtils INSTANCE;
     private SQLConnection dbConnection;
-    @Getter
-    private ResourcePackHandler resourcePackHandler;
     @Getter
     private TablistManager tablistManager;
 
@@ -51,14 +47,12 @@ public final class NetworkUtils extends JavaPlugin {
     @Override
     public void onEnable() {
 
-        this.resourcePackHandler = new ResourcePackHandler(this);
         MessageBackend backend = new MessageBackend(this.dbConnection, "networkutils");
 
         var pm = Bukkit.getPluginManager();
 
         pm.registerEvents(new Base64Listener(), this);
         pm.registerEvents(new CommandProtectionListener(backend), this);
-        pm.registerEvents(new PlayerJoinListener(this.dbConnection), this);
 
         Objects.requireNonNull(getCommand("location")).setExecutor(new LocationCommand(backend));
         Objects.requireNonNull(getCommand("gamemode")).setExecutor(new GamemodeCommand(backend));
