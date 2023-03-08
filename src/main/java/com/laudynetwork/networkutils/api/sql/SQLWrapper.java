@@ -25,7 +25,7 @@ public class SQLWrapper {
             builder.append(s).append(",");
         }
 
-        return builder.substring(0, builder.toString().length() - 1);
+        return builder.substring(0, Math.max(builder.toString().length() - 1, 0));
     }
 
     public static Map<String, String> fromStringToMap(String input) {

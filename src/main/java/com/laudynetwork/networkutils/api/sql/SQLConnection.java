@@ -32,22 +32,9 @@ public class SQLConnection {
 
     @SneakyThrows
     public boolean existsTable(String tableName) {
-        CompletableFuture<Boolean> future = new CompletableFuture<>();
-
-        Executors.newCachedThreadPool().submit(() -> {
-            try {
-                var ps = prepareStatement();
-                val resultSet = ps.executeQuery("SELECT * FROM information_schema.tables WHERE table_name = '" + tableName + "'");
-
-                future.complete(resultSet.next());
-
-                ps.close();
-            } catch (SQLException e) {
-                logger.error(e.getMessage());
-            }
-        });
-
-        return future.get();
+        DatabaseMetaData metaData = connection.getMetaData();
+        ResultSet resultSet = metaData.getTables(null, null, tableName, null);
+        return resultSet.next();
     }
 
     /**
