@@ -153,7 +153,6 @@ public class SQLConnection {
                 val resultSet = statement.executeQuery("SELECT * FROM `" + tableName + "` WHERE `" + conditionKey + "` = '" + conditionValue + "'");
                 while (resultSet.next()) {
                     val string = resultSet.getString(key);
-                    logger.warn(string);
                     column = new DataColumn(key, string);
                 }
 
