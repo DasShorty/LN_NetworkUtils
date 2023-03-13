@@ -4,6 +4,7 @@ import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
 import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
 import com.laudynetwork.networkutils.api.messanger.backend.TranslationLanguage;
 import lombok.val;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -27,7 +28,7 @@ public class CommandProtectionListener implements Listener {
 
         if (Bukkit.getHelpMap().getHelpTopic(command) == null) {
             event.setCancelled(true);
-            event.getPlayer().sendMessage(this.msgAPI.getMessage(TranslationLanguage.ENGLISH, "command.unknown"));
+            event.getPlayer().sendMessage(this.msgAPI.getMessage(TranslationLanguage.ENGLISH, "command.unknown", Placeholder.unparsed("command", command)));
 
             return;
         }
