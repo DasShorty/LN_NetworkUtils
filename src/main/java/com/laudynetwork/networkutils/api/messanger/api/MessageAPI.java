@@ -42,6 +42,10 @@ public class MessageAPI {
         return this.prefix.append(this.messageBackend.getTranslation(language, key).createBuilder(replacements).getData());
     }
 
+    public boolean existsTranslation(String key) {
+        return this.messageBackend.existsTranslation(key);
+    }
+
     public enum PrefixType {
         SYSTEM("&x&e&d&c&1&0&0System &8» "),
         CLAN("&x&c&c&7&a&1&6Clan &8» "),

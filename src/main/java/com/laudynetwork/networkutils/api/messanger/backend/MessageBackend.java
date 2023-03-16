@@ -78,4 +78,8 @@ public class MessageBackend {
 
         logger.info("Messages where updated!");
     }
+
+    public boolean existsTranslation(String key) {
+        return this.getConnection().existsColumn("translations", "translationKey", key);
+    }
 }
