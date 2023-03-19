@@ -32,7 +32,7 @@ dependencies {
     implementation("org.mariadb.jdbc:mariadb-java-client:3.1.2")
     implementation("org.projectlombok:lombok:1.18.26")
     annotationProcessor("org.projectlombok:lombok:1.18.26")
-    paperweight.paperDevBundle("1.19.2-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("1.19.3-R0.1-SNAPSHOT")
     compileOnly("net.luckperms:api:5.4")
     compileOnly("com.viaversion:viaversion-api:4.6.1")
 
