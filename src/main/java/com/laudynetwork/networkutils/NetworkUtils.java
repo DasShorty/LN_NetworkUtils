@@ -6,6 +6,7 @@ import com.laudynetwork.networkutils.api.sql.SQLConnection;
 import com.laudynetwork.networkutils.api.tablist.TablistManager;
 import com.laudynetwork.networkutils.essentials.FlyCommand;
 import com.laudynetwork.networkutils.essentials.GamemodeCommand;
+import com.laudynetwork.networkutils.essentials.control.ControlCommand;
 import com.laudynetwork.networkutils.essentials.vanish.VanishCommand;
 import com.laudynetwork.networkutils.listeners.Base64Listener;
 import com.laudynetwork.networkutils.listeners.CommandProtectionListener;
@@ -57,6 +58,7 @@ public final class NetworkUtils extends JavaPlugin {
         Objects.requireNonNull(getCommand("location")).setExecutor(new LocationCommand(backend));
         Objects.requireNonNull(getCommand("gamemode")).setExecutor(new GamemodeCommand(backend));
         Objects.requireNonNull(getCommand("fly")).setExecutor(new FlyCommand(backend));
+        Objects.requireNonNull(getCommand("control")).setExecutor(new ControlCommand(backend));
 
         VanishCommand vanishCommand = new VanishCommand(backend);
         pm.registerEvents(vanishCommand, this);

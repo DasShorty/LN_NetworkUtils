@@ -19,3 +19,6 @@ commands:
   vanish:
     permission: networkutils.vanish
     aliases: [ v ]
+  control:
+    permission: networkutils.control.basic
+    aliases: [ manage ]
