@@ -46,7 +46,6 @@ public class MessageBackend {
 
     @SneakyThrows
     public void updateMessages(@NotNull String project) {
-        logger.info("Loading all Messages into Cache ...");
         translationMap = new HashMap<>();
 
         var german = new HashMap<String, Translation>();
