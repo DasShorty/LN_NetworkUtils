@@ -20,7 +20,7 @@ public class NetworkPlayer {
         this.uuid = uuid;
         this.logger = LoggerFactory.getLogger("NetworkPlayer");
 
-        connection.createTableWithPrimaryKey("minecraft_general_playerData", "uuid", new SQLConnection.TableColumn("uid", SQLConnection.ColumnType.VARCHAR, 35),
+        connection.createTableWithPrimaryKey("minecraft_general_playerData", "uuid", new SQLConnection.TableColumn("uuid", SQLConnection.ColumnType.VARCHAR, 35),
                 new SQLConnection.TableColumn("language", SQLConnection.ColumnType.VARCHAR, 20));
     }
 
