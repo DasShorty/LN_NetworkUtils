@@ -31,6 +31,7 @@ dependencies {
     implementation("mysql:mysql-connector-java:8.0.32")
     implementation("org.mariadb.jdbc:mariadb-java-client:3.1.3")
     implementation("org.projectlombok:lombok:1.18.26")
+    implementation("biz.paluch.redis:lettuce:3.2.Final")
     annotationProcessor("org.projectlombok:lombok:1.18.26")
     paperweight.paperDevBundle("1.19.3-R0.1-SNAPSHOT")
     compileOnly("net.luckperms:api:5.4")
