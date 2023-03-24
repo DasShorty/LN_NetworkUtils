@@ -22,3 +22,5 @@ commands:
   control:
     permission: networkutils.control.basic
     aliases: [ manage ]
+  register:
+    permission: networkutils.register
