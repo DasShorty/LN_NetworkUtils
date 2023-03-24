@@ -2,6 +2,7 @@ package com.laudynetwork.networkutils;
 
 import com.laudynetwork.networkutils.api.location.commandimpl.LocationCommand;
 import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
+import com.laudynetwork.networkutils.api.redis.Redis;
 import com.laudynetwork.networkutils.api.sql.SQLConnection;
 import com.laudynetwork.networkutils.api.tablist.TablistManager;
 import com.laudynetwork.networkutils.essentials.FlyCommand;
@@ -10,6 +11,7 @@ import com.laudynetwork.networkutils.essentials.control.ControlCommand;
 import com.laudynetwork.networkutils.essentials.vanish.VanishCommand;
 import com.laudynetwork.networkutils.listeners.Base64Listener;
 import com.laudynetwork.networkutils.listeners.CommandProtectionListener;
+import com.laudynetwork.networkutils.registration.RegisterCommand;
 import lombok.Getter;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
@@ -25,6 +27,7 @@ public final class NetworkUtils extends JavaPlugin {
     private SQLConnection dbConnection;
     @Getter
     private TablistManager tablistManager;
+    private Redis redis;
 
     public static NetworkUtils getINSTANCE() {
         return INSTANCE;
@@ -37,6 +40,7 @@ public final class NetworkUtils extends JavaPlugin {
     @Override
     public void onLoad() {
         INSTANCE = this;
+        this.redis = new Redis();
 
         getSLF4JLogger().info("Loading config!");
         saveDefaultConfig();
@@ -59,6 +63,7 @@ public final class NetworkUtils extends JavaPlugin {
         Objects.requireNonNull(getCommand("gamemode")).setExecutor(new GamemodeCommand(backend));
         Objects.requireNonNull(getCommand("fly")).setExecutor(new FlyCommand(backend));
         Objects.requireNonNull(getCommand("control")).setExecutor(new ControlCommand(backend));
+        Objects.requireNonNull(getCommand("register")).setExecutor(new RegisterCommand(backend, redis));
 
         VanishCommand vanishCommand = new VanishCommand(backend);
         pm.registerEvents(vanishCommand, this);
@@ -84,6 +89,6 @@ public final class NetworkUtils extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // ignore
+        this.redis.shutdown();
     }
 }
