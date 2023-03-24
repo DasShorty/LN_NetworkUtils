@@ -26,7 +26,7 @@ public class WebsiteRegisterManager {
         this.sqlConnection.insert("website_users", new SQLConnection.DataColumn("uuid", uuid.toString()),
                 new SQLConnection.DataColumn("email", email));
 
-        this.redis.getConnection().setex(email, Duration.ofHours(2).toSeconds(), token.toString());
+        this.redis.getConnection().setex(token.toString(), Duration.ofHours(2).toSeconds(), email);
 
         return new RegisteredUser(true, token);
     }
