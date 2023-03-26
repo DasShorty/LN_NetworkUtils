@@ -35,7 +35,7 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:1.18.26")
     paperweight.paperDevBundle("1.19.3-R0.1-SNAPSHOT")
     compileOnly("net.luckperms:api:5.4")
-    compileOnly("com.viaversion:viaversion-api:4.6.1")
+    compileOnly("com.viaversion:viaversion-api:4.6.2")
 
     api("eu.thesimplecloud.simplecloud:simplecloud-api:2.4.1")
 }
