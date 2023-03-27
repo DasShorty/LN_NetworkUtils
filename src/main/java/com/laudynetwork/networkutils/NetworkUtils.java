@@ -1,5 +1,6 @@
 package com.laudynetwork.networkutils;
 
+import com.laudynetwork.networkutils.api.gui.GUIHandler;
 import com.laudynetwork.networkutils.api.location.commandimpl.LocationCommand;
 import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
 import com.laudynetwork.networkutils.api.redis.Redis;
@@ -8,14 +9,17 @@ import com.laudynetwork.networkutils.api.tablist.TablistManager;
 import com.laudynetwork.networkutils.essentials.FlyCommand;
 import com.laudynetwork.networkutils.essentials.GamemodeCommand;
 import com.laudynetwork.networkutils.essentials.control.ControlCommand;
+import com.laudynetwork.networkutils.essentials.language.LanguageCommand;
 import com.laudynetwork.networkutils.essentials.vanish.VanishCommand;
 import com.laudynetwork.networkutils.listeners.Base64Listener;
 import com.laudynetwork.networkutils.listeners.CommandProtectionListener;
 import com.laudynetwork.networkutils.registration.RegisterCommand;
 import lombok.Getter;
 import net.luckperms.api.LuckPerms;
+import net.minecraft.locale.Language;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -52,6 +56,8 @@ public final class NetworkUtils extends JavaPlugin {
     @Override
     public void onEnable() {
 
+        GUIHandler<Plugin> guiHandler = new GUIHandler<>(this);
+
         MessageBackend backend = new MessageBackend(this.dbConnection, "networkutils");
 
         var pm = Bukkit.getPluginManager();
@@ -64,6 +70,7 @@ public final class NetworkUtils extends JavaPlugin {
         Objects.requireNonNull(getCommand("fly")).setExecutor(new FlyCommand(backend));
         Objects.requireNonNull(getCommand("control")).setExecutor(new ControlCommand(backend));
         Objects.requireNonNull(getCommand("register")).setExecutor(new RegisterCommand(backend, redis));
+        Objects.requireNonNull(getCommand("language")).setExecutor(new LanguageCommand(backend, guiHandler));
 
         VanishCommand vanishCommand = new VanishCommand(backend);
         pm.registerEvents(vanishCommand, this);
