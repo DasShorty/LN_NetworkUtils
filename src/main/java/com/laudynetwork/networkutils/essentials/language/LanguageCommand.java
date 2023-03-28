@@ -34,7 +34,7 @@ public class LanguageCommand implements CommandExecutor {
         }
 
         val networkPlayer = new NetworkPlayer(this.msgBackend.getConnection(), player.getUniqueId());
-        val title = this.msgApi.getTranslation(networkPlayer.getLanguage(), "");
+        val title = this.msgApi.getTranslation(networkPlayer.getLanguage(), "networkutils.language.ui.title");
 
         guiHandler.open(player, new LanguageUI(player, title, this.msgApi, this.msgBackend));
         return true;
