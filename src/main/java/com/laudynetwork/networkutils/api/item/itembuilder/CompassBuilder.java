@@ -1,6 +1,5 @@
-package com.laudynetwork.networkutils.api.item.CompassBuilder;
+package com.laudynetwork.networkutils.api.item.itembuilder;
 
-import com.laudynetwork.networkutils.api.item.itembuilder.ItemStackBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Location;
@@ -10,7 +9,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.CompassMeta;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
@@ -111,8 +109,7 @@ public class CompassBuilder implements ItemStackBuilder<CompassBuilder> {
     @Override
     public ItemStack build() {
 
-        if (this.meta != null)
-            itemStack.setItemMeta(meta);
+        if (this.meta != null) itemStack.setItemMeta(meta);
         return itemStack;
     }
 
