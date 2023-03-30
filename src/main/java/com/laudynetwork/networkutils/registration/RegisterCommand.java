@@ -5,6 +5,7 @@ import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
 import com.laudynetwork.networkutils.api.messanger.backend.TranslationLanguage;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
 import com.laudynetwork.networkutils.api.redis.Redis;
+import lombok.SneakyThrows;
 import lombok.val;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.command.Command;
@@ -31,7 +32,7 @@ public class RegisterCommand implements CommandExecutor, TabCompleter {
         this.registerManager = new WebsiteRegisterManager(msgBackend.getConnection(), redis);
     }
 
-    @Override
+    @Override @SneakyThrows
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
         if (!(sender instanceof Player player)) {
@@ -61,7 +62,7 @@ public class RegisterCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        val registeredUser = this.registerManager.addUser(player.getUniqueId(), mail);
+        val registeredUser = this.registerManager.addUser(player.getUniqueId(), mail).get();
         if (!registeredUser.successfully()) {
             player.sendMessage(this.msgApi.getMessage(language, "command.register.registered"));
             return true;
