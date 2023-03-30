@@ -13,8 +13,6 @@ public class Redis {
     public Redis() {
         this.client = RedisClient.create("redis://RlUD7l3AC5Lg9UyC3BTjxIsn6Lw984TG@89.163.129.221:6379");
         this.connection = this.client.connect();
-
-        System.out.println("Connected to Redis");
     }
 
     public void shutdown() {

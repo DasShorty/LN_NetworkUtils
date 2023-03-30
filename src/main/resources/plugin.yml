@@ -24,3 +24,4 @@ commands:
     aliases: [ manage ]
   register:
     permission: networkutils.register
+  language:
