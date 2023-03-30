@@ -67,7 +67,7 @@ public class RegisterCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        String redirect = String.format("<click:open_url:'https://www.laudynetwork.com/password-reset/%s'>link</click>", registeredUser.token().toString());
+        String redirect = String.format("<click:open_url:'https://www.laudynetwork.com/%s/password-reset/%s'>link</click>", language.getDbName(), registeredUser.token().toString());
 
         player.sendMessage(this.msgApi.getMessage(language, "command.register.confirm",
                 Placeholder.parsed("redirect", redirect)));
