@@ -1,7 +1,15 @@
 stages:
+  - scan
   - build
   - deploy
   - update-dependencies
+
+osv-scanner:
+  stage: scan
+  image: golang:latest
+  script:
+    - go install github.com/google/osv-scanner/cmd/osv-scanner@v1
+    - osv-scanner -r .
 
 publish:
   image: gradle:jdk17
