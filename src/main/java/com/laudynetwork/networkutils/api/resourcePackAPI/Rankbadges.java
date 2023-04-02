@@ -16,5 +16,6 @@ public class Rankbadges extends ResourcePackImpl {
         items.put("PREMIUM", '\uE109');
         items.put("PLAYER", '\uE10A');
         items.put("VANISH", '\uE10B');
+        items.put("BETA", '\uE10C');
     }
 }
