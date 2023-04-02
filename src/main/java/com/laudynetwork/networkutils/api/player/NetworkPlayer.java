@@ -3,10 +3,14 @@ package com.laudynetwork.networkutils.api.player;
 import com.laudynetwork.networkutils.api.messanger.backend.TranslationLanguage;
 import com.laudynetwork.networkutils.api.sql.SQLConnection;
 import com.viaversion.viaversion.api.Via;
+import lombok.SneakyThrows;
+import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.SQLException;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("SqlResolve")
 public class NetworkPlayer {
@@ -28,6 +32,7 @@ public class NetworkPlayer {
         return ProtocolVersion.getByProtocolVersion(Via.getAPI().getPlayerVersion(uuid));
     }
 
+    @SneakyThrows
     public TranslationLanguage getLanguage() {
 
         if (!connection.existsColumn("minecraft_general_playerData", "uuid", uuid)) {
@@ -35,7 +40,21 @@ public class NetworkPlayer {
             return TranslationLanguage.ENGLISH;
         }
 
-        return TranslationLanguage.getFromDBName(connection.getStringResultColumn("minecraft_general_playerData", "uuid", uuid.toString(), "language").value().toString().toUpperCase());
+        val future = new CompletableFuture<String>();
+
+        connection.resultSet("SELECT * FROM minecraft_general_playerData WHERE uuid = " + uuid, resultSet -> {
+            try {
+                while (resultSet.next()) {
+
+                    future.complete(resultSet.getString("language"));
+
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        return TranslationLanguage.getFromDBName(future.get().toUpperCase());
     }
 
     public void setLanguage(TranslationLanguage language) {

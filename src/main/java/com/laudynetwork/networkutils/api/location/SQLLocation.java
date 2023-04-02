@@ -6,8 +6,10 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.bukkit.Location;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class SQLLocation {
 
@@ -60,14 +62,27 @@ public class SQLLocation {
         return list;
     }
 
+    @SneakyThrows
     public Location getStoredLocation() {
         checkTable(this.connection);
 
         if (!this.connection.existsColumn("minecraft_general_locations", "locationKey", this.locationKey))
             return null;
 
-        val stringResultColumn = this.connection.getStringResultColumn("minecraft_general_locations", "locationKey", this.locationKey, "location");
-        return SQLWrapper.fromStringToLocation(stringResultColumn.value().toString());
+        val future = new CompletableFuture<String>();
+
+        this.connection.resultSet("minecraft_general_locations", resultSet -> {
+            try {
+                while (resultSet.next()) {
+
+                    future.complete(resultSet.getString("locationKey"));
+
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return SQLWrapper.fromStringToLocation(future.get());
     }
 
     public void updateLocation(Location location) {
