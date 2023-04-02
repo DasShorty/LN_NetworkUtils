@@ -4,13 +4,10 @@ import com.laudynetwork.networkutils.api.messanger.backend.TranslationLanguage;
 import com.laudynetwork.networkutils.api.sql.SQLConnection;
 import com.viaversion.viaversion.api.Via;
 import lombok.SneakyThrows;
-import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.SQLException;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("SqlResolve")
 public class NetworkPlayer {
@@ -22,6 +19,7 @@ public class NetworkPlayer {
     public NetworkPlayer(SQLConnection connection, UUID uuid) {
         this.connection = connection;
         this.uuid = uuid;
+
         this.logger = LoggerFactory.getLogger("NetworkPlayer");
 
         connection.createTableWithPrimaryKey("minecraft_general_playerData", "uuid", new SQLConnection.TableColumn("uuid", SQLConnection.ColumnType.VARCHAR, 35),
@@ -40,13 +38,8 @@ public class NetworkPlayer {
             return TranslationLanguage.ENGLISH;
         }
 
-        val future = new CompletableFuture<String>();
-
-        connection.resultSet("SELECT * FROM minecraft_general_playerData WHERE uuid = " + uuid, resultSet -> {
-            try {
-                while (resultSet.next()) {
-
-                    future.complete(resultSet.getString("language"));
+        var result = sql.rowSelect(select);
+        var language = (String) result.getRows().get(0).get("language");
 
                 }
             } catch (SQLException e) {

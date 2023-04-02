@@ -1,10 +1,10 @@
 package com.laudynetwork.networkutils.api.location.commandimpl;
 
+import com.laudynetwork.database.mysql.MySQL;
 import com.laudynetwork.networkutils.api.location.SQLLocation;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
 import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
 import com.laudynetwork.networkutils.api.messanger.backend.TranslationLanguage;
-import com.laudynetwork.networkutils.api.sql.SQLConnection;
 import lombok.val;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -21,12 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LocationCommand implements CommandExecutor, TabCompleter {
-    private final SQLConnection connection;
+    private final MySQL sql;
     private final MessageAPI msgAPI;
 
     public LocationCommand(MessageBackend msgBackend) {
         this.msgAPI = new MessageAPI(msgBackend, MessageAPI.PrefixType.SYSTEM);
-        this.connection = msgBackend.getConnection();
+        this.sql = msgBackend.getSql();
     }
 
     @Override
@@ -61,7 +61,7 @@ public class LocationCommand implements CommandExecutor, TabCompleter {
                         player.sendMessage(this.msgAPI.getMessage(TranslationLanguage.ENGLISH, "command.use", Placeholder.unparsed("command", "/location get <location-key>")));
                     }
                     case "list" -> {
-                        val locationNames = SQLLocation.getAllLocationNames(this.connection);
+                        val locationNames = SQLLocation.getAllLocationNames(this.sql);
 
                         player.sendMessage(this.msgAPI.getMessage(TranslationLanguage.ENGLISH, "location.command.list"));
 
@@ -79,12 +79,12 @@ public class LocationCommand implements CommandExecutor, TabCompleter {
                         val location = player.getLocation();
 
                         val key = args[1];
-                        if (SQLLocation.existsLocation(key, this.connection)) {
+                        if (SQLLocation.existsLocation(key, this.sql)) {
                             player.sendMessage(this.msgAPI.getMessage(TranslationLanguage.ENGLISH, "command.location.exist"));
                             return true;
                         }
 
-                        SQLLocation.createLocation(key, location, this.connection);
+                        SQLLocation.createLocation(key, location, this.sql);
 
                         player.sendMessage(this.msgAPI.getMessage(TranslationLanguage.ENGLISH, "command.location.add"));
 
@@ -93,12 +93,12 @@ public class LocationCommand implements CommandExecutor, TabCompleter {
 
                     case "remove" -> {
 
-                        if (!SQLLocation.existsLocation(args[1], this.connection)) {
+                        if (!SQLLocation.existsLocation(args[1], this.sql)) {
                             player.sendMessage(this.msgAPI.getMessage(TranslationLanguage.ENGLISH, "command.location.not.exist"));
                             return true;
                         }
 
-                        val sqlLocation = SQLLocation.fromSQL(args[1], this.connection);
+                        val sqlLocation = SQLLocation.fromSQL(args[1], this.sql);
                         sqlLocation.deleteLocation();
 
                         player.sendMessage(this.msgAPI.getMessage(TranslationLanguage.ENGLISH, "command.location.remove"));
@@ -109,12 +109,12 @@ public class LocationCommand implements CommandExecutor, TabCompleter {
 
                         player.sendMessage(args[1]);
 
-                        if (!SQLLocation.existsLocation(args[1], this.connection)) {
+                        if (!SQLLocation.existsLocation(args[1], this.sql)) {
                             player.sendMessage(this.msgAPI.getMessage(TranslationLanguage.ENGLISH, "command.location.not.exist"));
                             return true;
                         }
 
-                        val sqlLocation = SQLLocation.fromSQL(args[1], this.connection);
+                        val sqlLocation = SQLLocation.fromSQL(args[1], this.sql);
                         val storageLocation = sqlLocation.getStoredLocation();
 
                         val tpTranslation = this.msgAPI.getTranslation(TranslationLanguage.ENGLISH, "layout.tp").clickEvent(
@@ -154,7 +154,7 @@ public class LocationCommand implements CommandExecutor, TabCompleter {
                         list.add("<Location Key>");
                     }
                     case "remove", "get" -> {
-                        list.addAll(SQLLocation.getAllLocationNames(this.connection));
+                        list.addAll(SQLLocation.getAllLocationNames(this.sql));
                     }
                 }
             }

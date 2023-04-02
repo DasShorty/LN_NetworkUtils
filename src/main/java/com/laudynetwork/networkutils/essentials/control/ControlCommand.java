@@ -38,7 +38,7 @@ public class ControlCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        val networkPlayer = new NetworkPlayer(this.msgBackend.getConnection(), player.getUniqueId());
+        val networkPlayer = new NetworkPlayer(this.msgBackend.getSql(), player.getUniqueId());
 
         val language = networkPlayer.getLanguage();
 
@@ -86,7 +86,7 @@ public class ControlCommand implements CommandExecutor, TabCompleter {
                 return list;
 
             val subCommand = this.subCommandHandler.getSubCommands().get(id);
-            list.addAll(subCommand.onTabComplete(player, command, label, args, this.msgBackend, this.msgApi, new NetworkPlayer(this.msgBackend.getConnection(), player.getUniqueId())));
+            list.addAll(subCommand.onTabComplete(player, command, label, args, this.msgBackend, this.msgApi, new NetworkPlayer(this.msgBackend.getSql(), player.getUniqueId())));
         }
 
         val completer = new ArrayList<String>();

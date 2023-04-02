@@ -1,10 +1,10 @@
 package com.laudynetwork.networkutils.essentials;
 
+import com.laudynetwork.database.mysql.MySQL;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
 import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
 import com.laudynetwork.networkutils.api.messanger.backend.TranslationLanguage;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
-import com.laudynetwork.networkutils.api.sql.SQLConnection;
 import lombok.val;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -25,10 +25,10 @@ import java.util.List;
 public class GamemodeCommand implements CommandExecutor, TabCompleter {
 
     private final MessageAPI msgApi;
-    private final SQLConnection sqlConnection;
+    private final MySQL sql;
 
     public GamemodeCommand(MessageBackend msgBackend) {
-        this.sqlConnection = msgBackend.getConnection();
+        this.sql = msgBackend.getSql();
         this.msgApi = new MessageAPI(msgBackend, MessageAPI.PrefixType.SYSTEM);
     }
 
@@ -40,7 +40,7 @@ public class GamemodeCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        NetworkPlayer networkPlayer = new NetworkPlayer(this.sqlConnection, player.getUniqueId());
+        NetworkPlayer networkPlayer = new NetworkPlayer(this.sql, player.getUniqueId());
 
         val language = networkPlayer.getLanguage();
 

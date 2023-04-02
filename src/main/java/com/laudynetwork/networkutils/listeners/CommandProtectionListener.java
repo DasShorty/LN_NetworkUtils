@@ -29,7 +29,7 @@ public class CommandProtectionListener implements Listener {
         val command = message.split(" ")[0];
 
         val player = event.getPlayer();
-        val networkPlayer = new NetworkPlayer(this.msgBackend.getConnection(), player.getUniqueId());
+        val networkPlayer = new NetworkPlayer(this.msgBackend.getSql(), player.getUniqueId());
 
         val language = networkPlayer.getLanguage();
 

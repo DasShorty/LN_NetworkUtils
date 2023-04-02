@@ -1,6 +1,6 @@
 package com.laudynetwork.networkutils.api.location;
 
-import com.laudynetwork.networkutils.api.sql.SQLConnection;
+import com.laudynetwork.database.mysql.MySQL;
 import lombok.val;
 import org.bukkit.Location;
 
@@ -11,14 +11,14 @@ public class LocationCache {
 
     private final Map<String, Location> locationMap = new HashMap<>();
 
-    public LocationCache(SQLConnection connection) {
-        loadAllLocationsInCache(connection);
+    public LocationCache(MySQL sql) {
+        loadAllLocationsInCache(sql);
     }
 
-    private void loadAllLocationsInCache(SQLConnection connection) {
+    private void loadAllLocationsInCache(MySQL sql) {
 
-        SQLLocation.getAllLocationNames(connection).forEach(locationKey -> {
-            val sqlLocation = SQLLocation.fromSQL(locationKey, connection);
+        SQLLocation.getAllLocationNames(sql).forEach(locationKey -> {
+            val sqlLocation = SQLLocation.fromSQL(locationKey, sql);
 
             locationMap.put(locationKey, sqlLocation.getStoredLocation());
 
