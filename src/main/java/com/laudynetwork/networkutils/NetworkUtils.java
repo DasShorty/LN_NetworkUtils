@@ -27,7 +27,6 @@ import java.util.Objects;
 @SuppressWarnings("unused")
 public final class NetworkUtils extends JavaPlugin {
     private static NetworkUtils INSTANCE;
-    //private SQLConnection dbConnection;
     @Getter
     private MySQL sql;
     @Getter
@@ -42,12 +41,8 @@ public final class NetworkUtils extends JavaPlugin {
     public void onLoad() {
         INSTANCE = this;
         this.redis = new Redis();
-
-        getSLF4JLogger().info("Loading config!");
-        saveDefaultConfig();
-        FileConfiguration config = this.getConfig();
-
-        sql = new MySQL("89.163.129.221", "laudynetwork", "M8-)opnbhrn/z]kD", "laudynetwork");
+        sql = new MySQL("89.163.129.221", "laudynetwork", "M8- )opnbhrn/z]kD", "laudynetwork");
+        this.sql.connect();
     }
 
     @Override
