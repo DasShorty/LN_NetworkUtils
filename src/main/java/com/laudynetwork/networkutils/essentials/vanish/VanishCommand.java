@@ -41,7 +41,7 @@ public class VanishCommand implements CommandExecutor, Listener {
             return true;
         }
 
-        NetworkPlayer networkPlayer = new NetworkPlayer(NetworkUtils.getINSTANCE().getDbConnection(), player.getUniqueId());
+        NetworkPlayer networkPlayer = new NetworkPlayer(NetworkUtils.getINSTANCE().getSql(), player.getUniqueId());
 
         val language = networkPlayer.getLanguage();
 

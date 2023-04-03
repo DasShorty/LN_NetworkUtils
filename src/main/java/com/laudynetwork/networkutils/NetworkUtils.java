@@ -1,10 +1,10 @@
 package com.laudynetwork.networkutils;
 
+import com.laudynetwork.database.mysql.MySQL;
+import com.laudynetwork.database.redis.Redis;
 import com.laudynetwork.networkutils.api.gui.GUIHandler;
 import com.laudynetwork.networkutils.api.location.commandimpl.LocationCommand;
 import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
-import com.laudynetwork.networkutils.api.redis.Redis;
-import com.laudynetwork.networkutils.api.sql.SQLConnection;
 import com.laudynetwork.networkutils.api.tablist.TablistManager;
 import com.laudynetwork.networkutils.essentials.FlyCommand;
 import com.laudynetwork.networkutils.essentials.GamemodeCommand;
@@ -16,7 +16,6 @@ import com.laudynetwork.networkutils.listeners.CommandProtectionListener;
 import com.laudynetwork.networkutils.registration.RegisterCommand;
 import lombok.Getter;
 import net.luckperms.api.LuckPerms;
-import net.minecraft.locale.Language;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -28,17 +27,15 @@ import java.util.Objects;
 @SuppressWarnings("unused")
 public final class NetworkUtils extends JavaPlugin {
     private static NetworkUtils INSTANCE;
-    private SQLConnection dbConnection;
+    //private SQLConnection dbConnection;
+    @Getter
+    private MySQL sql;
     @Getter
     private TablistManager tablistManager;
     private Redis redis;
 
     public static NetworkUtils getINSTANCE() {
         return INSTANCE;
-    }
-
-    public SQLConnection getDbConnection() {
-        return dbConnection;
     }
 
     @Override
@@ -50,7 +47,7 @@ public final class NetworkUtils extends JavaPlugin {
         saveDefaultConfig();
         FileConfiguration config = this.getConfig();
 
-        this.dbConnection = new SQLConnection(config.getString("db.jdbc"), config.getString("db.user"), config.getString("db.pwd"));
+        sql = new MySQL("89.163.129.221", "laudynetwork", "M8-)opnbhrn/z]kD", "laudynetwork");
     }
 
     @Override
@@ -58,7 +55,7 @@ public final class NetworkUtils extends JavaPlugin {
 
         GUIHandler<Plugin> guiHandler = new GUIHandler<>(this);
 
-        MessageBackend backend = new MessageBackend(this.dbConnection, "networkutils");
+        MessageBackend backend = new MessageBackend(this.sql, "networkutils");
 
         var pm = Bukkit.getPluginManager();
 
@@ -97,5 +94,6 @@ public final class NetworkUtils extends JavaPlugin {
     @Override
     public void onDisable() {
         this.redis.shutdown();
+        this.sql.close();
     }
 }

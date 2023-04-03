@@ -1,10 +1,10 @@
 package com.laudynetwork.networkutils.essentials;
 
+import com.laudynetwork.database.mysql.MySQL;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
 import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
 import com.laudynetwork.networkutils.api.messanger.backend.TranslationLanguage;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
-import com.laudynetwork.networkutils.api.sql.SQLConnection;
 import lombok.val;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
@@ -22,11 +22,11 @@ import java.util.List;
 public class FlyCommand implements CommandExecutor, TabCompleter {
 
     private final MessageAPI msgApi;
-    private final SQLConnection sqlConnection;
+    private final MySQL sql;
 
     public FlyCommand(MessageBackend msgBackend) {
         this.msgApi = new MessageAPI(msgBackend, MessageAPI.PrefixType.SYSTEM);
-        this.sqlConnection = msgBackend.getConnection();
+        this.sql = msgBackend.getSql();
     }
 
     @Override
@@ -37,7 +37,7 @@ public class FlyCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        NetworkPlayer networkPlayer = new NetworkPlayer(this.sqlConnection, player.getUniqueId());
+        NetworkPlayer networkPlayer = new NetworkPlayer(this.sql, player.getUniqueId());
 
         val language = networkPlayer.getLanguage();
 

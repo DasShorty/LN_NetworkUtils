@@ -1,6 +1,7 @@
 package com.laudynetwork.networkutils.api.messanger.backend;
 
-import com.laudynetwork.networkutils.api.sql.SQLConnection;
+import com.laudynetwork.database.mysql.MySQL;
+import com.laudynetwork.database.mysql.utils.Select;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -14,21 +15,17 @@ import java.util.Map;
 public class MessageBackend {
 
     @Getter
-    private final SQLConnection connection;
+    private final MySQL sql;
     private final Logger logger;
     private Map<TranslationLanguage, Map<String, Translation>> translationMap;
 
-    public MessageBackend(@NotNull SQLConnection connection, @NotNull String project) {
-        this.connection = connection;
+    public MessageBackend(MySQL sql, @NotNull String project) {
+
+        this.sql = sql;
 
         logger = LoggerFactory.getLogger(getClass());
 
         logger.info("Starting MessageBackend with project: " + project + " ...");
-
-        connection.createTableWithPrimaryKey("translations", "translationKey", new SQLConnection.TableColumn("translationKey", SQLConnection.ColumnType.VARCHAR, 255),
-                new SQLConnection.TableColumn("project", SQLConnection.ColumnType.VARCHAR, 255), new SQLConnection.TableColumn("de", SQLConnection.ColumnType.VARCHAR,
-                        255), new SQLConnection.TableColumn("en", SQLConnection.ColumnType.VARCHAR, 255), new SQLConnection.TableColumn("ru",
-                        SQLConnection.ColumnType.VARCHAR, 255), new SQLConnection.TableColumn("jp", SQLConnection.ColumnType.VARCHAR, 255));
 
         logger.info("MessageBackend started!");
 
@@ -53,22 +50,19 @@ public class MessageBackend {
         var japanese = new HashMap<String, Translation>();
         var russian = new HashMap<String, Translation>();
 
-        val prepareStatement = connection.getMySQLConnection().prepareStatement("SELECT * FROM `translations` WHERE `project` = '" + project + "' OR `project` = 'plugins'");
+        val result = this.sql.rowSelect(new Select("translations", "*", "project = '" + project + "' OR project = 'plugins'"));
 
-        val resultSet = prepareStatement.executeQuery();
-
-        while (resultSet.next()) {
-            val key = resultSet.getString("translationKey");
-            val germanTranslation = resultSet.getString("de");
+        result.getRows().forEach(row -> {
+            val key = ((String) row.get("translationKey"));
+            val germanTranslation = ((String) row.get("de"));
             german.put(key, new Translation(key, TranslationLanguage.GERMAN, germanTranslation));
-            val englishTranslation = resultSet.getString("en");
+            val englishTranslation = ((String) row.get("en"));
             english.put(key, new Translation(key, TranslationLanguage.ENGLISH, englishTranslation));
-            val japaneseTranslation = resultSet.getString("jp");
+            val japaneseTranslation = ((String) row.get("jp"));
             japanese.put(key, new Translation(key, TranslationLanguage.JAPANESE, japaneseTranslation));
-            val russianTranslation = resultSet.getString("ru");
+            val russianTranslation = ((String) row.get("ru"));
             russian.put(key, new Translation(key, TranslationLanguage.RUSSIAN, russianTranslation));
-
-        }
+        });
 
         translationMap.put(TranslationLanguage.GERMAN, german);
         translationMap.put(TranslationLanguage.ENGLISH, english);
@@ -79,6 +73,6 @@ public class MessageBackend {
     }
 
     public boolean existsTranslation(String key) {
-        return this.getConnection().existsColumn("translations", "translationKey", key);
+        return this.sql.rowExist(new Select("translations", "*", String.format("translationKey = '%s'", key)));
     }
 }

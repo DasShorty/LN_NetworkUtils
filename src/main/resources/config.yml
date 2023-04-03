@@ -1,4 +1,0 @@
-db:
-  jdbc: 'jdbc:mariadb://localhost:3306/laudynetwork?autoReconnect=true&allowPublicKeyRetrieval=true&useSSL=false'
-  user: 'laudynetwork'
-  pwd: 'M8-)opnbhrn/z]kD'

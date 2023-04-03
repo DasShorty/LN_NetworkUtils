@@ -1,7 +1,8 @@
 package com.laudynetwork.networkutils.registration;
 
-import com.laudynetwork.networkutils.api.redis.Redis;
-import com.laudynetwork.networkutils.api.sql.SQLConnection;
+import com.laudynetwork.database.mysql.MySQL;
+import com.laudynetwork.database.mysql.utils.Select;
+import com.laudynetwork.database.redis.Redis;
 import lombok.SneakyThrows;
 import lombok.val;
 
@@ -12,11 +13,11 @@ import java.util.regex.Pattern;
 
 public class WebsiteRegisterManager {
 
-    private final SQLConnection sqlConnection;
+    private final MySQL sql;
     private final Redis redis;
 
-    public WebsiteRegisterManager(SQLConnection sqlConnection, Redis redis) {
-        this.sqlConnection = sqlConnection;
+    public WebsiteRegisterManager(MySQL sql, Redis redis) {
+        this.sql = sql;
         this.redis = redis;
     }
 
@@ -24,17 +25,16 @@ public class WebsiteRegisterManager {
     public CompletableFuture<RegisteredUser> addUser(UUID uuid, String email) {
         val future = new CompletableFuture<RegisteredUser>();
 
-        if (this.sqlConnection.existsColumn("website_users", "uuid", uuid.toString())) {
+        if (this.sql.rowExist(new Select("website_users", "*", String.format("uuid = '%s'", uuid.toString())))) {
             future.complete(new RegisteredUser(false, null));
             return future;
         }
 
         UUID token = UUID.randomUUID();
 
-        this.sqlConnection.insert("website_users", new SQLConnection.DataColumn("uuid", uuid.toString()),
-                new SQLConnection.DataColumn("email", email));
+        this.sql.tableInsert("website_users", "uuid, email", uuid.toString(), email);
 
-        val done = this.redis.getConnection().async().setex(token.toString(), Duration.ofHours(2).toSeconds(), email).isDone();
+        this.redis.getConnection().async().setex(token.toString(), Duration.ofHours(2).toSeconds(), email).isDone();
 
         future.complete(new RegisteredUser(true, token));
         return future;

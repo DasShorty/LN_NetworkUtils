@@ -1,10 +1,10 @@
 package com.laudynetwork.networkutils.registration;
 
+import com.laudynetwork.database.redis.Redis;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
 import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
 import com.laudynetwork.networkutils.api.messanger.backend.TranslationLanguage;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
-import com.laudynetwork.networkutils.api.redis.Redis;
 import lombok.SneakyThrows;
 import lombok.val;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -29,10 +29,11 @@ public class RegisterCommand implements CommandExecutor, TabCompleter {
     public RegisterCommand(MessageBackend msgBackend, Redis redis) {
         this.msgBackend = msgBackend;
         this.msgApi = new MessageAPI(msgBackend, MessageAPI.PrefixType.SYSTEM);
-        this.registerManager = new WebsiteRegisterManager(msgBackend.getConnection(), redis);
+        this.registerManager = new WebsiteRegisterManager(msgBackend.getSql(), redis);
     }
 
-    @Override @SneakyThrows
+    @Override
+    @SneakyThrows
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
         if (!(sender instanceof Player player)) {
@@ -40,7 +41,7 @@ public class RegisterCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        val networkPlayer = new NetworkPlayer(this.msgBackend.getConnection(), player.getUniqueId());
+        val networkPlayer = new NetworkPlayer(this.msgBackend.getSql(), player.getUniqueId());
         val language = networkPlayer.getLanguage();
 
 

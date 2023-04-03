@@ -29,7 +29,7 @@ public class LanguageUI extends GUI {
     @Override
     public void generateGUI(Player player) {
 
-        val networkPlayer = new NetworkPlayer(this.msgBackend.getConnection(), player.getUniqueId());
+        val networkPlayer = new NetworkPlayer(this.msgBackend.getSql(), player.getUniqueId());
 
         val language = networkPlayer.getLanguage();
 
