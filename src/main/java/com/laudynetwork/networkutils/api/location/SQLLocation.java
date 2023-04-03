@@ -31,7 +31,7 @@ public class SQLLocation {
     }
 
     public static boolean existsLocation(String locationKey, MySQL sql) {
-        return sql.rowExist(new Select("minecraft_general_locations", "*", String.format("translationKey = '%s'", locationKey)));
+        return sql.rowExist(new Select("minecraft_general_locations", "*", String.format("locationKey = '%s'", locationKey)));
     }
 
     @SneakyThrows

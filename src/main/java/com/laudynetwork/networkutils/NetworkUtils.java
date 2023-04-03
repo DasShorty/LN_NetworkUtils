@@ -11,13 +11,12 @@ import com.laudynetwork.networkutils.essentials.GamemodeCommand;
 import com.laudynetwork.networkutils.essentials.control.ControlCommand;
 import com.laudynetwork.networkutils.essentials.language.LanguageCommand;
 import com.laudynetwork.networkutils.essentials.vanish.VanishCommand;
-import com.laudynetwork.networkutils.listeners.Base64Listener;
+import com.laudynetwork.networkutils.listeners.ChatListener;
 import com.laudynetwork.networkutils.listeners.CommandProtectionListener;
 import com.laudynetwork.networkutils.registration.RegisterCommand;
 import lombok.Getter;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -54,7 +53,7 @@ public final class NetworkUtils extends JavaPlugin {
 
         var pm = Bukkit.getPluginManager();
 
-        pm.registerEvents(new Base64Listener(), this);
+        pm.registerEvents(new ChatListener(), this);
         pm.registerEvents(new CommandProtectionListener(backend), this);
 
         Objects.requireNonNull(getCommand("location")).setExecutor(new LocationCommand(backend));
