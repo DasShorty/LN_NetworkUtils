@@ -3,9 +3,9 @@ package com.laudynetwork.networkutils.api.location;
 import com.laudynetwork.database.mysql.MySQL;
 import com.laudynetwork.database.mysql.utils.Select;
 import com.laudynetwork.database.mysql.utils.UpdateValue;
-import com.laudynetwork.networkutils.api.sql.SQLWrapper;
 import lombok.SneakyThrows;
 import lombok.val;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import java.util.List;
@@ -25,7 +25,7 @@ public class SQLLocation {
     }
 
     public static SQLLocation createLocation(String locationKey, Location location, MySQL sql) {
-        sql.tableInsert("minecraft_general_locations", "locationKey, location", locationKey, SQLWrapper.fromLocationToString(location));
+        sql.tableInsert("minecraft_general_locations", "locationKey, location", locationKey, fromLocationToString(location));
         return new SQLLocation(locationKey, sql);
     }
 
@@ -38,6 +38,22 @@ public class SQLLocation {
         return sql.rowSelect(new Select("minecraft_general_locations", "*", "")).getRows().stream().map(row -> ((String) row.get("locationKey"))).toList();
     }
 
+    private static Location fromStringToLocation(String str) {
+
+        String[] split = str.split(";");
+        var world = Bukkit.getWorld(split[0]);
+        var x = Integer.parseInt(split[1]);
+        var y = Integer.parseInt(split[2]);
+        var z = Integer.parseInt(split[3]);
+        var yaw = Float.parseFloat(split[4]);
+        var pitch = Float.parseFloat(split[5]);
+        return new Location(world, x, y, z, yaw, pitch);
+    }
+
+    private static String fromLocationToString(Location loc) {
+        return loc.getWorld().getName() + ";" + loc.getBlockX() + ";" + loc.getBlockY() + ";" + loc.getBlockZ() + ";" + loc.getYaw() + ";" + loc.getPitch();
+    }
+
     @SneakyThrows
     public Location getStoredLocation() {
         if (!this.sql.rowExist(new Select("minecraft_general_locations", "*", String.format("locationKey = '%s'", this.locationKey))))
@@ -45,15 +61,16 @@ public class SQLLocation {
 
         val result = this.sql.rowSelect(new Select("minecraft_general_locations", "*", "locationKey = '%s'"));
 
-        return SQLWrapper.fromStringToLocation(((String) result.getRows().get(0).get("location")));
+        return fromStringToLocation(((String) result.getRows().get(0).get("location")));
     }
 
     public void updateLocation(Location location) {
-        this.sql.rowUpdate("minecraft_general_locations", String.format("location = '%s'", SQLWrapper.fromLocationToString(location)), new UpdateValue("location", SQLWrapper.fromLocationToString(location)));
+        this.sql.rowUpdate("minecraft_general_locations", String.format("location = '%s'", fromLocationToString(location)), new UpdateValue("location", fromLocationToString(location)));
     }
 
     public void deleteLocation() {
         this.sql.custom("DELETE FROM minecraft_general_locations WHERE locationKey = '" + this.locationKey + "'");
     }
+
 
 }
