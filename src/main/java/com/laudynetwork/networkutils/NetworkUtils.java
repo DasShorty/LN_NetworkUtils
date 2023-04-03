@@ -41,7 +41,7 @@ public final class NetworkUtils extends JavaPlugin {
     public void onLoad() {
         INSTANCE = this;
         this.redis = new Redis();
-        sql = new MySQL("89.163.129.221", "laudynetwork", "M8- )opnbhrn/z]kD", "laudynetwork");
+        sql = new MySQL("89.163.129.221", "laudynetwork", "M8-)opnbhrn/z]kD", "laudynetwork");
         this.sql.connect();
     }
 

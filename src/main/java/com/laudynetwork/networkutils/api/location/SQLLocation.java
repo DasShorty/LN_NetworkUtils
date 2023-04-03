@@ -8,6 +8,7 @@ import lombok.val;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class SQLLocation {
@@ -35,7 +36,7 @@ public class SQLLocation {
 
     @SneakyThrows
     public static List<String> getAllLocationNames(MySQL sql) {
-        return sql.rowSelect(new Select("minecraft_general_locations", "*", "")).getRows().stream().map(row -> ((String) row.get("locationKey"))).toList();
+        return sql.rowSelect(new Select("minecraft_general_locations", "*", "1 = 1")).getRows().stream().map(row -> ((String) row.get("locationKey"))).toList();
     }
 
     private static Location fromStringToLocation(String str) {
@@ -55,17 +56,21 @@ public class SQLLocation {
     }
 
     @SneakyThrows
-    public Location getStoredLocation() {
-        if (!this.sql.rowExist(new Select("minecraft_general_locations", "*", String.format("locationKey = '%s'", this.locationKey))))
+    public @Nullable Location getStoredLocation() {
+        val select = new Select("minecraft_general_locations", "*", String.format("locationKey = '%s'", this.locationKey));
+        if (!this.sql.rowExist(select))
             return null;
 
-        val result = this.sql.rowSelect(new Select("minecraft_general_locations", "*", "locationKey = '%s'"));
+        val result = this.sql.rowSelect(select);
+
+        if (result.getRows().isEmpty())
+            return null;
 
         return fromStringToLocation(((String) result.getRows().get(0).get("location")));
     }
 
     public void updateLocation(Location location) {
-        this.sql.rowUpdate("minecraft_general_locations", String.format("location = '%s'", fromLocationToString(location)), new UpdateValue("location", fromLocationToString(location)));
+        this.sql.rowUpdate("minecraft_general_locations", String.format("locationKey = '%s'", this.locationKey), new UpdateValue("location", fromLocationToString(location)));
     }
 
     public void deleteLocation() {

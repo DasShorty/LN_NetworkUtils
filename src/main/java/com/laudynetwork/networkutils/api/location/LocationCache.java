@@ -2,6 +2,7 @@ package com.laudynetwork.networkutils.api.location;
 
 import com.laudynetwork.database.mysql.MySQL;
 import lombok.val;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import java.util.HashMap;
@@ -20,7 +21,11 @@ public class LocationCache {
         SQLLocation.getAllLocationNames(sql).forEach(locationKey -> {
             val sqlLocation = SQLLocation.fromSQL(locationKey, sql);
 
-            locationMap.put(locationKey, sqlLocation.getStoredLocation());
+            if (sqlLocation.getStoredLocation() != null) {
+                locationMap.put(locationKey, sqlLocation.getStoredLocation());
+            } else {
+                Bukkit.getLogger().warning("Skipping location " + locationKey + " because location is scuffed");
+            }
 
         });
 
