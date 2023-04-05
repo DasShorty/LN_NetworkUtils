@@ -22,7 +22,7 @@ public record VanishedPlayer(UUID uuid) {
         if (vanished)
             Bukkit.getOnlinePlayers().forEach(players -> {
                 if (!players.hasPermission("networkutils.essentials.vanish")) {
-                    changeInCache(players, player, true);
+                    updateMetadata(players, player, true);
                     players.hidePlayer(NetworkUtils.getINSTANCE(), player);
                 }
             });
@@ -30,7 +30,7 @@ public record VanishedPlayer(UUID uuid) {
         else
             Bukkit.getOnlinePlayers().forEach(players -> {
                 if (!players.hasPermission("networkutils.essentials.vanish")) {
-                    changeInCache(players, player, false);
+                    updateMetadata(players, player, false);
                     players.showPlayer(NetworkUtils.getINSTANCE(), player);
                 }
             });
@@ -42,7 +42,7 @@ public record VanishedPlayer(UUID uuid) {
         return new VanishedPlayer(this.uuid);
     }
 
-    private void changeInCache(Player player, Player target, boolean value) {
+    public void updateMetadata(Player player, Player target, boolean value) {
 
         if (!player.hasMetadata("vanished-player"))
             player.setMetadata("vanished-player", new FixedMetadataValue(NetworkUtils.getINSTANCE(), new ArrayList<Player>()));
