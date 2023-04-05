@@ -18,10 +18,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -113,15 +111,9 @@ public class VanishCommand implements CommandExecutor, Listener {
 
         this.vanishCache.put(player.getUniqueId(), vanishedPlayer.isVanished());
 
-        if (!player.hasMetadata("vanished-player"))
-            player.setMetadata("vanished-player", new FixedMetadataValue(NetworkUtils.getINSTANCE(), new ArrayList<Player>()));
-
         Bukkit.getOnlinePlayers().forEach(players -> {
-
-            vanishedPlayer.updateMetadata(player, players, vanishedPlayer.isVanished());
-
-            val targetVanishedPlayer = new VanishedPlayer(players.getUniqueId());
-            targetVanishedPlayer.updateMetadata(players, player, targetVanishedPlayer.isVanished());
+            if (this.vanishCache.asMap().get(player.getUniqueId()))
+                players.hidePlayer(NetworkUtils.getINSTANCE(), player);
 
             if (this.vanishCache.asMap().get(players.getUniqueId()))
                 player.hidePlayer(NetworkUtils.getINSTANCE(), players);
