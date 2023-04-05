@@ -71,7 +71,7 @@ public class VanishCommand implements CommandExecutor, Listener {
             case 1 -> {
 
                 if (Bukkit.getPlayerExact(args[0]) == null) {
-                    player.sendMessage(msgApi.getMessage(language, "command.player.not.found"));
+                    player.sendMessage(msgApi.getMessage(language, "command.player.not.found", Placeholder.unparsed("player", args[0])));
                     return true;
                 }
 
