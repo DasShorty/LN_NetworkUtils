@@ -6,7 +6,10 @@ import com.laudynetwork.networkutils.NetworkUtils;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public record VanishedPlayer(UUID uuid) {
@@ -16,17 +19,42 @@ public record VanishedPlayer(UUID uuid) {
         val player = Bukkit.getPlayer(this.uuid);
         assert player != null;
 
-        Bukkit.getOnlinePlayers().forEach(players -> {
-            if (!players.hasPermission("networkutils.essentials.vanish")) {
-                players.hidePlayer(NetworkUtils.getINSTANCE(), player);
-            }
-        });
+        if (vanished)
+            Bukkit.getOnlinePlayers().forEach(players -> {
+                if (!players.hasPermission("networkutils.essentials.vanish")) {
+                    changeInCache(players, player, true);
+                    players.hidePlayer(NetworkUtils.getINSTANCE(), player);
+                }
+            });
+
+        else
+            Bukkit.getOnlinePlayers().forEach(players -> {
+                if (!players.hasPermission("networkutils.essentials.vanish")) {
+                    changeInCache(players, player, true);
+                    players.showPlayer(NetworkUtils.getINSTANCE(), player);
+                }
+            });
 
         updateDB(vanished);
 
         NetworkUtils.getINSTANCE().getTablistManager().updateScoreboard();
 
         return new VanishedPlayer(this.uuid);
+    }
+
+    private void changeInCache(Player player, Player target, boolean value) {
+
+        if (!player.hasMetadata("vanished-player"))
+            player.setMetadata("vanished-player", new FixedMetadataValue(NetworkUtils.getINSTANCE(), new ArrayList<Player>()));
+
+        val vanishedPlayers = ((ArrayList<Player>) player.getMetadata("vanished-player").get(0).value());
+        assert vanishedPlayers != null;
+
+        if (value)
+            vanishedPlayers.add(target);
+        else
+            vanishedPlayers.remove(target);
+
     }
 
     @SneakyThrows
