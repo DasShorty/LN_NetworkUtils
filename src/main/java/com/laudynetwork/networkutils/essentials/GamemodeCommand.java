@@ -98,7 +98,7 @@ public class GamemodeCommand implements CommandExecutor, TabCompleter {
                 }
 
                 if (Bukkit.getPlayer(args[1]) == null) {
-                    player.sendMessage(msgApi.getMessage(language, "command.player.not.found", Placeholder.unparsed("player", args[0])));
+                    player.sendMessage(msgApi.getMessage(language, "command.player.not.found", Placeholder.unparsed("player", args[1])));
                     return true;
                 }
 
