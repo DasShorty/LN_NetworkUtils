@@ -1,6 +1,7 @@
 package com.laudynetwork.networkutils.essentials.language;
 
 import com.laudynetwork.networkutils.api.gui.GUI;
+import com.laudynetwork.networkutils.api.gui.GUIItem;
 import com.laudynetwork.networkutils.api.item.itembuilder.HeadBuilder;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
 import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
@@ -10,6 +11,7 @@ import lombok.val;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -33,16 +35,36 @@ public class LanguageUI extends GUI {
 
         val language = networkPlayer.getLanguage();
 
-        set(11, getItem(LanguageHead.GERMAN.getHeadTexture(), "networkutils.language.ui.german", language));
-        set(15, getItem(LanguageHead.ENGLISH.getHeadTexture(), "networkutils.language.ui.english", language));
+        set(11, getItem(LanguageHead.GERMAN.getHeadTexture(), "networkutils.language.ui.german", language), (clicker, clickedItem, clickType) -> {
+            changeLanguage(TranslationLanguage.GERMAN, clicker);
+            return GUIItem.GUIAction.NONE;
+        });
+        set(15, getItem(LanguageHead.ENGLISH.getHeadTexture(), "networkutils.language.ui.english", language), (clicker, clickedItem, clickType) -> {
+            changeLanguage(TranslationLanguage.ENGLISH, clicker);
+            return GUIItem.GUIAction.NONE;
+        });
 
         setBackground(Material.GRAY_STAINED_GLASS_PANE);
     }
 
+    private void changeLanguage(TranslationLanguage language, Player player) {
+        System.out.println("1");
+        val networkPlayer = new NetworkPlayer(this.msgBackend.getSql(), player.getUniqueId());
+        networkPlayer.setLanguage(language);
+
+        val languageName = this.msgApi.getTranslation(language, "networkutils.language." + language.getDbName());
+        System.out.println("2");
+        player.sendMessage(this.msgApi.getMessage(networkPlayer.getLanguage(), "networkutils.language.changed", Placeholder.component("language", languageName)));
+    }
+
     private HeadBuilder getItem(String headTexture, String key, TranslationLanguage language) {
-        val headBuilder = new HeadBuilder().skullOwner(headTexture);
-        return headBuilder.displayName(this.msgApi.getTranslation(language, key + ".title"))
-                .lore(getLore(language, key + ".lore"));
+        var headBuilder = new HeadBuilder().skullOwner(headTexture);
+
+        if (this.msgBackend.existsTranslation(key + ".lore"))
+            headBuilder = headBuilder.lore(getLore(language, key + ".lore"));
+
+
+        return headBuilder.displayName(this.msgApi.getTranslation(language, key + ".title"));
     }
 
     private ArrayList<Component> getLore(TranslationLanguage language, String key) {
