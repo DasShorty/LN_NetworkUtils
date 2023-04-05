@@ -30,7 +30,7 @@ public record VanishedPlayer(UUID uuid) {
         else
             Bukkit.getOnlinePlayers().forEach(players -> {
                 if (!players.hasPermission("networkutils.essentials.vanish")) {
-                    changeInCache(players, player, true);
+                    changeInCache(players, player, false);
                     players.showPlayer(NetworkUtils.getINSTANCE(), player);
                 }
             });
