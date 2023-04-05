@@ -25,3 +25,4 @@ commands:
   register:
     permission: networkutils.register
   language:
+    aliases: [ lang, merkel-lass-mal-sprache-ändern ]
