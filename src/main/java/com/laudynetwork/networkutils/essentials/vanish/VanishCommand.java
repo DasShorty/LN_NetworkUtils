@@ -112,11 +112,13 @@ public class VanishCommand implements CommandExecutor, Listener {
         this.vanishCache.put(player.getUniqueId(), vanishedPlayer.isVanished());
 
         Bukkit.getOnlinePlayers().forEach(players -> {
-            if (this.vanishCache.asMap().get(player.getUniqueId()))
-                players.hidePlayer(NetworkUtils.getINSTANCE(), player);
+            if (this.vanishCache.asMap().containsKey(player.getUniqueId()))
+                if (this.vanishCache.asMap().get(player.getUniqueId()))
+                    players.hidePlayer(NetworkUtils.getINSTANCE(), player);
 
-            if (this.vanishCache.asMap().get(players.getUniqueId()))
-                player.hidePlayer(NetworkUtils.getINSTANCE(), players);
+            if (this.vanishCache.asMap().containsKey(players.getUniqueId()))
+                if (this.vanishCache.asMap().get(players.getUniqueId()))
+                    player.hidePlayer(NetworkUtils.getINSTANCE(), players);
         });
     }
 
