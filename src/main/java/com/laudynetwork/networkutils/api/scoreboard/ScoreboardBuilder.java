@@ -80,6 +80,8 @@ public abstract class ScoreboardBuilder {
         if (team == null)
             team = this.playerBoard.registerNewTeam(line.getPlaceholder());
 
+        team.addEntry(line.getPlaceholder());
+
         return team;
     }
 
