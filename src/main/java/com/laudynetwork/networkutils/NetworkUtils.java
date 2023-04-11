@@ -19,6 +19,7 @@ import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
@@ -47,7 +48,9 @@ public final class NetworkUtils extends JavaPlugin {
     @Override
     public void onEnable() {
 
+
         GUIHandler<Plugin> guiHandler = new GUIHandler<>(this);
+        Bukkit.getServicesManager().register(GUIHandler.class, guiHandler, this, ServicePriority.High);
 
         MessageBackend backend = new MessageBackend(this.sql, "networkutils");
 
