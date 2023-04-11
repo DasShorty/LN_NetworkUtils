@@ -16,10 +16,8 @@ import java.util.UUID;
 public class GUIHandler<P extends Plugin> implements Listener {
 
     private final Map<UUID, GUI> openGUIs = new HashMap<>();
-    private final GUIHandler instance;
 
     public GUIHandler(P plugin) {
-        this.instance = this;
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
