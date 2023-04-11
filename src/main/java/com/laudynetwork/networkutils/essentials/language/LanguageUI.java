@@ -1,5 +1,6 @@
 package com.laudynetwork.networkutils.essentials.language;
 
+import com.laudynetwork.networkutils.NetworkUtils;
 import com.laudynetwork.networkutils.api.gui.GUI;
 import com.laudynetwork.networkutils.api.gui.GUIItem;
 import com.laudynetwork.networkutils.api.item.itembuilder.HeadBuilder;
@@ -12,6 +13,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -47,13 +49,13 @@ public class LanguageUI extends GUI {
     }
 
     private void changeLanguage(TranslationLanguage language, Player player) {
-        System.out.println("1");
-        val networkPlayer = new NetworkPlayer(this.msgBackend.getSql(), player.getUniqueId());
-        networkPlayer.setLanguage(language);
+        Bukkit.getScheduler().runTaskAsynchronously(NetworkUtils.getINSTANCE(), () -> {
+            val networkPlayer = new NetworkPlayer(this.msgBackend.getSql(), player.getUniqueId());
+            networkPlayer.setLanguage(language);
 
-        val languageName = this.msgApi.getTranslation(language, "networkutils.language." + language.getDbName());
-        System.out.println("2");
-        player.sendMessage(this.msgApi.getMessage(networkPlayer.getLanguage(), "networkutils.language.changed", Placeholder.component("language", languageName)));
+            val languageName = this.msgApi.getTranslation(language, "networkutils.language." + language.getDbName());
+            player.sendMessage(this.msgApi.getMessage(networkPlayer.getLanguage(), "networkutils.language.changed", Placeholder.component("language", languageName)));
+        });
     }
 
     private HeadBuilder getItem(String headTexture, String key, TranslationLanguage language) {
