@@ -30,18 +30,17 @@ public class LanguageUI extends GUI {
 
     @Override
     public void generateGUI(Player player) {
-
         val networkPlayer = new NetworkPlayer(this.msgBackend.getSql(), player.getUniqueId());
 
         val language = networkPlayer.getLanguage();
 
         set(11, getItem(LanguageHead.GERMAN.getHeadTexture(), "networkutils.language.ui.german", language), (clicker, clickedItem, clickType) -> {
             changeLanguage(TranslationLanguage.GERMAN, clicker);
-            return GUIItem.GUIAction.NONE;
+            return GUIItem.GUIAction.CANCEL;
         });
         set(15, getItem(LanguageHead.ENGLISH.getHeadTexture(), "networkutils.language.ui.english", language), (clicker, clickedItem, clickType) -> {
             changeLanguage(TranslationLanguage.ENGLISH, clicker);
-            return GUIItem.GUIAction.NONE;
+            return GUIItem.GUIAction.CANCEL;
         });
 
         setBackground(Material.GRAY_STAINED_GLASS_PANE);
