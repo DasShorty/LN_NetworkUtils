@@ -3,9 +3,12 @@ package com.laudynetwork.networkutils.api.player;
 import com.laudynetwork.database.mysql.MySQL;
 import com.laudynetwork.database.mysql.utils.Select;
 import com.laudynetwork.database.mysql.utils.UpdateValue;
+import com.laudynetwork.networkutils.NetworkUtils;
 import com.laudynetwork.networkutils.api.messanger.backend.TranslationLanguage;
+import com.laudynetwork.networkutils.api.player.event.PlayerChangeLanguageEvent;
 import com.viaversion.viaversion.api.Via;
 import lombok.SneakyThrows;
+import org.bukkit.Bukkit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,8 +49,10 @@ public class NetworkPlayer {
     }
 
     public void setLanguage(TranslationLanguage language) {
-        var select = new Select("minecraft_general_playerData", "*", "uuid = '" + uuid.toString() + "'");
 
+        Bukkit.getPluginManager().callEvent(new PlayerChangeLanguageEvent(this, getLanguage(), language));
+
+        var select = new Select("minecraft_general_playerData", "*", "uuid = '" + uuid.toString() + "'");
         if (sql.rowExist(select)) {
             logger.info("Updating language for [" + uuid + "] to " + language.name());
             sql.rowUpdate("minecraft_general_playerData", "uuid = '" + uuid + "'", new UpdateValue("language", language.getDbName()));
