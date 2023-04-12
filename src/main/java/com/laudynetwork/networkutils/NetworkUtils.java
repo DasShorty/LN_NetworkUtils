@@ -85,6 +85,8 @@ public final class NetworkUtils extends JavaPlugin {
 
         this.tablistManager = new TablistManager(this, luckPerms);
 
+        Bukkit.getMessenger().registerOutgoingPluginChannel(this, "minecraft:player-send-to-server");
+
         getSLF4JLogger().info("loaded!");
     }
 
