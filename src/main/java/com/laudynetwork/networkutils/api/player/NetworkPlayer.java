@@ -3,10 +3,10 @@ package com.laudynetwork.networkutils.api.player;
 import com.laudynetwork.database.mysql.MySQL;
 import com.laudynetwork.database.mysql.utils.Select;
 import com.laudynetwork.database.mysql.utils.UpdateValue;
-import com.laudynetwork.networkutils.NetworkUtils;
 import com.laudynetwork.networkutils.api.messanger.backend.TranslationLanguage;
 import com.laudynetwork.networkutils.api.player.event.PlayerChangeLanguageEvent;
 import com.viaversion.viaversion.api.Via;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.slf4j.Logger;
@@ -18,6 +18,7 @@ import java.util.UUID;
 public class NetworkPlayer {
 
     private final MySQL sql;
+    @Getter
     private final UUID uuid;
     private final Logger logger;
 
