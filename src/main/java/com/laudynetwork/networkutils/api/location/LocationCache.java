@@ -11,8 +11,14 @@ import java.util.Map;
 public class LocationCache {
 
     private final Map<String, Location> locationMap = new HashMap<>();
+    private final MySQL sql;
 
     public LocationCache(MySQL sql) {
+        this.sql = sql;
+        loadAllLocationsInCache(sql);
+    }
+
+    public void updateLocations() {
         loadAllLocationsInCache(sql);
     }
 
