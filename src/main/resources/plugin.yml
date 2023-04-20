@@ -7,6 +7,8 @@ authors: [ ShortException ]
 description: Network Management (chat, ui, tablist, scoreboard)
 depend:
   - LuckPerms
+  - ProtocolLib
+  - ViaVersion
 commands:
   location:
     permission: networkutils.location
