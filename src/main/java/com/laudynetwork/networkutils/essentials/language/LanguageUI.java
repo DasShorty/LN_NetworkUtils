@@ -8,6 +8,7 @@ import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
 import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
 import com.laudynetwork.networkutils.api.messanger.backend.TranslationLanguage;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
+import com.laudynetwork.networkutils.api.player.event.PlayerChangeLanguageEvent;
 import lombok.val;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -23,18 +24,19 @@ public class LanguageUI extends GUI {
 
     private final MessageAPI msgApi;
     private final MessageBackend msgBackend;
+    private final TranslationLanguage language;
+    private final NetworkPlayer networkPlayer;
 
     public LanguageUI(Player player, Component displayName, MessageAPI msgApi, MessageBackend msgBackend) {
         super(player, displayName, 27);
         this.msgApi = msgApi;
         this.msgBackend = msgBackend;
+        this.networkPlayer = new NetworkPlayer(this.msgBackend.getSql(), player.getUniqueId());
+        this.language = this.networkPlayer.getLanguage();
     }
 
     @Override
     public void generateGUI(Player player) {
-        val networkPlayer = new NetworkPlayer(this.msgBackend.getSql(), player.getUniqueId());
-
-        val language = networkPlayer.getLanguage();
 
         set(11, getItem(LanguageHead.GERMAN.getHeadTexture(), "networkutils.language.ui.german", language), (clicker, clickedItem, clickType) -> {
             changeLanguage(TranslationLanguage.GERMAN, clicker);
@@ -50,7 +52,6 @@ public class LanguageUI extends GUI {
 
     private void changeLanguage(TranslationLanguage language, Player player) {
         Bukkit.getScheduler().runTaskAsynchronously(NetworkUtils.getINSTANCE(), () -> {
-            val networkPlayer = new NetworkPlayer(this.msgBackend.getSql(), player.getUniqueId());
             networkPlayer.setLanguage(language);
 
             val languageName = this.msgApi.getTranslation(language, "networkutils.language." + language.getDbName());
@@ -85,6 +86,6 @@ public class LanguageUI extends GUI {
 
     @Override
     public void onClose(Player player) {
-
+        Bukkit.getPluginManager().callEvent(new PlayerChangeLanguageEvent(networkPlayer, language, networkPlayer.getLanguage()));
     }
 }
