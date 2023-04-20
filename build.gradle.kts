@@ -30,16 +30,18 @@ dependencies {
     implementation("org.projectlombok:lombok:1.18.26")
     annotationProcessor("org.projectlombok:lombok:1.18.26")
     implementation("biz.paluch.redis:lettuce:4.5.0.Final")
-    paperweight.paperDevBundle("1.19.3-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("1.19.4-R0.1-SNAPSHOT")
     compileOnly("net.luckperms:api:5.4")
     compileOnly("com.viaversion:viaversion-api:4.6.2")
     implementation("com.laudynetwork:database:latest")
     api("eu.thesimplecloud.simplecloud:simplecloud-api:2.4.1")
+    api("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
 }
 repositories {
     mavenCentral()
     maven("https://repo.thesimplecloud.eu/artifactory/list/gradle-release-local/")
     maven("https://repo.viaversion.com")
+    maven("https://eldonexus.de/repository/maven-proxies/")
     maven {
         url = uri("https://repo.laudynetwork.com/repository/maven")
         authentication {
