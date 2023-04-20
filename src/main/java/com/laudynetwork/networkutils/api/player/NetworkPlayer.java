@@ -49,12 +49,7 @@ public class NetworkPlayer {
         return TranslationLanguage.getFromDBName(language);
     }
 
-    private synchronized void callEvent(TranslationLanguage oldLanguage, TranslationLanguage newLanguage) {
-        Bukkit.getPluginManager().callEvent(new PlayerChangeLanguageEvent(this, oldLanguage, newLanguage));
-    }
-
     public void setLanguage(TranslationLanguage language) {
-        callEvent(getLanguage(), language);
         var select = new Select("minecraft_general_playerData", "*", "uuid = '" + uuid.toString() + "'");
         if (sql.rowExist(select)) {
             logger.info("Updating language for [" + uuid + "] to " + language.name());
