@@ -13,6 +13,7 @@ public interface ControlSubCommand {
     String id();
 
     void onCommand(Player player, Command command, String label, String[] args, MessageBackend msgBackend, MessageAPI msgApi, NetworkPlayer networkPlayer);
+
     List<String> onTabComplete(Player player, Command command, String label, String[] args, MessageBackend msgBackend, MessageAPI msgApi, NetworkPlayer networkPlayer);
 
 }
