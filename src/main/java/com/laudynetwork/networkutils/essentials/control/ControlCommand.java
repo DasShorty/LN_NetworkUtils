@@ -24,10 +24,10 @@ public class ControlCommand implements CommandExecutor, TabCompleter {
     private final MessageBackend msgBackend;
     private final MessageAPI msgApi;
 
-    public ControlCommand(MessageBackend msgBackend) {
+    public ControlCommand(MessageBackend msgBackend, ControlSubCommandHandler handler) {
         this.msgBackend = msgBackend;
         this.msgApi = new MessageAPI(msgBackend, MessageAPI.PrefixType.SYSTEM);
-        this.subCommandHandler = new ControlSubCommandHandler();
+        this.subCommandHandler = handler;
     }
 
     @Override

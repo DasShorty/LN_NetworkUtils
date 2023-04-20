@@ -11,17 +11,11 @@ public class ControlSubCommandHandler {
     @Getter
     private final Map<String, ControlSubCommand> subCommands = new HashMap<>();
 
-    public ControlSubCommandHandler() {
-
-        // register sub commands
-
-    }
-
     public List<String> getSubCommandIDs() {
         return subCommands.keySet().stream().toList();
     }
 
-    private void registerSubCommand(ControlSubCommand subCommand) {
+    public void registerSubCommand(ControlSubCommand subCommand) {
         subCommands.put(subCommand.id(), subCommand);
     }
 
