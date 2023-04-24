@@ -76,7 +76,7 @@ tasks {
             exclude(dependency("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT"))
             exclude(dependency("eu.thesimplecloud.simplecloud:simplecloud-api:2.4.1"))
             exclude(dependency("eu.thesimplecloud.clientserverapi:clientserverapi:4.1.17"))
-            exclude(dependency("eu.thesimplecloud.jsonlib:json-lib:1.0.8"))
+            exclude(dependency("eu.thesimplecloud.jsonlib:json-lib:1.0.10"))
             exclude(dependency("eu.thesimplecloud.simplecloud:simplecloud-runner:2.4.1"))
         }
     }
