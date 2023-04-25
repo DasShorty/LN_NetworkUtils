@@ -21,11 +21,11 @@ jobs:
           chmod 777 gradlew
           ./gradlew build
         env:
-          USERNAME: root
-          PASSWORD: 2mo6LYMV4zMXsNsJ6xExZLabFdgMbV
+          NEXUS_USER: ${{ secrets.NEXUS_USER }}
+          NEXUS_PWD: ${{ secrets.NEXUS_PWD }}
       - name: Publish to Nexus
         if: github.ref == 'refs/heads/main'
         run: ./gradlew publish
         env:
-          USERNAME: root
-          PASSWORD: 2mo6LYMV4zMXsNsJ6xExZLabFdgMbV
+          NEXUS_USER: ${{ secrets.NEXUS_USER }}
+          NEXUS_PWD: ${{ secrets.NEXUS_PWD }}
