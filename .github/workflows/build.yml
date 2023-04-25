@@ -1,0 +1,57 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          java-version: 17
+      - name: Build with Gradle
+        run: |
+          chmod 777 gradlew
+          ./gradlew build
+        env:
+          USERNAME: root
+          PASSWORD: 2mo6LYMV4zMXsNsJ6xExZLabFdgMbV
+      - name: Publish to Nexus
+        if: github.ref == 'refs/heads/main'
+        run: ./gradlew publish
+        env:
+          USERNAME: root
+          PASSWORD: 2mo6LYMV4zMXsNsJ6xExZLabFdgMbV
+      - name: Upload artifacts
+        uses: appleboy/ftp-action@master
+        if: github.ref == 'refs/heads/main'
+        with:
+          host: 89.163.129.221
+          username: root
+          password: 'Z6%D~:M%3kA5nR"}e?'
+          local-dir: ./build/dist
+          remote-dir: /home/simplecloud/templates/EVERY_SERVER/plugins
+      - name: Upload artifacts to Build-1
+        uses: appleboy/ftp-action@master
+        if: github.ref == 'refs/heads/main'
+        with:
+          host: 89.163.129.221
+          username: root
+          password: 'Z6%D~:M%3kA5nR"}e?'
+          local-dir: ./build/dist
+          remote-dir: /home/simplecloud/static/Build-1/plugins
+      - name: Upload artifacts to BuilderPlots-1
+        uses: appleboy/ftp-action@master
+        if: github.ref == 'refs/heads/main'
+        with:
+          host: 89.163.129.221
+          username: root
+          password: 'Z6%D~:M%3kA5nR"}e?'
+          local-dir: ./build/dist
+          remote-dir: /home/simplecloud/static/BuilderPlots-1/plugins
