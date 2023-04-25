@@ -10,8 +10,8 @@ publishing {
         maven {
             url = uri("https://repo.laudynetwork.com/repository/maven")
             credentials {
-                username = "root"
-                password = "2mo6LYMV4zMXsNsJ6xExZLabFdgMbV"
+                username = System.getenv("NEXUS_USER")
+                password = System.getenv("NEXUS_PWD")
             }
         }
     }
@@ -35,7 +35,7 @@ dependencies {
     compileOnly("com.viaversion:viaversion-api:4.6.2")
     implementation("com.laudynetwork:database:latest")
     api("eu.thesimplecloud.simplecloud:simplecloud-api:2.4.1")
-    api("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
+    compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
 }
 repositories {
     mavenCentral()
