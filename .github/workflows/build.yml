@@ -28,30 +28,3 @@ jobs:
         env:
           USERNAME: root
           PASSWORD: 2mo6LYMV4zMXsNsJ6xExZLabFdgMbV
-      - name: Upload artifacts
-        uses: appleboy/ftp-action@master
-        if: github.ref == 'refs/heads/main'
-        with:
-          host: 89.163.129.221
-          username: root
-          password: 'Z6%D~:M%3kA5nR"}e?'
-          local-dir: ./build/dist
-          remote-dir: /home/simplecloud/templates/EVERY_SERVER/plugins
-      - name: Upload artifacts to Build-1
-        uses: appleboy/ftp-action@master
-        if: github.ref == 'refs/heads/main'
-        with:
-          host: 89.163.129.221
-          username: root
-          password: 'Z6%D~:M%3kA5nR"}e?'
-          local-dir: ./build/dist
-          remote-dir: /home/simplecloud/static/Build-1/plugins
-      - name: Upload artifacts to BuilderPlots-1
-        uses: appleboy/ftp-action@master
-        if: github.ref == 'refs/heads/main'
-        with:
-          host: 89.163.129.221
-          username: root
-          password: 'Z6%D~:M%3kA5nR"}e?'
-          local-dir: ./build/dist
-          remote-dir: /home/simplecloud/static/BuilderPlots-1/plugins
