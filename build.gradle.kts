@@ -27,6 +27,7 @@ java {
 }
 
 dependencies {
+    // test
     implementation("org.projectlombok:lombok:1.18.26")
     annotationProcessor("org.projectlombok:lombok:1.18.26")
     implementation("biz.paluch.redis:lettuce:4.5.0.Final")
