@@ -28,3 +28,12 @@ jobs:
         env:
           NEXUS_USER: ${{ secrets.NEXUS_USER }}
           NEXUS_PWD: ${{ secrets.NEXUS_PWD }}
+      - name: Upload artifacts
+        uses: appleboy/ftp-action@master
+        if: github.ref == 'refs/heads/main'
+        with:
+          host: 89.163.129.221
+          user: root
+          password: ${{ secrets.SFTP_PWD }}
+          local-dir: ./build/dist
+          remote-dir: /home/simplecloud/templates/EVERY_SERVER/plugins
