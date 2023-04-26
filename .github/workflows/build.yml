@@ -26,8 +26,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: data
-          path: |
-            ./build/dist
+          path: ./build/dist/NetworkUtils.jar
 
   deploy:
     runs-on: self-hosted
