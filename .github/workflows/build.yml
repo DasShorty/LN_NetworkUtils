@@ -42,4 +42,4 @@ jobs:
           compress: true                             # Compression
           forceUpload: true                          # Optional, Force uploading all files, Default to false(upload only newer files).
           localDir: '.'                              # Required, Absolute or relative to cwd.
-          remoteDir: '/'  
+          remoteDir: '/root'  
