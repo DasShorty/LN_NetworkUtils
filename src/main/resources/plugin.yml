@@ -6,25 +6,25 @@ prefix: NU
 authors: [ ShortException ]
 description: Network Management (chat, ui, tablist, scoreboard)
 depend:
-  - LuckPerms
-  - ProtocolLib
-  - ViaVersion
+    - LuckPerms
+    - ProtocolLib
+    - ViaVersion
 commands:
-  location:
-    permission: networkutils.location
-  gamemode:
-    permission: networkutils.gamemode
-    aliases: [ gm ]
-  fly:
-    permission: networkutils.fly
-    aliases: [ merkel-lass-mich-fliegen ]
-  vanish:
-    permission: networkutils.vanish
-    aliases: [ v ]
-  control:
-    permission: networkutils.control.basic
-    aliases: [ manage ]
-  register:
-    permission: networkutils.register
-  language:
-    aliases: [ lang, merkel-lass-mal-sprache-ändern ]
+    location:
+        permission: networkutils.location
+    gamemode:
+        permission: networkutils.gamemode
+        aliases: [ gm ]
+    fly:
+        permission: networkutils.fly
+        aliases: [ merkel-lass-mich-fliegen ]
+    vanish:
+        permission: networkutils.vanish
+        aliases: [ v ]
+    control:
+        permission: networkutils.control.basic
+        aliases: [ manage ]
+    register:
+        permission: networkutils.register
+    language:
+        aliases: [ lang, merkel-lass-mal-sprache-ändern ]

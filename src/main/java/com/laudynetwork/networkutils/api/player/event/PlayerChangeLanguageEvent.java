@@ -12,19 +12,19 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 public class PlayerChangeLanguageEvent extends Event {
 
+    private static final HandlerList handlers = new HandlerList();
     private final NetworkPlayer networkPlayer;
     private final TranslationLanguage oldLanguage;
     private final TranslationLanguage newLanguage;
 
-    private static final HandlerList handlers = new HandlerList();
     @NotNull
-    @Override
-    public HandlerList getHandlers() {
+    public static HandlerList getHandlerList() {
         return handlers;
     }
 
     @NotNull
-    public static HandlerList getHandlerList() {
+    @Override
+    public HandlerList getHandlers() {
         return handlers;
     }
 }

@@ -8,20 +8,6 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("unused")
 public class TextUtils {
 
-    public String formatTime(int seconds, boolean hoursVisible) {
-        int sec = seconds % 60;
-        int min = (seconds / 60) % 60;
-        int hours = ((seconds / 60) / 60) % 24;
-        int days = ((seconds / 60) / 60) / 24;
-
-        String strSec = (sec < 10) ? "0" + sec : Integer.toString(sec);
-        String strMin = (min < 10) ? "0" + min : Integer.toString(min);
-        String strHours = (hours < 10) ? "0" + hours : Integer.toString(hours);
-
-        return (days > 0 ? days + " Days " : "") + ((hours > 0) && hoursVisible ? strHours + ":" : "") + strMin + ":" +
-                strSec;
-    }
-
     public static @NotNull String toRoman(int number) {
         StringBuilder sb = new StringBuilder();
 
@@ -34,5 +20,19 @@ public class TextUtils {
             }
         }
         return sb.toString();
+    }
+
+    public String formatTime(int seconds, boolean hoursVisible) {
+        int sec = seconds % 60;
+        int min = (seconds / 60) % 60;
+        int hours = ((seconds / 60) / 60) % 24;
+        int days = ((seconds / 60) / 60) / 24;
+
+        String strSec = (sec < 10) ? "0" + sec : Integer.toString(sec);
+        String strMin = (min < 10) ? "0" + min : Integer.toString(min);
+        String strHours = (hours < 10) ? "0" + hours : Integer.toString(hours);
+
+        return (days > 0 ? days + " Days " : "") + ((hours > 0) && hoursVisible ? strHours + ":" : "") + strMin + ":" +
+                strSec;
     }
 }
