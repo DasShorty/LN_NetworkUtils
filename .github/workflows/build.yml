@@ -22,11 +22,6 @@ jobs:
         env:
           NEXUS_USER: ${{ secrets.NEXUS_USER }}
           NEXUS_PWD: ${{ secrets.NEXUS_PWD }}
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: NetworkUtils.jar
-          path: ./build/dist/NetworkUtils.jar
       - name: Upload to Server
         uses: Dylan700/sftp-upload-action@latest
         with:
