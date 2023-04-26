@@ -22,12 +22,6 @@ jobs:
         env:
           NEXUS_USER: ${{ secrets.NEXUS_USER }}
           NEXUS_PWD: ${{ secrets.NEXUS_PWD }}
-      - name: Publish to Nexus
-        if: github.ref == 'refs/heads/main'
-        run: ./gradlew publish
-        env:
-          NEXUS_USER: ${{ secrets.NEXUS_USER }}
-          NEXUS_PWD: ${{ secrets.NEXUS_PWD }}
       - name: Upload build artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -48,3 +42,12 @@ jobs:
           ignore: |
             *.git
             */**/*git*
+  publish:
+    runs-on: self-hosted
+    steps:
+      - name: Publish to Nexus
+        if: github.ref == 'refs/heads/main'
+        run: ./gradlew publish
+        env:
+          NEXUS_USER: ${{ secrets.NEXUS_USER }}
+          NEXUS_PWD: ${{ secrets.NEXUS_PWD }}
