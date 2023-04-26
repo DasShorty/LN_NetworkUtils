@@ -41,7 +41,7 @@ jobs:
           password: ${{ secrets.SFTP_PWD }}
           port: 22
           uploads: |
-            ./build/dist => ./home/simplecloud/templates/EVERY_SERVER/plugins
+            ./home/runner/_work/NetworkUtils/NetworkUtils/build/dist => ./home/simplecloud/templates/EVERY_SERVER/plugins
           ignore: |
             *.git
             */**/*git*
