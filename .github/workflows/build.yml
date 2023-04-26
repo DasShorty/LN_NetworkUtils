@@ -28,8 +28,8 @@ jobs:
         env:
           NEXUS_USER: ${{ secrets.NEXUS_USER }}
           NEXUS_PWD: ${{ secrets.NEXUS_PWD }}
-      - name: Upload artifacts
-        uses: appleboy/ftp-action@master
+      - name: Upload File to Server
+        uses: sebastianpopp/ftp-action@v2.0.0
         if: github.ref == 'refs/heads/main'
         with:
           host: 89.163.129.221
