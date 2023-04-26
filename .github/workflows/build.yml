@@ -40,5 +40,5 @@ jobs:
           host: 89.163.129.221
           user: root
           password: ${{ secrets.SFTP_PWD }}
-          localDir: ./build/dist
+          localDir: /home/runner/_work/NetworkUtils/NetworkUtils/build/dist/
           remoteDir: /home/simplecloud/templates/EVERY_SERVER/plugins
