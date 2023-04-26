@@ -33,12 +33,13 @@ jobs:
         with:
           name: NetworkUtils.jar
           path: ./build/dist/NetworkUtils.jar
-      - name: Upload File to Server
-        uses: sebastianpopp/ftp-action@v2.0.0
-        if: github.ref == 'refs/heads/main'
+      - name: 📂 SFTP uploader                       # Upload to SFTP 
+        uses: wangyucode/sftp-upload-action@v2.0.2
         with:
-          host: 89.163.129.221
-          user: root
+          host: ${{ secrets.SFTP_HOST }}                  # Recommended to put the credentials in github secrets.
+          username: ${{ secrets.SFTP_USER }}
           password: ${{ secrets.SFTP_PWD }}
-          localDir: /home/runner/_work/NetworkUtils/NetworkUtils/build/dist/
-          remoteDir: /home/simplecloud/templates/EVERY_SERVER/plugins
+          compress: true                             # Compression
+          forceUpload: true                          # Optional, Force uploading all files, Default to false(upload only newer files).
+          localDir: '.'                              # Required, Absolute or relative to cwd.
+          remoteDir: '/'  
