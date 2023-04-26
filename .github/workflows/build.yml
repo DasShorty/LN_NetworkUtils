@@ -33,13 +33,15 @@ jobs:
         with:
           name: NetworkUtils.jar
           path: ./build/dist/NetworkUtils.jar
-      - name: 📂 SFTP uploader                       # Upload to SFTP 
-        uses: wangyucode/sftp-upload-action@v2.0.2
+      - name: Upload to Server
+        uses: Dylan700/sftp-upload-action@latest
         with:
-          host: ${{ secrets.SFTP_HOST }}                  # Recommended to put the credentials in github secrets.
+          server: ${{ secrets.SFTP_HOST }}
           username: ${{ secrets.SFTP_USER }}
           password: ${{ secrets.SFTP_PWD }}
-          compress: true                             # Compression
-          forceUpload: true                          # Optional, Force uploading all files, Default to false(upload only newer files).
-          localDir: '.'                              # Required, Absolute or relative to cwd.
-          remoteDir: '/root'  
+          port: 22
+          uploads: |
+            ./build/dist => ./root
+          ignore: |
+            *.git
+            */**/*git*
