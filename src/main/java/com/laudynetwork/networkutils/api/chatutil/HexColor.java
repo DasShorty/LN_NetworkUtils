@@ -19,7 +19,7 @@ public class HexColor {
         Matcher match = pattern.matcher(message);
         while (match.find()) {
             String color = message.substring(match.start(), match.end());
-            message = message.replace(color, ChatColor.getByChar(color) + "");
+            message = message.replace(color, String.valueOf(ChatColor.getByChar(color)));
             match = pattern.matcher(message);
         }
         return ChatColor.translateAlternateColorCodes('&', message);
