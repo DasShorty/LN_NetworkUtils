@@ -10,7 +10,7 @@ public enum LanguageHead {
     ENGLISH("cd91456877f54bf1ace251e4cee40dba597d2cc40362cb8f4ed711e50b0be5b3");
 
     @Getter
-    private String headTexture;
+    private final String headTexture;
 
     LanguageHead(String headTexture) {
         this.headTexture = headTexture;
