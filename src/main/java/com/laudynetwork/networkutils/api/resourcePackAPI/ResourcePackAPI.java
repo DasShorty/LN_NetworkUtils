@@ -42,7 +42,7 @@ public class ResourcePackAPI {
         for (Map.Entry<String, String> entry : data.entrySet()) {
             ResourcePackInterface res = resourcePackEnum(enums.get(entry.getKey()));
             if (res.contains(entry.getValue()))
-                input = input.replaceAll("\\{" + entry.getKey() + ":" + entry.getValue() + "}", "" + res.get(entry.getValue()));
+                input = input.replaceAll("\\{" + entry.getKey() + ":" + entry.getValue() + "}", String.valueOf(res.get(entry.getValue())));
         }
         return input;
     }
