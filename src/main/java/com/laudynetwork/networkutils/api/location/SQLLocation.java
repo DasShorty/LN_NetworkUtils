@@ -43,16 +43,16 @@ public class SQLLocation {
 
         String[] split = str.split(";");
         var world = Bukkit.getWorld(split[0]);
-        var x = Integer.parseInt(split[1]);
-        var y = Integer.parseInt(split[2]);
-        var z = Integer.parseInt(split[3]);
+        var x = Double.parseDouble(split[1]);
+        var y = Double.parseDouble(split[2]);
+        var z = Double.parseDouble(split[3]);
         var yaw = Float.parseFloat(split[4]);
         var pitch = Float.parseFloat(split[5]);
         return new Location(world, x, y, z, yaw, pitch);
     }
 
     private static String fromLocationToString(Location loc) {
-        return loc.getWorld().getName() + ";" + loc.getBlockX() + ";" + loc.getBlockY() + ";" + loc.getBlockZ() + ";" + loc.getYaw() + ";" + loc.getPitch();
+        return loc.getWorld().getName() + ";" + loc.getX() + ";" + loc.getY() + ";" + loc.getZ() + ";" + loc.getYaw() + ";" + loc.getPitch();
     }
 
     @SneakyThrows
