@@ -1,71 +1,81 @@
 name: Build and Deploy
 
 on:
-  push:
-    branches: [ '**' ]
+    push:
+        branches: [ '**' ]
 
 jobs:
-  build:
-    runs-on: self-hosted
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: 17
-          distribution: zulu
-      - name: Build with Gradle
-        run: |
-          chmod 777 gradlew
-          ./gradlew build
-        env:
-          NEXUS_USER: ${{ secrets.NEXUS_USER }}
-          NEXUS_PWD: ${{ secrets.NEXUS_PWD }}
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: data
-          path: ./build/dist/NetworkUtils.jar
+    build:
+        runs-on: self-hosted
+        steps:
+            -   name: Checkout code
+                uses: actions/checkout@v3
+            -   name: Set up JDK 17
+                uses: actions/setup-java@v3
+                with:
+                    java-version: 17
+                    distribution: zulu
+            -   name: Build with Gradle
+                run: |
+                    chmod 777 gradlew
+                    ./gradlew build
+                env:
+                    NEXUS_USER: ${{ secrets.NEXUS_USER }}
+                    NEXUS_PWD: ${{ secrets.NEXUS_PWD }}
+            -   name: Upload Artifacts
+                uses: actions/upload-artifact@v3
+                if: github.ref == 'refs/heads/main'
+                with:
+                    name: data
+                    path: ./build/dist/NetworkUtils.jar
 
-  deploy:
-    runs-on: self-hosted
-    if: github.ref == 'refs/heads/main'
-    needs: [ build ]
-    steps:
-      - name: Load Artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: data
-      - name: Upload to Server
-        uses: Dylan700/sftp-upload-action@latest
-        with:
-          server: ${{ secrets.SFTP_HOST }}
-          username: ${{ secrets.SFTP_USER }}
-          password: ${{ secrets.SFTP_PWD }}
-          port: 22
-          uploads: |
-            ./build/dist/ => /home/simplecloud/templates/EVERY_SERVER/plugins
-            ./build/dist/ => /home/simplecloud/static/Dev-1/plugins/
-            ./build/dist/ => /home/simplecloud/templates/BuilderPlots-1/plugins
-            ./build/dist/ => /home/simplecloud/static/Build-1/plugins/
-          ignore: |
-            *.git
-            */**/*git*
+    deploy:
+        runs-on: self-hosted
+        if: github.ref == 'refs/heads/main'
+        needs: [ build ]
+        steps:
+            -   name: Load Artifacts
+                uses: actions/download-artifact@v3
+                with:
+                    name: data
+            -   name: Upload to Server
+                uses: Dylan700/sftp-upload-action@latest
+                with:
+                    server: ${{ secrets.SFTP_HOST }}
+                    username: ${{ secrets.SFTP_USER }}
+                    password: ${{ secrets.SFTP_PWD }}
+                    port: 22
+                    uploads: |
+                        ./build/dist/ => /home/simplecloud/templates/EVERY_SERVER/plugins
+                        ./build/dist/ => /home/simplecloud/static/Dev-1/plugins/
+                        ./build/dist/ => /home/simplecloud/static/BuilderPlots-1/plugins
+                        ./build/dist/ => /home/simplecloud/static/Build-1/plugins/
+                    ignore: |
+                        *.git
+                        */**/*git*
 
-  publish:
-    runs-on: self-hosted
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: 17
-          distribution: zulu
-      - name: Publish to Nexus
-        run: ./gradlew publish
-        env:
-          NEXUS_USER: ${{ secrets.NEXUS_USER }}
-          NEXUS_PWD: ${{ secrets.NEXUS_PWD }}
+    cleanup:
+        runs-on: self-hosted
+        needs: [ deploy ]
+        steps:
+            -   name: Delete Artifacts
+                uses: GeekyEggo/delete-artifact@v2
+                with:
+                    name: data
+
+    publish:
+        runs-on: self-hosted
+        if: github.ref == 'refs/heads/main'
+        steps:
+            -   name: Checkout code
+                uses: actions/checkout@v3
+            -   name: Set up JDK 17
+                uses: actions/setup-java@v3
+                with:
+                    java-version: 17
+                    distribution: zulu
+            -   name: Publish to Nexus
+                run: ./gradlew publish
+                env:
+                    NEXUS_USER: ${{ secrets.NEXUS_USER }}
+                    NEXUS_PWD: ${{ secrets.NEXUS_PWD }}
