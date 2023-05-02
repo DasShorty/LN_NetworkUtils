@@ -7,6 +7,7 @@ import lombok.val;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -66,6 +67,7 @@ public class DefaultTablist implements Tablist {
                         .color(TextColor.color(0xFFFFFF)).append(Component.space())
                         .append(tablistPlayer.getGroupPrefix(tablistPlayer.getGroupName()))
         );
+
         vanishedTeam.color(NamedTextColor.GRAY);
 
         return vanishedTeam;
@@ -80,7 +82,7 @@ public class DefaultTablist implements Tablist {
 
 
         team.prefix(tablistPlayer.getGroupPrefix(groupName));
-        team.color(NamedTextColor.GRAY);
+        team.color(NamedTextColor.nearestTo(tablistPlayer.getRankColor(groupName)));
         return team;
     }
 
