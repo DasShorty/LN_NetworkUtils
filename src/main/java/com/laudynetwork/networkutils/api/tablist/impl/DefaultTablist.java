@@ -83,6 +83,7 @@ public class DefaultTablist implements Tablist {
             team = scoreboard.registerNewTeam(tablistPlayer.getWeight(groupName) + groupName);
 
         team.color(NamedTextColor.nearestTo(tablistPlayer.getRankColor(groupName)));
+        team.prefix(tablistPlayer.getGroupPrefix(groupName));
         return new Pair<>(team, tablistPlayer.getGroupPrefix(groupName).append(Component.text(playerName).color(tablistPlayer.getRankColor(groupName))));
     }
 
