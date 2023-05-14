@@ -44,7 +44,6 @@ public final class NetworkUtils extends JavaPlugin {
         INSTANCE = this;
         this.redis = new Redis();
         sql = new MySQL("89.163.129.221", "laudynetwork", "M8-)opnbhrn/z]kD", "laudynetwork");
-        this.sql.connect();
     }
 
     @Override
@@ -98,6 +97,5 @@ public final class NetworkUtils extends JavaPlugin {
     @Override
     public void onDisable() {
         this.redis.shutdown();
-        this.sql.close();
     }
 }
