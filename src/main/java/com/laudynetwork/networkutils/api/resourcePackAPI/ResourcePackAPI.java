@@ -1,5 +1,7 @@
 package com.laudynetwork.networkutils.api.resourcePackAPI;
 
+import com.laudynetwork.networkutils.api.resourcePackAPI.text.Overlay;
+import com.laudynetwork.networkutils.api.resourcePackAPI.text.Rankbadges;
 import lombok.SneakyThrows;
 
 import java.util.HashMap;
