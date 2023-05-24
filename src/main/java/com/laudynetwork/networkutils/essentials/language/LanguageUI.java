@@ -1,14 +1,11 @@
 package com.laudynetwork.networkutils.essentials.language;
 
-import com.laudynetwork.networkutils.NetworkUtils;
 import com.laudynetwork.networkutils.api.gui.GUI;
 import com.laudynetwork.networkutils.api.gui.GUIItem;
-import com.laudynetwork.networkutils.api.item.itembuilder.HeadBuilder;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
 import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
 import com.laudynetwork.networkutils.api.messanger.backend.TranslationLanguage;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
-import com.laudynetwork.networkutils.api.player.event.PlayerChangeLanguageEvent;
 import lombok.val;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -51,7 +48,7 @@ public class LanguageUI extends GUI {
     }
 
     private void changeLanguage(TranslationLanguage language, Player player) {
-        Bukkit.getScheduler().runTaskAsynchronously(NetworkUtils.getINSTANCE(), () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(PLUGIN, () -> {
             networkPlayer.setLanguage(language);
 
             val languageName = this.msgApi.getTranslation(language, "networkutils.language." + language.getDbName());

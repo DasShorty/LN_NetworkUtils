@@ -92,6 +92,7 @@ public final class NetworkUtils extends JavaPlugin {
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, "minecraft:player-send-to-server");
 
         getSLF4JLogger().info("loaded!");
+
     }
 
     @Override

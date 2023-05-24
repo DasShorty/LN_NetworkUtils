@@ -1,5 +1,6 @@
 package com.laudynetwork.networkutils.api.gui;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -7,6 +8,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.plugin.Plugin;
 
 import java.util.HashMap;
@@ -22,12 +24,18 @@ public class GUIHandler<P extends Plugin> implements Listener {
     }
 
     public synchronized void open(Player player, GUI ui) {
+        Bukkit.broadcast(Component.text("player " + player.getName() + " opened gui "));
         openGUIs.put(player.getUniqueId(), ui);
         ui.open(player);
     }
 
     public boolean isPlayerInUI(UUID uuid) {
         return openGUIs.containsKey(uuid);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onInventoryOpen(InventoryOpenEvent event) {
+        System.out.println("opened gui");
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
@@ -53,6 +61,7 @@ public class GUIHandler<P extends Plugin> implements Listener {
             return;
 
         openGUIs.remove(player.getUniqueId());
+        System.out.println("closed gui");
 
     }
 }

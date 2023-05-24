@@ -41,6 +41,7 @@ repositories {
     mavenCentral()
     maven("https://repo.thesimplecloud.eu/artifactory/list/gradle-release-local/")
     maven("https://repo.viaversion.com")
+    maven("https://jitpack.io")
     maven("https://eldonexus.de/repository/maven-proxies/")
     maven {
         url = uri("https://repo.laudynetwork.com/repository/maven")

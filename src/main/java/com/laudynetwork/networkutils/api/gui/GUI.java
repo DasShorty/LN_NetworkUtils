@@ -33,7 +33,6 @@ public abstract class GUI implements InventoryHolder {
 
     private final Player player;
     private final int size;
-    @Getter
     private final Inventory inventory;
     private final Map<Integer, GUIItem> guiItemMap;
     private Material background = Material.GRAY_STAINED_GLASS_PANE;
@@ -54,9 +53,7 @@ public abstract class GUI implements InventoryHolder {
     protected void generate() {
         for (int i = 0; i < inventory.getSize(); i++) {
             if (!guiItemMap.containsKey(i)) {
-                guiItemMap.put(i, new GUIItem(i, new ItemBuilder(background).displayName(Component.empty()).itemFlags(ItemFlag.values()), (clicker, clickedItem, clickType) -> {
-                    return GUIItem.GUIAction.CANCEL;
-                }));
+                guiItemMap.put(i, new GUIItem(i, new ItemBuilder(background).displayName(Component.empty()).itemFlags(ItemFlag.values()), (clicker, clickedItem, clickType) -> GUIItem.GUIAction.CANCEL));
             }
         }
         guiItemMap.forEach((slot, item) -> {
