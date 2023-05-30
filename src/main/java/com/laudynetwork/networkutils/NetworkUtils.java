@@ -4,7 +4,7 @@ import com.laudynetwork.database.mysql.MySQL;
 import com.laudynetwork.database.redis.Redis;
 import com.laudynetwork.networkutils.api.gui.GUIHandler;
 import com.laudynetwork.networkutils.api.location.commandimpl.LocationCommand;
-import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
+import com.laudynetwork.networkutils.api.messanger.backend.MessageCache;
 import com.laudynetwork.networkutils.api.tablist.TablistManager;
 import com.laudynetwork.networkutils.essentials.FlyCommand;
 import com.laudynetwork.networkutils.essentials.GamemodeCommand;
@@ -56,11 +56,11 @@ public final class NetworkUtils extends JavaPlugin {
         val subControlCommandHandler = new ControlSubCommandHandler();
         Bukkit.getServicesManager().register(ControlSubCommandHandler.class, subControlCommandHandler, this, ServicePriority.High);
 
-        MessageBackend backend = new MessageBackend(this.sql, "networkutils");
+        val messageCache = new MessageCache("tgpak_gjptkndkmnuge4rsmzwwi2bzn5zhembzhbxhm5tbhbsa");
 
         var pm = Bukkit.getPluginManager();
 
-        VanishCommand vanishCommand = new VanishCommand(backend);
+        VanishCommand vanishCommand = new VanishCommand(messageCache);
         pm.registerEvents(vanishCommand, this);
         Objects.requireNonNull(getCommand("vanish")).setExecutor(vanishCommand);
 
@@ -80,14 +80,14 @@ public final class NetworkUtils extends JavaPlugin {
         this.tablistManager = new TablistManager(this, luckPerms);
 
         pm.registerEvents(new ChatListener(), this);
-        pm.registerEvents(new CommandProtectionListener(backend), this);
+        pm.registerEvents(new CommandProtectionListener(messageCache, sql), this);
 
-        Objects.requireNonNull(getCommand("location")).setExecutor(new LocationCommand(backend));
-        Objects.requireNonNull(getCommand("gamemode")).setExecutor(new GamemodeCommand(backend));
-        Objects.requireNonNull(getCommand("fly")).setExecutor(new FlyCommand(backend));
-        Objects.requireNonNull(getCommand("control")).setExecutor(new ControlCommand(backend, subControlCommandHandler));
-        Objects.requireNonNull(getCommand("register")).setExecutor(new RegisterCommand(backend, redis));
-        Objects.requireNonNull(getCommand("language")).setExecutor(new LanguageCommand(backend, guiHandler));
+        Objects.requireNonNull(getCommand("location")).setExecutor(new LocationCommand(messageCache, sql));
+        Objects.requireNonNull(getCommand("gamemode")).setExecutor(new GamemodeCommand(messageCache, sql));
+        Objects.requireNonNull(getCommand("fly")).setExecutor(new FlyCommand(messageCache, sql));
+        Objects.requireNonNull(getCommand("control")).setExecutor(new ControlCommand(messageCache, subControlCommandHandler, sql));
+        Objects.requireNonNull(getCommand("register")).setExecutor(new RegisterCommand(messageCache, redis, sql));
+        Objects.requireNonNull(getCommand("language")).setExecutor(new LanguageCommand(messageCache, guiHandler, sql, this));
 
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, "minecraft:player-send-to-server");
 

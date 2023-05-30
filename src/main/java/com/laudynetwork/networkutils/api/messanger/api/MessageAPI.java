@@ -1,49 +1,40 @@
 package com.laudynetwork.networkutils.api.messanger.api;
 
-import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
-import com.laudynetwork.networkutils.api.messanger.backend.TranslationLanguage;
+import com.laudynetwork.networkutils.api.messanger.backend.MessageCache;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
-@SuppressWarnings("unused")
+/**
+ * Class made by DasShorty ~Anthony
+ */
+@RequiredArgsConstructor
 public class MessageAPI {
-    private final MessageBackend messageBackend;
-    private final Component prefix;
 
-    public MessageAPI(MessageBackend messageBackend, PrefixType prefixType) {
-        this.messageBackend = messageBackend;
-        this.prefix = LegacyComponentSerializer.legacyAmpersand().deserialize(prefixType.getPrefix());
+    private final MessageCache messageCache;
+    private final PrefixType prefixType;
+
+    public Component getTranslation(String language, String key) {
+        return MiniMessage.miniMessage().deserialize(messageCache.getTranslation(language, key).rawTranslation());
     }
 
-    public Component asHighlight(Component component) {
-        return component.color(TextColor.fromHexString("#FFAA00"));
+    public Component getTranslation(String language, String key, TagResolver... tagResolvers) {
+        return MiniMessage.miniMessage().deserialize(messageCache.getTranslation(language, key).rawTranslation(), tagResolvers);
     }
 
-    public Component withPrefix(Component component) {
-        return prefix.append(component);
+    public Component getMessage(String language, String key) {
+        return getPrefix().append(getTranslation(language, key));
     }
 
-    public Component getTranslation(TranslationLanguage language, String key) {
-        return this.messageBackend.getTranslation(language, key).createBuilder().getData();
+    public Component getMessage(String language, String key, TagResolver... tagResolvers) {
+        return getPrefix().append(getTranslation(language, key, tagResolvers));
     }
 
-    public Component getTranslation(TranslationLanguage language, String key, TagResolver... replacements) {
-        return this.messageBackend.getTranslation(language, key).createBuilder(replacements).getData();
-    }
-
-    public Component getMessage(TranslationLanguage language, String key) {
-        return this.prefix.append(this.messageBackend.getTranslation(language, key).createBuilder().getData());
-    }
-
-    public Component getMessage(TranslationLanguage language, String key, TagResolver... replacements) {
-        return this.prefix.append(this.messageBackend.getTranslation(language, key).createBuilder(replacements).getData());
-    }
-
-    public boolean existsTranslation(String key) {
-        return this.messageBackend.existsTranslation(key);
+    private Component getPrefix() {
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(prefixType.getPrefix());
     }
 
     public enum PrefixType {

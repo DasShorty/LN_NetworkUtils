@@ -3,12 +3,9 @@ package com.laudynetwork.networkutils.api.player;
 import com.laudynetwork.database.mysql.MySQL;
 import com.laudynetwork.database.mysql.utils.Select;
 import com.laudynetwork.database.mysql.utils.UpdateValue;
-import com.laudynetwork.networkutils.api.messanger.backend.TranslationLanguage;
-import com.laudynetwork.networkutils.api.player.event.PlayerChangeLanguageEvent;
 import com.viaversion.viaversion.api.Via;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.bukkit.Bukkit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,29 +31,28 @@ public class NetworkPlayer {
     }
 
     @SneakyThrows
-    public TranslationLanguage getLanguage() {
+    public String getLanguage() {
 
         var select = new Select("minecraft_general_playerData", "*", "uuid = '" + uuid.toString() + "'");
 
         if (!sql.rowExist(select)) {
-            setLanguage(TranslationLanguage.ENGLISH);
-            return TranslationLanguage.ENGLISH;
+            setLanguage("en");
+            return "en";
         }
 
         var result = sql.rowSelect(select);
-        var language = (String) result.getRows().get(0).get("language");
 
-        return TranslationLanguage.getFromDBName(language);
+        return (String) result.getRows().get(0).get("language");
     }
 
-    public void setLanguage(TranslationLanguage language) {
+    public void setLanguage(String language) {
         var select = new Select("minecraft_general_playerData", "*", "uuid = '" + uuid.toString() + "'");
         if (sql.rowExist(select)) {
-            logger.info("Updating language for [" + uuid + "] to " + language.name());
-            sql.rowUpdate("minecraft_general_playerData", "uuid = '" + uuid + "'", new UpdateValue("language", language.getDbName()));
+            logger.info("Updating language for [" + uuid + "] to " + language);
+            sql.rowUpdate("minecraft_general_playerData", "uuid = '" + uuid + "'", new UpdateValue("language", language));
         } else {
-            logger.info("Creating language for [" + uuid + "] with language " + language.name());
-            sql.tableInsert("minecraft_general_playerData", "uuid, language", uuid.toString(), language.getDbName());
+            logger.info("Creating language for [" + uuid + "] with language " + language);
+            sql.tableInsert("minecraft_general_playerData", "uuid, language", uuid.toString(), language);
         }
     }
 }

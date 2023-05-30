@@ -1,8 +1,11 @@
+import de.undercouch.gradle.tasks.download.Download
+
 plugins {
     `java-library`
     id("io.papermc.paperweight.userdev") version "1.5.5"
     id("com.github.johnrengelman.shadow") version ("8.1.1")
     id("maven-publish")
+    id("de.undercouch.download") version ("5.4.0")
 }
 
 publishing {
@@ -28,7 +31,7 @@ java {
 
 dependencies {
     implementation("org.projectlombok:lombok:1.18.26")
-    annotationProcessor("org.projectlombok:lombok:1.18.26")
+    annotationProcessor("org.projectlombok:lombok:1.18.28")
     implementation("biz.paluch.redis:lettuce:4.5.0.Final")
     paperweight.paperDevBundle("1.19.4-R0.1-SNAPSHOT")
     compileOnly("net.luckperms:api:5.4")
@@ -75,7 +78,7 @@ tasks {
     shadowJar {
         dependencies {
             exclude(dependency("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT"))
-            exclude(dependency("eu.thesimplecloud.simplecloud:simplecloud-api:2.5.0"))
+            exclude(dependency("eu.thesimplecloud.simplecloud:simplecloud-api:2.4.1"))
             exclude(dependency("eu.thesimplecloud.clientserverapi:clientserverapi:4.1.17"))
             exclude(dependency("eu.thesimplecloud.jsonlib:json-lib:1.0.10"))
             exclude(dependency("eu.thesimplecloud.simplecloud:simplecloud-runner:2.5.0"))
@@ -102,3 +105,15 @@ tasks {
         outputJar.set(layout.buildDirectory.file("dist/NetworkUtils.jar"))
     }
 }
+
+
+tasks.register<Download>("downloadFiles") {
+    acceptAnyCertificate(true)
+    val url = "https://tolgee.laudynetwork.com/v2/projects/export?languages=en&format=JSON&zip=false&ak=tgpak_gjptkndkmnuge4rsmzwwi2bzn5zhembzhbxhm5tbhbsa"
+    src(url)
+    dest("${projectDir}/src/main/resources/")
+    overwrite(true)
+}
+
+
+defaultTasks("downloadFiles")

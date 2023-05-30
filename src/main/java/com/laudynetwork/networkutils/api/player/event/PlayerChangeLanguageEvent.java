@@ -1,6 +1,5 @@
 package com.laudynetwork.networkutils.api.player.event;
 
-import com.laudynetwork.networkutils.api.messanger.backend.TranslationLanguage;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +13,8 @@ public class PlayerChangeLanguageEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
     private final NetworkPlayer networkPlayer;
-    private final TranslationLanguage oldLanguage;
-    private final TranslationLanguage newLanguage;
+    private final String oldLanguage;
+    private final String newLanguage;
 
     @NotNull
     public static HandlerList getHandlerList() {

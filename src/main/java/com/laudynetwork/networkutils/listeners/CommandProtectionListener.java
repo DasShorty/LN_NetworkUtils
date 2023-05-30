@@ -1,7 +1,8 @@
 package com.laudynetwork.networkutils.listeners;
 
+import com.laudynetwork.database.mysql.MySQL;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
-import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
+import com.laudynetwork.networkutils.api.messanger.backend.MessageCache;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
 import lombok.val;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -14,11 +15,13 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 public class CommandProtectionListener implements Listener {
 
     private final MessageAPI msgAPI;
-    private final MessageBackend msgBackend;
+    private final MessageCache messageCache;
+    private final MySQL sql;
 
-    public CommandProtectionListener(MessageBackend msgBackend) {
-        this.msgAPI = new MessageAPI(msgBackend, MessageAPI.PrefixType.SYSTEM);
-        this.msgBackend = msgBackend;
+    public CommandProtectionListener(MessageCache messageCache, MySQL sql) {
+        this.msgAPI = new MessageAPI(messageCache, MessageAPI.PrefixType.SYSTEM);
+        this.messageCache = messageCache;
+        this.sql = sql;
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
@@ -29,7 +32,7 @@ public class CommandProtectionListener implements Listener {
         val command = message.split(" ")[0];
 
         val player = event.getPlayer();
-        val networkPlayer = new NetworkPlayer(this.msgBackend.getSql(), player.getUniqueId());
+        val networkPlayer = new NetworkPlayer(this.sql, player.getUniqueId());
 
         val language = networkPlayer.getLanguage();
 

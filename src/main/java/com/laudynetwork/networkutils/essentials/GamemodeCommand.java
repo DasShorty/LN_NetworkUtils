@@ -2,8 +2,7 @@ package com.laudynetwork.networkutils.essentials;
 
 import com.laudynetwork.database.mysql.MySQL;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
-import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
-import com.laudynetwork.networkutils.api.messanger.backend.TranslationLanguage;
+import com.laudynetwork.networkutils.api.messanger.backend.MessageCache;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
 import lombok.val;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -27,16 +26,16 @@ public class GamemodeCommand implements CommandExecutor, TabCompleter {
     private final MessageAPI msgApi;
     private final MySQL sql;
 
-    public GamemodeCommand(MessageBackend msgBackend) {
-        this.sql = msgBackend.getSql();
-        this.msgApi = new MessageAPI(msgBackend, MessageAPI.PrefixType.SYSTEM);
+    public GamemodeCommand(MessageCache msgCache, MySQL sql) {
+        this.sql = sql;
+        this.msgApi = new MessageAPI(msgCache, MessageAPI.PrefixType.SYSTEM);
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(msgApi.getTranslation(TranslationLanguage.ENGLISH, "command.only.player"));
+            sender.sendMessage(msgApi.getTranslation("en", "command.only.player"));
             return true;
         }
 

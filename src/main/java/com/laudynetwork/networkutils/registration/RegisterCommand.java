@@ -1,9 +1,9 @@
 package com.laudynetwork.networkutils.registration;
 
+import com.laudynetwork.database.mysql.MySQL;
 import com.laudynetwork.database.redis.Redis;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
-import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
-import com.laudynetwork.networkutils.api.messanger.backend.TranslationLanguage;
+import com.laudynetwork.networkutils.api.messanger.backend.MessageCache;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -22,14 +22,16 @@ import java.util.List;
 public class RegisterCommand implements CommandExecutor, TabCompleter {
 
     private final MessageAPI msgApi;
-    private final MessageBackend msgBackend;
+    private final MySQL sql;
+    private final MessageCache messageCache;
 
     private final WebsiteRegisterManager registerManager;
 
-    public RegisterCommand(MessageBackend msgBackend, Redis redis) {
-        this.msgBackend = msgBackend;
-        this.msgApi = new MessageAPI(msgBackend, MessageAPI.PrefixType.SYSTEM);
-        this.registerManager = new WebsiteRegisterManager(msgBackend.getSql(), redis);
+    public RegisterCommand(MessageCache messageCache, Redis redis, MySQL sql) {
+        this.messageCache = messageCache;
+        this.msgApi = new MessageAPI(messageCache, MessageAPI.PrefixType.SYSTEM);
+        this.sql = sql;
+        this.registerManager = new WebsiteRegisterManager(sql, redis);
     }
 
     @Override
@@ -37,11 +39,11 @@ public class RegisterCommand implements CommandExecutor, TabCompleter {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(this.msgApi.getMessage(TranslationLanguage.ENGLISH, "command.only.player"));
+            sender.sendMessage(this.msgApi.getMessage("en", "command.only.player"));
             return true;
         }
 
-        val networkPlayer = new NetworkPlayer(this.msgBackend.getSql(), player.getUniqueId());
+        val networkPlayer = new NetworkPlayer(this.sql, player.getUniqueId());
         val language = networkPlayer.getLanguage();
 
 
@@ -69,7 +71,7 @@ public class RegisterCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        String redirect = String.format("<click:open_url:'https://www.laudynetwork.com/%s/password-reset/%s'>link</click>", language.getDbName(), registeredUser.token().toString());
+        String redirect = String.format("<click:open_url:'https://www.laudynetwork.com/%s/password-reset/%s'>link</click>", language, registeredUser.token().toString());
 
         player.sendMessage(this.msgApi.getMessage(language, "command.register.confirm",
                 Placeholder.parsed("redirect", redirect)));
