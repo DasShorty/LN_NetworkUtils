@@ -30,7 +30,7 @@ java {
 }
 
 dependencies {
-    implementation("org.projectlombok:lombok:1.18.26")
+    implementation("org.projectlombok:lombok:1.18.28")
     annotationProcessor("org.projectlombok:lombok:1.18.28")
     implementation("biz.paluch.redis:lettuce:4.5.0.Final")
     paperweight.paperDevBundle("1.19.4-R0.1-SNAPSHOT")
