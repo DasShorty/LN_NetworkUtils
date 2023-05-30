@@ -1,4 +1,4 @@
-import de.undercouch.gradle.tasks.download.Download
+import java.io.FileOutputStream
 
 plugins {
     `java-library`
@@ -39,6 +39,7 @@ dependencies {
     implementation("com.laudynetwork:database:latest")
     api("eu.thesimplecloud.simplecloud:simplecloud-api:2.5.0")
     compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
+    implementation("org.reflections:reflections:0.10.2")
 }
 repositories {
     mavenCentral()
@@ -106,14 +107,30 @@ tasks {
     }
 }
 
-
-tasks.register<Download>("downloadFiles") {
-    acceptAnyCertificate(true)
-    val url = "https://tolgee.laudynetwork.com/v2/projects/export?languages=en&format=JSON&zip=false&ak=tgpak_gjptkndkmnuge4rsmzwwi2bzn5zhembzhbxhm5tbhbsa"
-    src(url)
-    dest("${projectDir}/src/main/resources/")
-    overwrite(true)
+tasks.register("translations") {
+    downloadFile(System.getenv("TOLGEE_TOKEN_PLUGIN"), "own")
+    downloadFile(System.getenv("TOLGEE_TOKEN_GENERAL"), "plugins")
 }
 
+fun downloadFile(token: String, dir: String) {
+    downloadLink(token).forEach {
+        downloadFromServer(it.key, it.value + ".json", dir)
+    }
+}
 
-defaultTasks("downloadFiles")
+fun downloadFromServer(url: String, fileName: String, dir: String) {
+    val f = file("${projectDir}/src/main/resources/translations/${dir}/${fileName}");
+    uri(url).toURL().openStream().use {
+        it.copyTo(
+                FileOutputStream(f)
+        )
+    }
+}
+
+fun downloadLink(token: String): Map<String, String> {
+    val map = HashMap<String, String>()
+    val params = "format=JSON&zip=false&ak=$token&structureDelimiter"
+    map["https://tolgee.laudynetwork.com/v2/projects/export?languages=en&$params&ak=$token"] = "en"
+    map["https://tolgee.laudynetwork.com/v2/projects/export?languages=de&$params&ak=$token"] = "de"
+    return map
+}

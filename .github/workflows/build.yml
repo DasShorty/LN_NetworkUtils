@@ -18,7 +18,7 @@ jobs:
             -   name: Build with Gradle
                 run: |
                     chmod 777 gradlew
-                    ./gradlew build
+                    ./gradlew translations build
                 env:
                     NEXUS_USER: ${{ secrets.NEXUS_USER }}
                     NEXUS_PWD: ${{ secrets.NEXUS_PWD }}

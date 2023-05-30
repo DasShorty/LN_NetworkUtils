@@ -14,6 +14,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 @RequiredArgsConstructor
 public class MessageAPI {
 
+    @MessagePrefix(prefix = PrefixType.SYSTEM)
     private final MessageCache messageCache;
     private final PrefixType prefixType;
 

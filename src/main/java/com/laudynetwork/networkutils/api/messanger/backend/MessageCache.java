@@ -1,10 +1,12 @@
 package com.laudynetwork.networkutils.api.messanger.backend;
 
 import com.google.gson.JsonObject;
-import com.laudynetwork.networkutils.api.messanger.request.MessageRequestHandler;
-import com.laudynetwork.networkutils.api.messanger.request.RequestLanguage;
+import com.google.gson.JsonParser;
+import lombok.SneakyThrows;
 import lombok.val;
 
+import java.io.File;
+import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,30 +16,38 @@ import java.util.Map;
 public class MessageCache {
     private final Map<String, Map<String, Translation>> translationMap = new HashMap<>();
 
-    public MessageCache(String translationApiKey) {
-        MessageRequestHandler requestHandler = new MessageRequestHandler(translationApiKey);
-        convertMap(requestHandler.getTranslationForGeneralPlugin());
-        convertMap(requestHandler.getTranslationForPlugin());
+    public MessageCache() {
+        loadFileInCache("translations/own/en.json");
+        loadFileInCache("translations/own/de.json");
+        loadFileInCache("translations/plugins/de.json");
+        loadFileInCache("translations/plugins/en.json");
+    }
+
+    @SneakyThrows
+    private void loadFileInCache(String languageFile) {
+
+        val file = new File("./plugins/NetworkUtils/" + languageFile);
+        if (!file.exists())
+            return;
+
+        convertTranslation(file.getName().substring(0, 2), JsonParser.parseReader(new FileReader(file)).getAsJsonObject());
     }
 
     public Translation getTranslation(String language, String key) {
         return translationMap.get(language).get(key);
     }
+
     public boolean existTranslation(String key) {
         return translationMap.get("en").containsKey(key);
     }
 
-    private void convertMap(Map<RequestLanguage, JsonObject> map) {
-        map.forEach(this::convertTranslation);
-    }
-
-    private void convertTranslation(RequestLanguage language, JsonObject json) {
+    private void convertTranslation(String language, JsonObject json) {
         val strings = json.keySet();
 
-        if (!this.translationMap.containsKey(language.tag()))
-            this.translationMap.put(language.tag(), new HashMap<>());
+        if (!this.translationMap.containsKey(language))
+            this.translationMap.put(language, new HashMap<>());
 
-        val map = this.translationMap.get(language.tag());
+        val map = this.translationMap.get(language);
 
         strings.forEach(key -> {
             map.put(key, new Translation(json.get(key).getAsString()));

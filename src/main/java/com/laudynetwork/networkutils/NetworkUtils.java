@@ -4,6 +4,7 @@ import com.laudynetwork.database.mysql.MySQL;
 import com.laudynetwork.database.redis.Redis;
 import com.laudynetwork.networkutils.api.gui.GUIHandler;
 import com.laudynetwork.networkutils.api.location.commandimpl.LocationCommand;
+import com.laudynetwork.networkutils.api.messanger.backend.MessageAnnotationInjector;
 import com.laudynetwork.networkutils.api.messanger.backend.MessageCache;
 import com.laudynetwork.networkutils.api.tablist.TablistManager;
 import com.laudynetwork.networkutils.essentials.FlyCommand;
@@ -44,6 +45,15 @@ public final class NetworkUtils extends JavaPlugin {
         INSTANCE = this;
         this.redis = new Redis();
         sql = new MySQL("89.163.129.221", "laudynetwork", "M8-)opnbhrn/z]kD", "laudynetwork");
+
+        loadTranslations();
+    }
+
+    private void loadTranslations() {
+        saveResource("translations/own/de.json", true);
+        saveResource("translations/own/en.json", true);
+        saveResource("translations/plugins/de.json", true);
+        saveResource("translations/plugins/en.json", true);
     }
 
     @Override
@@ -56,11 +66,13 @@ public final class NetworkUtils extends JavaPlugin {
         val subControlCommandHandler = new ControlSubCommandHandler();
         Bukkit.getServicesManager().register(ControlSubCommandHandler.class, subControlCommandHandler, this, ServicePriority.High);
 
-        val messageCache = new MessageCache("tgpak_gjptkndkmnuge4rsmzwwi2bzn5zhembzhbxhm5tbhbsa");
+        val messageCache = new MessageCache();
+        val translationInjection = new MessageAnnotationInjector(messageCache);
+        Bukkit.getServicesManager().register(MessageAnnotationInjector.class, translationInjection, this, ServicePriority.High);
 
         var pm = Bukkit.getPluginManager();
 
-        VanishCommand vanishCommand = new VanishCommand(messageCache);
+        val vanishCommand = new VanishCommand(messageCache);
         pm.registerEvents(vanishCommand, this);
         Objects.requireNonNull(getCommand("vanish")).setExecutor(vanishCommand);
 
@@ -91,6 +103,7 @@ public final class NetworkUtils extends JavaPlugin {
 
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, "minecraft:player-send-to-server");
 
+        translationInjection.initVariables();
         getSLF4JLogger().info("loaded!");
 
     }
