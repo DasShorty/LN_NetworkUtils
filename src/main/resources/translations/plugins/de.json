@@ -1,0 +1,9 @@
+{
+  "command.missing.permission" : "<gray>Du hast <red>keine</red> Rechte für diesen Befehl!</gray>",
+  "command.only.player" : "<gray>Dieser Befehl kann <red>nur</red> von Spielern ausgeführt werden!</gray>",
+  "command.player.not.found" : "<gray>Der Spieler <gold><player></gold> konnte <red>nicht</red> gefunden werden!</gray>",
+  "command.plugins.show" : "<gray>Du kannst dir die Plugins <red>nicht</red> anschauen!</gray>",
+  "command.unknown" : "<gray>Unbekannter Befehl: <gold><command></gold></gray>",
+  "command.usage" : "<gray>Nutze: <gold><command></gold></gray>",
+  "location.not.exist" : "<gray>Die Location konnte nicht gefunden werden! <red>Error: <i><error></i></red></gray>"
+}
