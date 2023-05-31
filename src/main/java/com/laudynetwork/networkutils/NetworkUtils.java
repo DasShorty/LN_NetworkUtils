@@ -67,7 +67,7 @@ public final class NetworkUtils extends JavaPlugin {
         val subControlCommandHandler = new ControlSubCommandHandler();
         Bukkit.getServicesManager().register(ControlSubCommandHandler.class, subControlCommandHandler, this, ServicePriority.High);
 
-        this.messageCache = new MessageCache();
+        this.messageCache = new MessageCache(this);
 
         var pm = Bukkit.getPluginManager();
 

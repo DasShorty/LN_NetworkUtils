@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.SneakyThrows;
 import lombok.val;
+import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.FileReader;
@@ -16,17 +17,17 @@ import java.util.Map;
 public class MessageCache {
     private final Map<String, Map<String, Translation>> translationMap = new HashMap<>();
 
-    public MessageCache() {
-        loadFileInCache("translations/own/en.json");
-        loadFileInCache("translations/own/de.json");
-        loadFileInCache("translations/plugins/de.json");
-        loadFileInCache("translations/plugins/en.json");
+    public MessageCache(Plugin plugin) {
+        loadFileInCache(plugin, "translations/own/en.json");
+        loadFileInCache(plugin, "translations/own/de.json");
+        loadFileInCache(plugin, "translations/plugins/de.json");
+        loadFileInCache(plugin, "translations/plugins/en.json");
     }
 
     @SneakyThrows
-    private void loadFileInCache(String languageFile) {
+    private void loadFileInCache(Plugin plugin, String languageFile) {
 
-        val file = new File("./plugins/NetworkUtils/" + languageFile);
+        val file = new File("./plugins/" + plugin.getName() + "/" + languageFile);
         if (!file.exists())
             return;
 
