@@ -23,12 +23,11 @@ import java.util.List;
 
 public class GamemodeCommand implements CommandExecutor, TabCompleter {
 
-    private final MessageAPI msgApi;
+    private final MessageAPI msgApi = MessageAPI.create(MessageAPI.PrefixType.SYSTEM);
     private final MySQL sql;
 
-    public GamemodeCommand(MessageCache msgCache, MySQL sql) {
+    public GamemodeCommand(MySQL sql) {
         this.sql = sql;
-        this.msgApi = new MessageAPI(msgCache, MessageAPI.PrefixType.SYSTEM);
     }
 
     @Override

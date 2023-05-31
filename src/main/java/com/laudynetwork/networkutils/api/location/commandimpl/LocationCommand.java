@@ -3,7 +3,6 @@ package com.laudynetwork.networkutils.api.location.commandimpl;
 import com.laudynetwork.database.mysql.MySQL;
 import com.laudynetwork.networkutils.api.location.SQLLocation;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
-import com.laudynetwork.networkutils.api.messanger.backend.MessageCache;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
 import lombok.val;
 import net.kyori.adventure.text.Component;
@@ -22,10 +21,9 @@ import java.util.List;
 
 public class LocationCommand implements CommandExecutor, TabCompleter {
     private final MySQL sql;
-    private final MessageAPI msgAPI;
+    private final MessageAPI msgAPI = MessageAPI.create(MessageAPI.PrefixType.SYSTEM);
 
-    public LocationCommand(MessageCache msgCache, MySQL sql) {
-        this.msgAPI = new MessageAPI(msgCache, MessageAPI.PrefixType.SYSTEM);
+    public LocationCommand(MySQL sql) {
         this.sql = sql;
     }
 

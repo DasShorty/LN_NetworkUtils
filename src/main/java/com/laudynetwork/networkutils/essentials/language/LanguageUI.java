@@ -5,7 +5,6 @@ import com.laudynetwork.networkutils.api.gui.GUI;
 import com.laudynetwork.networkutils.api.gui.GUIItem;
 import com.laudynetwork.networkutils.api.item.itembuilder.HeadBuilder;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
-import com.laudynetwork.networkutils.api.messanger.backend.MessageCache;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
 import com.laudynetwork.networkutils.api.player.event.PlayerChangeLanguageEvent;
 import lombok.val;
@@ -22,18 +21,13 @@ import java.util.ArrayList;
 
 public class LanguageUI extends GUI {
 
-    private final MessageAPI msgApi;
-    private final MessageCache msgCache;
+    private final MessageAPI msgApi = MessageAPI.create(MessageAPI.PrefixType.SYSTEM);
     private final String language;
     private final NetworkPlayer networkPlayer;
-    private final MySQL sql;
     private final Plugin plugin;
 
-    public LanguageUI(Player player, Component displayName, MessageAPI msgApi, MessageCache msgCache, MySQL sql, Plugin plugin) {
+    public LanguageUI(Player player, Component displayName, MySQL sql, Plugin plugin) {
         super(player, displayName, 27);
-        this.msgApi = msgApi;
-        this.msgCache = msgCache;
-        this.sql = sql;
         this.plugin = plugin;
         this.networkPlayer = new NetworkPlayer(sql, player.getUniqueId());
         this.language = this.networkPlayer.getLanguage();
@@ -66,7 +60,7 @@ public class LanguageUI extends GUI {
     private HeadBuilder getItem(String headTexture, String key, String language) {
         var headBuilder = new HeadBuilder().skullOwner(headTexture);
 
-        if (this.msgCache.existTranslation(key + ".lore"))
+        if (this.msgApi.existTranslation(key + ".lore"))
             headBuilder = headBuilder.lore(getLore(language, key + ".lore"));
 
 
@@ -75,7 +69,7 @@ public class LanguageUI extends GUI {
 
     private ArrayList<Component> getLore(String language, String key) {
 
-        val translation = this.msgCache.getTranslation(language, key);
+        val translation = this.msgApi.getRaw(language, key);
         val split = translation.rawTranslation().split(";");
 
         MiniMessage miniMessage = MiniMessage.miniMessage();

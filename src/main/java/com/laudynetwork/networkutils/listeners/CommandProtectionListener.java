@@ -1,6 +1,7 @@
 package com.laudynetwork.networkutils.listeners;
 
 import com.laudynetwork.database.mysql.MySQL;
+import com.laudynetwork.networkutils.NetworkUtils;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
 import com.laudynetwork.networkutils.api.messanger.backend.MessageCache;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
@@ -14,13 +15,10 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 public class CommandProtectionListener implements Listener {
 
-    private final MessageAPI msgAPI;
-    private final MessageCache messageCache;
+    private final MessageAPI msgAPI = MessageAPI.create(MessageAPI.PrefixType.SYSTEM);
     private final MySQL sql;
 
-    public CommandProtectionListener(MessageCache messageCache, MySQL sql) {
-        this.msgAPI = new MessageAPI(messageCache, MessageAPI.PrefixType.SYSTEM);
-        this.messageCache = messageCache;
+    public CommandProtectionListener(MySQL sql) {
         this.sql = sql;
     }
 

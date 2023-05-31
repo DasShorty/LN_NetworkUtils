@@ -1,8 +1,9 @@
 package com.laudynetwork.networkutils.api.messanger.api;
 
+import com.laudynetwork.networkutils.NetworkUtils;
 import com.laudynetwork.networkutils.api.messanger.backend.MessageCache;
+import com.laudynetwork.networkutils.api.messanger.backend.Translation;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -11,12 +12,27 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 /**
  * Class made by DasShorty ~Anthony
  */
-@RequiredArgsConstructor
 public class MessageAPI {
 
-    @TranslationInjection(prefix = PrefixType.SYSTEM)
     private final MessageCache messageCache;
     private final PrefixType prefixType;
+
+    private MessageAPI(MessageCache messageCache, PrefixType prefixType) {
+        this.messageCache = messageCache;
+        this.prefixType = prefixType;
+    }
+
+    public static MessageAPI create(PrefixType type) {
+        return new MessageAPI(NetworkUtils.getINSTANCE().getMessageCache(), type);
+    }
+
+    public boolean existTranslation(String key) {
+        return messageCache.existTranslation(key);
+    }
+
+    public Translation getRaw(String language, String key) {
+        return messageCache.getTranslation(language, key);
+    }
 
     public Component getTranslation(String language, String key) {
         return MiniMessage.miniMessage().deserialize(messageCache.getTranslation(language, key).rawTranslation());

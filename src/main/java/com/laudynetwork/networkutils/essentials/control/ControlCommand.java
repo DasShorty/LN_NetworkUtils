@@ -2,7 +2,6 @@ package com.laudynetwork.networkutils.essentials.control;
 
 import com.laudynetwork.database.mysql.MySQL;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
-import com.laudynetwork.networkutils.api.messanger.backend.MessageCache;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
 import com.laudynetwork.networkutils.essentials.control.api.ControlSubCommandHandler;
 import lombok.val;
@@ -22,12 +21,9 @@ public class ControlCommand implements CommandExecutor, TabCompleter {
 
     private final ControlSubCommandHandler subCommandHandler;
     private final MySQL sql;
-    private final MessageCache msgCache;
-    private final MessageAPI msgApi;
+    private final MessageAPI msgApi = MessageAPI.create(MessageAPI.PrefixType.SYSTEM);
 
-    public ControlCommand(MessageCache msgCache, ControlSubCommandHandler handler, MySQL sql) {
-        this.msgCache = msgCache;
-        this.msgApi = new MessageAPI(msgCache, MessageAPI.PrefixType.SYSTEM);
+    public ControlCommand(ControlSubCommandHandler handler, MySQL sql) {
         this.subCommandHandler = handler;
         this.sql = sql;
     }
@@ -63,7 +59,7 @@ public class ControlCommand implements CommandExecutor, TabCompleter {
 
         val controlSubCommand = this.subCommandHandler.getSubCommands().get(id);
 
-        controlSubCommand.onCommand(player, command, label, args, this.msgCache, this.msgApi, networkPlayer);
+        controlSubCommand.onCommand(player, command, label, args, networkPlayer);
 
         return true;
     }
@@ -88,7 +84,7 @@ public class ControlCommand implements CommandExecutor, TabCompleter {
                 return list;
 
             val subCommand = this.subCommandHandler.getSubCommands().get(id);
-            list.addAll(subCommand.onTabComplete(player, command, label, args, this.msgCache, this.msgApi, new NetworkPlayer(this.sql, player.getUniqueId())));
+            list.addAll(subCommand.onTabComplete(player, command, label, args, new NetworkPlayer(this.sql, player.getUniqueId())));
         }
 
         val completer = new ArrayList<String>();

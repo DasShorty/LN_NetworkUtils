@@ -2,7 +2,6 @@ package com.laudynetwork.networkutils.essentials;
 
 import com.laudynetwork.database.mysql.MySQL;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
-import com.laudynetwork.networkutils.api.messanger.backend.MessageCache;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
 import lombok.val;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -20,11 +19,10 @@ import java.util.List;
 
 public class FlyCommand implements CommandExecutor, TabCompleter {
 
-    private final MessageAPI msgApi;
+    private final MessageAPI msgApi = MessageAPI.create(MessageAPI.PrefixType.SYSTEM);
     private final MySQL sql;
 
-    public FlyCommand(MessageCache msgCache, MySQL sql) {
-        this.msgApi = new MessageAPI(msgCache, MessageAPI.PrefixType.SYSTEM);
+    public FlyCommand(MySQL sql) {
         this.sql = sql;
     }
 
@@ -32,7 +30,7 @@ public class FlyCommand implements CommandExecutor, TabCompleter {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(msgApi.getTranslation("en", "command.only.player"));
+            sender.sendMessage(msgApi.getMessage("en", "command.only.player"));
             return true;
         }
 

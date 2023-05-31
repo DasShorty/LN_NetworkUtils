@@ -3,7 +3,6 @@ package com.laudynetwork.networkutils.registration;
 import com.laudynetwork.database.mysql.MySQL;
 import com.laudynetwork.database.redis.Redis;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
-import com.laudynetwork.networkutils.api.messanger.backend.MessageCache;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -21,15 +20,12 @@ import java.util.List;
 
 public class RegisterCommand implements CommandExecutor, TabCompleter {
 
-    private final MessageAPI msgApi;
+    private final MessageAPI msgApi = MessageAPI.create(MessageAPI.PrefixType.SYSTEM);
     private final MySQL sql;
-    private final MessageCache messageCache;
 
     private final WebsiteRegisterManager registerManager;
 
-    public RegisterCommand(MessageCache messageCache, Redis redis, MySQL sql) {
-        this.messageCache = messageCache;
-        this.msgApi = new MessageAPI(messageCache, MessageAPI.PrefixType.SYSTEM);
+    public RegisterCommand(Redis redis, MySQL sql) {
         this.sql = sql;
         this.registerManager = new WebsiteRegisterManager(sql, redis);
     }
