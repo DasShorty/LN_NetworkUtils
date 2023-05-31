@@ -119,7 +119,7 @@ fun downloadFile(token: String, dir: String) {
 }
 
 fun downloadFromServer(url: String, fileName: String, dir: String) {
-    val f = file("${projectDir}/src/main/resources/translations/${dir}/${fileName}");
+    val f = file("${projectDir}/src/main/resources/translations/${dir}/${fileName}")
     uri(url).toURL().openStream().use {
         it.copyTo(
                 FileOutputStream(f)
