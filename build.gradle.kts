@@ -119,6 +119,7 @@ fun downloadFile(token: String, dir: String) {
 }
 
 fun downloadFromServer(url: String, fileName: String, dir: String) {
+    file("${projectDir}/src/main/resources/translations/${dir}").mkdirs()
     val f = file("${projectDir}/src/main/resources/translations/${dir}/${fileName}")
     uri(url).toURL().openStream().use {
         it.copyTo(
