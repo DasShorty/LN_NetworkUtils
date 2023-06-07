@@ -25,11 +25,17 @@ public class GUIHandler<P extends Plugin> implements Listener {
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
+    /**
+     * if you try to open a GUI but the player has already an open ui please use the GUIHandler#openDelayed method
+     * */
     public synchronized void open(Player player, GUI ui) {
         openGUIs.put(player.getUniqueId(), ui);
         ui.open(player);
     }
 
+    /**
+     * if you try to open a GUI but the player has already an open ui please use the GUIHandler#openDelayed method
+     * */
     public void openDelayed(Player player, GUI ui) {
         Bukkit.getScheduler().runTaskLater(plugin, () -> open(player, ui), 10L);
     }
