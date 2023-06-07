@@ -18,24 +18,24 @@ import java.util.UUID;
 public class GUIHandler<P extends Plugin> implements Listener {
 
     private final Map<UUID, GUI> openGUIs = new HashMap<>();
+    private final P plugin;
 
     public GUIHandler(P plugin) {
+        this.plugin = plugin;
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
     public synchronized void open(Player player, GUI ui) {
-        Bukkit.broadcast(Component.text("player " + player.getName() + " opened gui "));
         openGUIs.put(player.getUniqueId(), ui);
         ui.open(player);
     }
 
-    public boolean isPlayerInUI(UUID uuid) {
-        return openGUIs.containsKey(uuid);
+    public void openDelayed(Player player, GUI ui) {
+        Bukkit.getScheduler().runTaskLater(plugin, () -> open(player, ui), 10L);
     }
 
-    @EventHandler(ignoreCancelled = true)
-    public void onInventoryOpen(InventoryOpenEvent event) {
-        System.out.println("opened gui");
+    public boolean isPlayerInUI(UUID uuid) {
+        return openGUIs.containsKey(uuid);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
