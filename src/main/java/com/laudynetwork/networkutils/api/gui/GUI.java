@@ -10,6 +10,8 @@
 
 package com.laudynetwork.networkutils.api.gui;
 
+import com.laudynetwork.networkutils.api.gui.event.CloseReason;
+import com.laudynetwork.networkutils.api.gui.event.UICloseEvent;
 import com.laudynetwork.networkutils.api.item.itembuilder.ItemBuilder;
 import com.laudynetwork.networkutils.api.item.itembuilder.ItemStackBuilder;
 import lombok.Getter;
@@ -74,6 +76,11 @@ public abstract class GUI implements InventoryHolder {
     }
 
     public abstract void onClose(Player player);
+
+    public void close(Player player, CloseReason closeReason) {
+        onClose(player);
+        Bukkit.getPluginManager().callEvent(new UICloseEvent(player, this, closeReason));
+    }
 
     public void open(Player player) {
         generateGUI(player);

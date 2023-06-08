@@ -36,11 +36,11 @@ public class MessageCache {
 
     public Translation getTranslation(String language, String key) {
         if (!translationMap.containsKey(language)) {
-            return new Translation("Language  + " + language + " not found!");
+            return new Translation("Language " + language + " not found!");
         }
 
         if (!translationMap.get(language).containsKey(key)) {
-            return new Translation("Key  + " + key + " not found in " + language + "!");
+            return new Translation("Key " + key + " not found in " + language + "!");
         }
         return translationMap.get(language).get(key);
     }
