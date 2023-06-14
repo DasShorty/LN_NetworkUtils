@@ -46,15 +46,6 @@ public final class NetworkUtils extends JavaPlugin {
         INSTANCE = this;
         this.redis = new Redis();
         sql = new MySQL("89.163.129.221", "laudynetwork", "M8-)opnbhrn/z]kD", "laudynetwork");
-
-        loadTranslations();
-    }
-
-    private void loadTranslations() {
-        saveResource("translations/own/de.json", true);
-        saveResource("translations/own/en.json", true);
-        saveResource("translations/plugins/de.json", true);
-        saveResource("translations/plugins/en.json", true);
     }
 
     @Override

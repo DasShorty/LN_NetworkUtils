@@ -6,8 +6,8 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.bukkit.plugin.Plugin;
 
-import java.io.File;
-import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,20 +18,15 @@ public class MessageCache {
     private final Map<String, Map<String, Translation>> translationMap = new HashMap<>();
 
     public MessageCache(Plugin plugin) {
-        loadFileInCache(plugin, "translations/own/en.json");
-        loadFileInCache(plugin, "translations/own/de.json");
-        loadFileInCache(plugin, "translations/plugins/de.json");
-        loadFileInCache(plugin, "translations/plugins/en.json");
+        loadFileInCache(plugin.getResource("translations/own/de.json"), "de");
+        loadFileInCache(plugin.getResource("translations/own/en.json"), "en");
+        loadFileInCache(plugin.getResource("translations/plugins/de.json"), "de");
+        loadFileInCache(plugin.getResource("translations/plugins/en.json"), "en");
     }
 
     @SneakyThrows
-    private void loadFileInCache(Plugin plugin, String languageFile) {
-
-        val file = new File("./plugins/" + plugin.getName() + "/" + languageFile);
-        if (!file.exists())
-            return;
-
-        convertTranslation(file.getName().substring(0, 2), JsonParser.parseReader(new FileReader(file)).getAsJsonObject());
+    private void loadFileInCache(InputStream languageFile, String lang) {
+        convertTranslation(lang, JsonParser.parseReader(new InputStreamReader(languageFile)).getAsJsonObject());
     }
 
     public Translation getTranslation(String language, String key) {
