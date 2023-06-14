@@ -51,7 +51,6 @@ public final class NetworkUtils extends JavaPlugin {
     @Override
     public void onEnable() {
 
-
         val guiHandler = new GUIHandler<Plugin>(this);
         Bukkit.getServicesManager().register(GUIHandler.class, guiHandler, this, ServicePriority.High);
 
