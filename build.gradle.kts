@@ -1,3 +1,4 @@
+import org.gradle.internal.impldep.com.google.common.io.Files
 import java.io.FileOutputStream
 
 plugins {
@@ -70,10 +71,26 @@ publishing {
     }
 }
 
+tasks.register("translations") {
+    downloadFile(System.getenv("TOLGEE_TOKEN_PLUGIN"), "own")
+    downloadFile(System.getenv("TOLGEE_TOKEN_GENERAL"), "plugins")
+}
+
 tasks {
     // Configure reobfJar to run when invoking the build task
     assemble {
         dependsOn(reobfJar)
+    }
+
+    processResources {
+        dependsOn("translations")
+    }
+
+    build {
+        doLast {
+            file(layout.buildDirectory.file("libs/NetworkUtils-latest-dev.jar")).delete()
+            file(layout.buildDirectory.file("libs/NetworkUtils-latest-dev-all.jar")).delete()
+        }
     }
 
     shadowJar {
@@ -103,14 +120,11 @@ tasks {
     reobfJar {
         // This is an example of how you might change the output location for reobfJar. It's recommended not to do this
         // for a variety of reasons, however it's asked frequently enough that an example of how to do it is included here.
-        outputJar.set(layout.buildDirectory.file("dist/NetworkUtils.jar"))
+        outputJar.set(layout.buildDirectory.file("libs/NetworkUtils.jar"))
     }
 }
 
-tasks.register("translations") {
-    downloadFile(System.getenv("TOLGEE_TOKEN_PLUGIN"), "own")
-    downloadFile(System.getenv("TOLGEE_TOKEN_GENERAL"), "plugins")
-}
+
 
 fun downloadFile(token: String, dir: String) {
     downloadLink(token).forEach {

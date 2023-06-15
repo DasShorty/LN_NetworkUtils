@@ -18,7 +18,7 @@ jobs:
             -   name: Build with Gradle
                 run: |
                     chmod 777 gradlew
-                    ./gradlew translations build
+                    ./gradlew build
                 env:
                     NEXUS_USER: ${{ secrets.NEXUS_USER }}
                     NEXUS_PWD: ${{ secrets.NEXUS_PWD }}
@@ -29,7 +29,7 @@ jobs:
                 if: github.ref == 'refs/heads/main'
                 with:
                     name: data
-                    path: ./build/dist/NetworkUtils.jar
+                    path: ./build/libs/NetworkUtils.jar
 
     deploy:
         runs-on: self-hosted
@@ -48,10 +48,10 @@ jobs:
                     password: ${{ secrets.SFTP_PWD }}
                     port: 22
                     uploads: |
-                        ./build/dist/ => /home/simplecloud/templates/EVERY_SERVER/plugins
-                        ./build/dist/ => /home/simplecloud/static/Dev-1/plugins/
-                        ./build/dist/ => /home/simplecloud/static/BuilderPlots-1/plugins
-                        ./build/dist/ => /home/simplecloud/static/Build-1/plugins/
+                        ./build/libs/ => /home/simplecloud/templates/EVERY_SERVER/plugins
+                        ./build/libs/ => /home/simplecloud/static/Dev-1/plugins/
+                        ./build/libs/ => /home/simplecloud/static/BuilderPlots-1/plugins
+                        ./build/libs/ => /home/simplecloud/static/Build-1/plugins/
                     ignore: |
                         *.git
                         */**/*git*
