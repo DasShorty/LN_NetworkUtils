@@ -17,16 +17,8 @@ import java.util.Map;
 public class MessageCache {
     private final Map<String, Map<String, Translation>> translationMap = new HashMap<>();
 
-    public MessageCache(Plugin plugin) {
-        loadFileInCache(plugin.getResource("translations/own/de.json"), "de");
-        loadFileInCache(plugin.getResource("translations/own/en.json"), "en");
-        loadFileInCache(plugin.getResource("translations/plugins/de.json"), "de");
-        loadFileInCache(plugin.getResource("translations/plugins/en.json"), "en");
-        System.out.println(plugin.getName() + " loading translations");
-    }
-
     @SneakyThrows
-    private void loadFileInCache(InputStream languageFile, String lang) {
+    public void loadFileInCache(InputStream languageFile, String lang) {
         System.out.println("Loading " + lang);
         convertTranslation(lang, JsonParser.parseReader(new InputStreamReader(languageFile)).getAsJsonObject());
     }

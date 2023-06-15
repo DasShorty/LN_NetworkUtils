@@ -57,7 +57,11 @@ public final class NetworkUtils extends JavaPlugin {
         val subControlCommandHandler = new ControlSubCommandHandler();
         Bukkit.getServicesManager().register(ControlSubCommandHandler.class, subControlCommandHandler, this, ServicePriority.High);
 
-        this.messageCache = new MessageCache(this);
+        this.messageCache = new MessageCache();
+        this.messageCache.loadFileInCache(this.getResource("translations/own/de.json"), "de");
+        this.messageCache.loadFileInCache(this.getResource("translations/own/en.json"), "en");
+        this.messageCache.loadFileInCache(this.getResource("translations/plugins/de.json"), "de");
+        this.messageCache.loadFileInCache(this.getResource("translations/plugins/en.json"), "en");
 
         var pm = Bukkit.getPluginManager();
 
