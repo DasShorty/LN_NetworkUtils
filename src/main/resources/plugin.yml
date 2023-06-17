@@ -24,7 +24,5 @@ commands:
     control:
         permission: networkutils.control.basic
         aliases: [ manage ]
-    register:
-        permission: networkutils.register
     language:
         aliases: [ lang, merkel-lass-mal-sprache-ändern ]
