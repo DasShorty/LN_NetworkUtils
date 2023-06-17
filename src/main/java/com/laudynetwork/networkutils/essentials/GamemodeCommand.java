@@ -1,8 +1,7 @@
 package com.laudynetwork.networkutils.essentials;
 
-import com.laudynetwork.database.mysql.MySQL;
+import com.laudynetwork.networkutils.api.MongoDatabase;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
-import com.laudynetwork.networkutils.api.messanger.backend.MessageCache;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
 import lombok.val;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -24,10 +23,10 @@ import java.util.List;
 public class GamemodeCommand implements CommandExecutor, TabCompleter {
 
     private final MessageAPI msgApi = MessageAPI.create(MessageAPI.PrefixType.SYSTEM);
-    private final MySQL sql;
+    private final MongoDatabase database;
 
-    public GamemodeCommand(MySQL sql) {
-        this.sql = sql;
+    public GamemodeCommand(MongoDatabase database) {
+        this.database = database;
     }
 
     @Override
@@ -38,7 +37,7 @@ public class GamemodeCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        NetworkPlayer networkPlayer = new NetworkPlayer(this.sql, player.getUniqueId());
+        NetworkPlayer networkPlayer = new NetworkPlayer(this.database, player.getUniqueId());
 
         val language = networkPlayer.getLanguage();
 
@@ -141,9 +140,7 @@ public class GamemodeCommand implements CommandExecutor, TabCompleter {
 
             }
 
-            default -> {
-                player.sendMessage(msgApi.getMessage(language, "command.usage", Placeholder.unparsed("gamemode", "/gm <0-3> [player]")));
-            }
+            default -> player.sendMessage(msgApi.getMessage(language, "command.usage", Placeholder.unparsed("gamemode", "/gm <0-3> [player]")));
         }
 
 

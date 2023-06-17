@@ -1,9 +1,10 @@
 package com.laudynetwork.networkutils.essentials.control;
 
-import com.laudynetwork.database.mysql.MySQL;
+import com.laudynetwork.networkutils.api.MongoDatabase;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
 import com.laudynetwork.networkutils.essentials.control.api.ControlSubCommandHandler;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.command.Command;
@@ -17,16 +18,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+@RequiredArgsConstructor
 public class ControlCommand implements CommandExecutor, TabCompleter {
 
     private final ControlSubCommandHandler subCommandHandler;
-    private final MySQL sql;
+    private final MongoDatabase database;
     private final MessageAPI msgApi = MessageAPI.create(MessageAPI.PrefixType.SYSTEM);
-
-    public ControlCommand(ControlSubCommandHandler handler, MySQL sql) {
-        this.subCommandHandler = handler;
-        this.sql = sql;
-    }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -36,7 +33,7 @@ public class ControlCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        val networkPlayer = new NetworkPlayer(this.sql, player.getUniqueId());
+        val networkPlayer = new NetworkPlayer(this.database, player.getUniqueId());
 
         val language = networkPlayer.getLanguage();
 
@@ -84,7 +81,7 @@ public class ControlCommand implements CommandExecutor, TabCompleter {
                 return list;
 
             val subCommand = this.subCommandHandler.getSubCommands().get(id);
-            list.addAll(subCommand.onTabComplete(player, command, label, args, new NetworkPlayer(this.sql, player.getUniqueId())));
+            list.addAll(subCommand.onTabComplete(player, command, label, args, new NetworkPlayer(this.database, player.getUniqueId())));
         }
 
         val completer = new ArrayList<String>();

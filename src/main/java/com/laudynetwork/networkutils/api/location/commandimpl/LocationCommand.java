@@ -1,7 +1,7 @@
 package com.laudynetwork.networkutils.api.location.commandimpl;
 
-import com.laudynetwork.database.mysql.MySQL;
-import com.laudynetwork.networkutils.api.location.SQLLocation;
+import com.laudynetwork.networkutils.api.MongoDatabase;
+import com.laudynetwork.networkutils.api.location.DatabaseLocation;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
 import lombok.val;
@@ -20,11 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LocationCommand implements CommandExecutor, TabCompleter {
-    private final MySQL sql;
+    private final MongoDatabase database;
     private final MessageAPI msgAPI = MessageAPI.create(MessageAPI.PrefixType.SYSTEM);
 
-    public LocationCommand(MySQL sql) {
-        this.sql = sql;
+    public LocationCommand(MongoDatabase database) {
+        this.database = database;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class LocationCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        val networkPlayer = new NetworkPlayer(this.sql, player.getUniqueId());
+        val networkPlayer = new NetworkPlayer(this.database, player.getUniqueId());
         val language = networkPlayer.getLanguage();
 
         if (!player.hasPermission("networkutils.location.use")) {
@@ -52,22 +52,12 @@ public class LocationCommand implements CommandExecutor, TabCompleter {
                 }
 
                 switch (args[0].toLowerCase()) {
-                    case "add" -> {
-                        player.sendMessage(this.msgAPI.getMessage(language, "command.use", Placeholder.unparsed("command", "/location add <location-key>")));
-                    }
-                    case "remove" -> {
-                        player.sendMessage(this.msgAPI.getMessage(language, "command.use", Placeholder.unparsed("command", "/location remove <location-key>")));
-                    }
-                    case "get" -> {
-                        player.sendMessage(this.msgAPI.getMessage(language, "command.use", Placeholder.unparsed("command", "/location get <location-key>")));
-                    }
+                    case "add" -> player.sendMessage(this.msgAPI.getMessage(language, "command.use", Placeholder.unparsed("command", "/location add <location-key>")));
+                    case "remove" -> player.sendMessage(this.msgAPI.getMessage(language, "command.use", Placeholder.unparsed("command", "/location remove <location-key>")));
+                    case "get" -> player.sendMessage(this.msgAPI.getMessage(language, "command.use", Placeholder.unparsed("command", "/location get <location-key>")));
                     case "list" -> {
-                        val locationNames = SQLLocation.getAllLocationNames(this.sql);
-
                         player.sendMessage(this.msgAPI.getMessage(language, "location.command.list"));
-
-                        locationNames.forEach(s -> player.sendMessage(Component.text(s).clickEvent(ClickEvent.suggestCommand("/location get " + s))));
-
+                        DatabaseLocation.getAllLocationNames(this.database).forEach(s -> player.sendMessage(Component.text(s).clickEvent(ClickEvent.suggestCommand("/location get " + s))));
                     }
                 }
             }
@@ -78,12 +68,12 @@ public class LocationCommand implements CommandExecutor, TabCompleter {
                         val location = player.getLocation();
 
                         val key = args[1];
-                        if (SQLLocation.existsLocation(key, this.sql)) {
+                        if (DatabaseLocation.existsLocation(key, this.database)) {
                             player.sendMessage(this.msgAPI.getMessage(language, "command.location.exist"));
                             return true;
                         }
 
-                        SQLLocation.createLocation(key, location, this.sql);
+                        DatabaseLocation.createLocation(key, location, this.database);
 
                         player.sendMessage(this.msgAPI.getMessage(language, "command.location.add"));
 
@@ -92,12 +82,12 @@ public class LocationCommand implements CommandExecutor, TabCompleter {
 
                     case "remove" -> {
 
-                        if (!SQLLocation.existsLocation(args[1], this.sql)) {
+                        if (!DatabaseLocation.existsLocation(args[1], this.database)) {
                             player.sendMessage(this.msgAPI.getMessage(language, "command.location.not.exist"));
                             return true;
                         }
 
-                        val sqlLocation = SQLLocation.fromSQL(args[1], this.sql);
+                        val sqlLocation = DatabaseLocation.fromDatabase(args[1], this.database);
                         sqlLocation.deleteLocation();
 
                         player.sendMessage(this.msgAPI.getMessage(language, "command.location.remove"));
@@ -108,14 +98,15 @@ public class LocationCommand implements CommandExecutor, TabCompleter {
 
                         player.sendMessage(args[1]);
 
-                        if (!SQLLocation.existsLocation(args[1], this.sql)) {
+                        if (!DatabaseLocation.existsLocation(args[1], this.database)) {
                             player.sendMessage(this.msgAPI.getMessage(language, "command.location.not.exist"));
                             return true;
                         }
 
-                        val sqlLocation = SQLLocation.fromSQL(args[1], this.sql);
+                        val sqlLocation = DatabaseLocation.fromDatabase(args[1], this.database);
                         val storageLocation = sqlLocation.getStoredLocation();
 
+                        assert storageLocation != null;
                         val tpTranslation = this.msgAPI.getTranslation(language, "layout.tp").clickEvent(
                                 ClickEvent.suggestCommand("/teleport " + storageLocation.getBlockX() + " " + storageLocation.getBlockY() + " " + storageLocation.getBlockZ())
                         );
@@ -149,12 +140,8 @@ public class LocationCommand implements CommandExecutor, TabCompleter {
             }
             case 2 -> {
                 switch (args[0].toLowerCase()) {
-                    case "add" -> {
-                        list.add("<Location Key>");
-                    }
-                    case "remove", "get" -> {
-                        list.addAll(SQLLocation.getAllLocationNames(this.sql));
-                    }
+                    case "add" -> list.add("<Location Key>");
+                    case "remove", "get" -> list.addAll(DatabaseLocation.getAllLocationNames(this.database));
                 }
             }
         }

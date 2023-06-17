@@ -1,8 +1,9 @@
 package com.laudynetwork.networkutils.essentials;
 
-import com.laudynetwork.database.mysql.MySQL;
+import com.laudynetwork.networkutils.api.MongoDatabase;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
@@ -17,14 +18,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+@RequiredArgsConstructor
 public class FlyCommand implements CommandExecutor, TabCompleter {
 
     private final MessageAPI msgApi = MessageAPI.create(MessageAPI.PrefixType.SYSTEM);
-    private final MySQL sql;
-
-    public FlyCommand(MySQL sql) {
-        this.sql = sql;
-    }
+    private final MongoDatabase database;
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -34,7 +32,7 @@ public class FlyCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        NetworkPlayer networkPlayer = new NetworkPlayer(this.sql, player.getUniqueId());
+        NetworkPlayer networkPlayer = new NetworkPlayer(this.database, player.getUniqueId());
 
         val language = networkPlayer.getLanguage();
 

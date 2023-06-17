@@ -1,7 +1,7 @@
 package com.laudynetwork.networkutils;
 
-import com.laudynetwork.database.mysql.MySQL;
 import com.laudynetwork.database.redis.Redis;
+import com.laudynetwork.networkutils.api.MongoDatabase;
 import com.laudynetwork.networkutils.api.gui.GUIHandler;
 import com.laudynetwork.networkutils.api.location.commandimpl.LocationCommand;
 import com.laudynetwork.networkutils.api.messanger.backend.MessageCache;
@@ -14,7 +14,6 @@ import com.laudynetwork.networkutils.essentials.language.LanguageCommand;
 import com.laudynetwork.networkutils.essentials.vanish.VanishCommand;
 import com.laudynetwork.networkutils.listeners.ChatListener;
 import com.laudynetwork.networkutils.listeners.CommandProtectionListener;
-import com.laudynetwork.networkutils.registration.RegisterCommand;
 import lombok.Getter;
 import lombok.val;
 import net.luckperms.api.LuckPerms;
@@ -30,7 +29,7 @@ import java.util.Objects;
 public final class NetworkUtils extends JavaPlugin {
     private static NetworkUtils INSTANCE;
     @Getter
-    private MySQL sql;
+    private MongoDatabase database;
     @Getter
     private TablistManager tablistManager;
     private Redis redis;
@@ -45,7 +44,7 @@ public final class NetworkUtils extends JavaPlugin {
     public void onLoad() {
         INSTANCE = this;
         this.redis = new Redis();
-        sql = new MySQL("89.163.129.221", "laudynetwork", "M8-)opnbhrn/z]kD", "laudynetwork");
+        this.database = new MongoDatabase("mongodb://root:Pe7yeBPvimUcJ6B2kN@89.163.129.221:27017/?authMechanism=SCRAM-SHA-1");
     }
 
     @Override
@@ -85,22 +84,21 @@ public final class NetworkUtils extends JavaPlugin {
         this.tablistManager = new TablistManager(this, luckPerms);
 
         pm.registerEvents(new ChatListener(), this);
-        pm.registerEvents(new CommandProtectionListener(sql), this);
+        pm.registerEvents(new CommandProtectionListener(this.database), this);
 
-        Objects.requireNonNull(getCommand("location")).setExecutor(new LocationCommand(sql));
-        Objects.requireNonNull(getCommand("gamemode")).setExecutor(new GamemodeCommand(sql));
-        Objects.requireNonNull(getCommand("fly")).setExecutor(new FlyCommand(sql));
-        Objects.requireNonNull(getCommand("control")).setExecutor(new ControlCommand(subControlCommandHandler, sql));
-        Objects.requireNonNull(getCommand("register")).setExecutor(new RegisterCommand(redis, sql));
-        Objects.requireNonNull(getCommand("language")).setExecutor(new LanguageCommand(guiHandler, sql, this));
+        Objects.requireNonNull(getCommand("location")).setExecutor(new LocationCommand(this.database));
+        Objects.requireNonNull(getCommand("gamemode")).setExecutor(new GamemodeCommand(this.database));
+        Objects.requireNonNull(getCommand("fly")).setExecutor(new FlyCommand(this.database));
+        Objects.requireNonNull(getCommand("control")).setExecutor(new ControlCommand(subControlCommandHandler, this.database));
+        Objects.requireNonNull(getCommand("language")).setExecutor(new LanguageCommand(guiHandler, this.database, this));
 
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, "minecraft:player-send-to-server");
         getSLF4JLogger().info("loaded!");
-
     }
 
     @Override
     public void onDisable() {
+        this.database.shutdown();
         this.redis.shutdown();
     }
 }

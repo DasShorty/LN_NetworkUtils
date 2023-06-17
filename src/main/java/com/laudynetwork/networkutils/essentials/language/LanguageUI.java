@@ -1,6 +1,6 @@
 package com.laudynetwork.networkutils.essentials.language;
 
-import com.laudynetwork.database.mysql.MySQL;
+import com.laudynetwork.networkutils.api.MongoDatabase;
 import com.laudynetwork.networkutils.api.gui.GUI;
 import com.laudynetwork.networkutils.api.gui.GUIItem;
 import com.laudynetwork.networkutils.api.item.itembuilder.HeadBuilder;
@@ -26,10 +26,10 @@ public class LanguageUI extends GUI {
     private final NetworkPlayer networkPlayer;
     private final Plugin plugin;
 
-    public LanguageUI(Player player, Component displayName, MySQL sql, Plugin plugin) {
+    public LanguageUI(Player player, Component displayName, MongoDatabase database, Plugin plugin) {
         super(player, displayName, 27);
         this.plugin = plugin;
-        this.networkPlayer = new NetworkPlayer(sql, player.getUniqueId());
+        this.networkPlayer = new NetworkPlayer(database, player.getUniqueId());
         this.language = this.networkPlayer.getLanguage();
     }
 

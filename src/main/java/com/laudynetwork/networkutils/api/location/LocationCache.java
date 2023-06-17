@@ -1,6 +1,6 @@
 package com.laudynetwork.networkutils.api.location;
 
-import com.laudynetwork.database.mysql.MySQL;
+import com.laudynetwork.networkutils.api.MongoDatabase;
 import lombok.val;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -11,21 +11,21 @@ import java.util.Map;
 public class LocationCache {
 
     private final Map<String, Location> locationMap = new HashMap<>();
-    private final MySQL sql;
+    private final MongoDatabase database;
 
-    public LocationCache(MySQL sql) {
-        this.sql = sql;
-        loadAllLocationsInCache(sql);
+    public LocationCache(MongoDatabase database) {
+        this.database = database;
+        loadAllLocationsInCache(database);
     }
 
     public void updateLocations() {
-        loadAllLocationsInCache(sql);
+        loadAllLocationsInCache(this.database);
     }
 
-    private void loadAllLocationsInCache(MySQL sql) {
+    private void loadAllLocationsInCache(MongoDatabase database) {
 
-        SQLLocation.getAllLocationNames(sql).forEach(locationKey -> {
-            val sqlLocation = SQLLocation.fromSQL(locationKey, sql);
+        DatabaseLocation.getAllLocationNames(database).forEach(locationKey -> {
+            val sqlLocation = DatabaseLocation.fromDatabase(locationKey, this.database);
 
             if (sqlLocation.getStoredLocation() != null) {
                 locationMap.put(locationKey, sqlLocation.getStoredLocation());
