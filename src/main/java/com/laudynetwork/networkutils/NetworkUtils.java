@@ -28,7 +28,6 @@ import java.util.Objects;
 @SuppressWarnings("unused")
 public final class NetworkUtils extends JavaPlugin {
     private static NetworkUtils INSTANCE;
-    @Getter
     private MongoDatabase database;
     @Getter
     private TablistManager tablistManager;
@@ -49,6 +48,8 @@ public final class NetworkUtils extends JavaPlugin {
 
     @Override
     public void onEnable() {
+
+        Bukkit.getServicesManager().register(MongoDatabase.class, database, this, ServicePriority.High);
 
         val guiHandler = new GUIHandler<Plugin>(this);
         Bukkit.getServicesManager().register(GUIHandler.class, guiHandler, this, ServicePriority.High);
