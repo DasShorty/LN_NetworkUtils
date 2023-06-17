@@ -3,6 +3,7 @@ package com.laudynetwork.networkutils.essentials.vanish;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.laudynetwork.networkutils.NetworkUtils;
+import com.laudynetwork.networkutils.api.MongoDatabase;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
 import lombok.val;
@@ -18,6 +19,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -35,7 +37,7 @@ public class VanishCommand implements CommandExecutor, Listener {
             return true;
         }
 
-        NetworkPlayer networkPlayer = new NetworkPlayer(NetworkUtils.getINSTANCE().getDatabase(), player.getUniqueId());
+        NetworkPlayer networkPlayer = new NetworkPlayer(Objects.requireNonNull(Bukkit.getServicesManager().getRegistration(MongoDatabase.class)).getProvider(), player.getUniqueId());
 
         val language = networkPlayer.getLanguage();
 
@@ -88,7 +90,8 @@ public class VanishCommand implements CommandExecutor, Listener {
 
             }
 
-            default -> player.sendMessage(this.msgApi.getMessage(language, "command.usage", Placeholder.unparsed("command", "/vanish [player]")));
+            default ->
+                    player.sendMessage(this.msgApi.getMessage(language, "command.usage", Placeholder.unparsed("command", "/vanish [player]")));
 
         }
         return true;
