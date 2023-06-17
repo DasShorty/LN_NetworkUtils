@@ -1,4 +1,3 @@
-import org.gradle.internal.impldep.com.google.common.io.Files
 import java.io.FileOutputStream
 
 plugins {
@@ -41,6 +40,7 @@ dependencies {
     api("eu.thesimplecloud.simplecloud:simplecloud-api:2.5.0")
     compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
     implementation("org.reflections:reflections:0.10.2")
+    implementation("org.mongodb:mongodb-driver-sync:4.9.0")
 }
 repositories {
     mavenCentral()
