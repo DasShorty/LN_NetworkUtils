@@ -43,7 +43,7 @@ public final class NetworkUtils extends JavaPlugin {
     public void onLoad() {
         INSTANCE = this;
         this.redis = new Redis();
-        this.database = new MongoDatabase("mongodb://root:Pe7yeBPvimUcJ6B2kN@89.163.129.221:27017/?authMechanism=SCRAM-SHA-1");
+        this.database = new MongoDatabase("mongodb://root:gtH7O4teg2auWpouSBOi1v9q3vIHDtZ1cPJG20XYGZ8sA5srFW@127.0.0.1:27017/?authMechanism=SCRAM-SHA-1");
     }
 
     @Override
