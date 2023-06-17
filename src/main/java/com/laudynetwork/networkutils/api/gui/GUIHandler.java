@@ -46,13 +46,13 @@ public class GUIHandler<P extends Plugin> implements Listener {
     }
 
     private void reOpen(Player player, GUI ui, CloseReason reason) {
-        if (!isPlayerInUI(player.getUniqueId()))
+        if (isPlayerInUI(player.getUniqueId()))
             openGUIs.get(player.getUniqueId()).close(player, reason);
         open(player, ui);
     }
 
     public boolean isPlayerInUI(UUID uuid) {
-        return openGUIs.containsKey(uuid);
+        return !openGUIs.containsKey(uuid);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
@@ -61,7 +61,7 @@ public class GUIHandler<P extends Plugin> implements Listener {
         if (!(event.getWhoClicked() instanceof Player player))
             return;
 
-        if (!isPlayerInUI(player.getUniqueId())) {
+        if (isPlayerInUI(player.getUniqueId())) {
             Bukkit.broadcast(Component.text("You are not in a GUI").color(NamedTextColor.RED));
             return;
         }

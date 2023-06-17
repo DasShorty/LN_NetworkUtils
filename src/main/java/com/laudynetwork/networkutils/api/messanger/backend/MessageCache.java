@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.SneakyThrows;
 import lombok.val;
-import org.bukkit.plugin.Plugin;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -46,8 +45,6 @@ public class MessageCache {
 
         val map = this.translationMap.get(language);
 
-        strings.forEach(key -> {
-            map.put(key, new Translation(json.get(key).getAsString()));
-        });
+        strings.forEach(key -> map.put(key, new Translation(json.get(key).getAsString())));
     }
 }

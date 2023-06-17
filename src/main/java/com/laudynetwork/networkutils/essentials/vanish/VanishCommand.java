@@ -4,7 +4,6 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.laudynetwork.networkutils.NetworkUtils;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
-import com.laudynetwork.networkutils.api.messanger.backend.MessageCache;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
 import lombok.val;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -36,7 +35,7 @@ public class VanishCommand implements CommandExecutor, Listener {
             return true;
         }
 
-        NetworkPlayer networkPlayer = new NetworkPlayer(NetworkUtils.getINSTANCE().getSql(), player.getUniqueId());
+        NetworkPlayer networkPlayer = new NetworkPlayer(NetworkUtils.getINSTANCE().getDatabase(), player.getUniqueId());
 
         val language = networkPlayer.getLanguage();
 
@@ -89,9 +88,7 @@ public class VanishCommand implements CommandExecutor, Listener {
 
             }
 
-            default -> {
-                player.sendMessage(this.msgApi.getMessage(language, "command.usage", Placeholder.unparsed("command", "/vanish [player]")));
-            }
+            default -> player.sendMessage(this.msgApi.getMessage(language, "command.usage", Placeholder.unparsed("command", "/vanish [player]")));
 
         }
         return true;
