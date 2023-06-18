@@ -3,6 +3,7 @@ package com.laudynetwork.networkutils.api.location;
 import com.google.gson.Gson;
 import com.laudynetwork.networkutils.api.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.bson.Document;
@@ -91,7 +92,7 @@ public class DatabaseLocation {
     public void updateLocation(Location location) {
         this.database.getDatabase()
                 .getCollection("minecraft_general_locations")
-                .updateOne(Filters.eq("locationKey", this.locationKey), new Document("$location", location));
+                .updateOne(Filters.eq("locationKey", this.locationKey), Updates.set("location", location));
     }
 
     public void deleteLocation() {

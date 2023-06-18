@@ -3,6 +3,7 @@ package com.laudynetwork.networkutils.api.player;
 import com.google.gson.Gson;
 import com.laudynetwork.networkutils.api.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
 import com.viaversion.viaversion.api.Via;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -52,6 +53,6 @@ public class NetworkPlayer {
             return;
         }
 
-        collection.updateOne(Filters.eq("uuid", this.uuid.toString()), new Document("$language", language));
+        collection.updateOne(Filters.eq("uuid", this.uuid.toString()), Updates.set("language", language));
     }
 }
