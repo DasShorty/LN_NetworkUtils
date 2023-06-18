@@ -15,7 +15,7 @@ public record VanishedPlayer(UUID uuid) {
 
     public VanishedPlayer update(boolean vanished) {
 
-        val player = Bukkit.getPlayer(this.uuid);
+        val player = Bukkit.getPlayer(this.uuid.toString());
         assert player != null;
 
         if (vanished)
@@ -44,7 +44,7 @@ public record VanishedPlayer(UUID uuid) {
 
         val database = Objects.requireNonNull(Bukkit.getServicesManager().getRegistration(MongoDatabase.class)).getProvider();
 
-        val document = database.getDatabase().getCollection("minecraft_networktutils_essentials_vanish").find(Filters.eq("uuid", this.uuid)).first();
+        val document = database.getDatabase().getCollection("minecraft_networktutils_essentials_vanish").find(Filters.eq("uuid", this.uuid.toString())).first();
 
         if (document == null)
             return false;
@@ -55,7 +55,7 @@ public record VanishedPlayer(UUID uuid) {
     private void updateDB(boolean vanished) {
         val database = Objects.requireNonNull(Bukkit.getServicesManager().getRegistration(MongoDatabase.class)).getProvider();
         database.getDatabase().getCollection("minecraft_networktutils_essentials_vanish")
-                .updateOne(Filters.eq("uuid", this.uuid), new Document("$vanished", vanished));
+                .updateOne(Filters.eq("uuid", this.uuid.toString()), new Document("$vanished", vanished));
     }
 
 }
