@@ -29,7 +29,7 @@ public class NetworkPlayer {
 
     @SneakyThrows
     public String getLanguage() {
-        val document = this.database.getDatabase().getCollection("minecraft_general_playerData").find(Filters.eq("uuid", this.uuid)).first();
+        val document = this.database.getDatabase().getCollection("minecraft_general_playerData").find(Filters.eq("uuid", this.uuid.toString().toString())).first();
         assert document != null;
         return PlayerLanguage.fromJson(document.toJson()).language();
     }
@@ -47,6 +47,6 @@ public class NetworkPlayer {
             return;
         }
 
-        collection.updateOne(Filters.eq("uuid", this.uuid), new Document("$language", language));
+        collection.updateOne(Filters.eq("uuid", this.uuid.toString()), new Document("$language", language));
     }
 }
