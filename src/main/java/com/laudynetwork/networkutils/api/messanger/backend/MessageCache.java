@@ -45,10 +45,6 @@ public class MessageCache {
 
         val map = this.translationMap.get(language);
 
-        strings.forEach(key -> {
-            val rawTranslation = json.get(key).getAsString();
-            System.out.println(key  + " | " + rawTranslation);
-            map.put(key, new Translation(rawTranslation));
-        });
+        strings.forEach(key -> map.put(key, new Translation(json.get(key).getAsString())));
     }
 }
