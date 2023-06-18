@@ -8,7 +8,8 @@ public enum ProtocolVersion {
      * 1.19.1 also represents 1.19.2
      */
     V_1_19_1(760, "1.19"),
-    V_1_19_3(761, "1.19.3");
+    V_1_19_3(761, "1.19.3"),
+    V_1_20(762, "1.20");
 
 
     private final int protocolVersion;
