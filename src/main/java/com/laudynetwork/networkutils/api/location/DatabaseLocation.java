@@ -30,14 +30,28 @@ public class DatabaseLocation {
     }
 
     public static DatabaseLocation createLocation(String locationKey, Location location, MongoDatabase database) {
-        database.getDatabase().getCollection("minecraft_general_locations").insertOne(gson.fromJson(
-                new LocationData(locationKey, location.getWorld().getUID().toString(), location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch()
-                ).toJson(), Document.class));
+        database.getDatabase()
+                .getCollection("minecraft_general_locations")
+                .insertOne(
+                        gson.fromJson(
+                                new LocationData(locationKey,
+                                        location.getWorld().getUID().toString(),
+                                        location.getX(),
+                                        location.getY(),
+                                        location.getZ(),
+                                        location.getYaw(),
+                                        location.getPitch()
+                                ).toJson(),
+                                Document.class)
+                );
+
         return new DatabaseLocation(locationKey, database);
     }
 
     public static boolean existsLocation(String locationKey, MongoDatabase database) {
-        return database.getDatabase().getCollection("minecraft_general_locations").countDocuments(Filters.eq("locationKey", locationKey)) > 0;
+        return database.getDatabase()
+                .getCollection("minecraft_general_locations")
+                .countDocuments(Filters.eq("locationKey", locationKey)) > 0;
     }
 
     @SneakyThrows
@@ -45,44 +59,45 @@ public class DatabaseLocation {
 
         val list = new ArrayList<String>();
 
-        database.getDatabase().getCollection("minecraft_general_locations").find().forEach(document -> list.add(gson.fromJson(document.toJson(), LocationData.class).locationKey()));
+        database.getDatabase()
+                .getCollection("minecraft_general_locations")
+                .find().forEach(document -> list.add(gson.fromJson(document.toJson(), LocationData.class).locationKey()));
 
         return list;
     }
 
-    private static Location fromStringToLocation(String str) {
-
-        String[] split = str.split(";");
-        var world = Bukkit.getWorld(split[0]);
-        var x = Double.parseDouble(split[1]);
-        var y = Double.parseDouble(split[2]);
-        var z = Double.parseDouble(split[3]);
-        var yaw = Float.parseFloat(split[4]);
-        var pitch = Float.parseFloat(split[5]);
-        return new Location(world, x, y, z, yaw, pitch);
-    }
-
-    private static String fromLocationToString(Location loc) {
-        return loc.getWorld().getName() + ";" + loc.getX() + ";" + loc.getY() + ";" + loc.getZ() + ";" + loc.getYaw() + ";" + loc.getPitch();
-    }
-
     @SneakyThrows
     public @Nullable Location getStoredLocation() {
-        val document = database.getDatabase().getCollection("minecraft_general_locations").find(Filters.eq("locationKey", this.locationKey)).first();
-        if (document == null) {
+
+        val document = database.getDatabase()
+                .getCollection("minecraft_general_locations")
+                .find(Filters.eq("locationKey", this.locationKey)).first();
+
+        if (document == null)
             return null;
-        } else {
-            val locationData = gson.fromJson(document.toJson(), LocationData.class);
-            return new Location(Bukkit.getWorld(UUID.fromString(locationData.worldID())), locationData.x(), locationData.y(), locationData.z(), locationData.yaw(), locationData.pitch());
-        }
+
+
+        val locationData = gson.fromJson(document.toJson(), LocationData.class);
+        return new Location(
+                Bukkit.getWorld(UUID.fromString(locationData.worldID())),
+                locationData.x(),
+                locationData.y(),
+                locationData.z(),
+                locationData.yaw(),
+                locationData.pitch()
+        );
     }
 
     public void updateLocation(Location location) {
-        this.database.getDatabase().getCollection("minecraft_general_locations").updateOne(Filters.eq("locationKey", this.locationKey), new Document("$location", location));
+        this.database.getDatabase()
+                .getCollection("minecraft_general_locations")
+                .updateOne(Filters.eq("locationKey", this.locationKey), new Document("$location", location));
     }
 
     public void deleteLocation() {
-        this.database.getDatabase().getCollection("minecraft_general_locations").deleteOne(Filters.eq("locationKey", this.locationKey));
+        this.database.getDatabase()
+                .getCollection("minecraft_general_locations")
+                .deleteOne(Filters.eq("locationKey", this.locationKey));
     }
 
 

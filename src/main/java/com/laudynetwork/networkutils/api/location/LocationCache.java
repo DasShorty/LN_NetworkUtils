@@ -25,16 +25,15 @@ public class LocationCache {
     private void loadAllLocationsInCache(MongoDatabase database) {
 
         DatabaseLocation.getAllLocationNames(database).forEach(locationKey -> {
-            val sqlLocation = DatabaseLocation.fromDatabase(locationKey, this.database);
+            val databaseLocation = DatabaseLocation.fromDatabase(locationKey, this.database);
 
-            if (sqlLocation.getStoredLocation() != null) {
-                locationMap.put(locationKey, sqlLocation.getStoredLocation());
+            if (databaseLocation.getStoredLocation() != null) {
+                locationMap.put(locationKey, databaseLocation.getStoredLocation());
             } else {
                 Bukkit.getLogger().warning("Skipping location " + locationKey + " because location is scuffed");
             }
 
         });
-
     }
 
     public boolean existLocation(String locationName) {
