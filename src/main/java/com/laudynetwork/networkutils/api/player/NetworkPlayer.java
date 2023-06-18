@@ -29,7 +29,12 @@ public class NetworkPlayer {
 
     @SneakyThrows
     public String getLanguage() {
-        val document = this.database.getDatabase().getCollection("minecraft_general_playerData").find(Filters.eq("uuid", this.uuid.toString().toString())).first();
+        val collection = this.database.getDatabase().getCollection("minecraft_general_playerData");
+        if (collection.countDocuments(Filters.eq("uuid", this.uuid.toString())) == 0) {
+            setLanguage("en");
+            return "en";
+        }
+        val document = collection.find(Filters.eq("uuid", this.uuid.toString())).first();
         assert document != null;
         return PlayerLanguage.fromJson(document.toJson()).language();
     }
@@ -38,12 +43,12 @@ public class NetworkPlayer {
 
         val collection = this.database.getDatabase().getCollection("minecraft_general_playerData");
 
-        val iterator = collection.find(Filters.eq("uuid", this.uuid)).iterator();
+        val iterator = collection.find(Filters.eq("uuid", this.uuid.toString())).iterator();
         val hasNext = iterator.hasNext();
         iterator.close();
 
         if (!hasNext) {
-            collection.insertOne(this.gson.fromJson(this.gson.toJson(new PlayerLanguage(this.uuid, language)), Document.class));
+            collection.insertOne(this.gson.fromJson(this.gson.toJson(new PlayerLanguage(this.uuid.toString(), language)), Document.class));
             return;
         }
 
