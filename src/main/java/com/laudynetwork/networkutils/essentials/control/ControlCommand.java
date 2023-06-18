@@ -1,5 +1,6 @@
 package com.laudynetwork.networkutils.essentials.control;
 
+import com.laudynetwork.networkutils.NetworkUtils;
 import com.laudynetwork.networkutils.api.MongoDatabase;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
@@ -23,7 +24,7 @@ public class ControlCommand implements CommandExecutor, TabCompleter {
 
     private final ControlSubCommandHandler subCommandHandler;
     private final MongoDatabase database;
-    private final MessageAPI msgApi = MessageAPI.create(MessageAPI.PrefixType.SYSTEM);
+    private final MessageAPI msgApi = new MessageAPI(NetworkUtils.getINSTANCE().getMessageCache(), MessageAPI.PrefixType.SYSTEM);
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {

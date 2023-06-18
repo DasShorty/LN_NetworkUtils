@@ -1,5 +1,6 @@
 package com.laudynetwork.networkutils.essentials.language;
 
+import com.laudynetwork.networkutils.NetworkUtils;
 import com.laudynetwork.networkutils.api.MongoDatabase;
 import com.laudynetwork.networkutils.api.gui.GUI;
 import com.laudynetwork.networkutils.api.gui.GUIItem;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 
 public class LanguageUI extends GUI {
 
-    private final MessageAPI msgApi = MessageAPI.create(MessageAPI.PrefixType.SYSTEM);
+    private final MessageAPI msgApi = new MessageAPI(NetworkUtils.getINSTANCE().getMessageCache(), MessageAPI.PrefixType.SYSTEM);
     private final String language;
     private final NetworkPlayer networkPlayer;
     private final Plugin plugin;

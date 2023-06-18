@@ -17,13 +17,9 @@ public class MessageAPI {
     private final MessageCache messageCache;
     private final PrefixType prefixType;
 
-    private MessageAPI(MessageCache messageCache, PrefixType prefixType) {
+    public MessageAPI(MessageCache messageCache, PrefixType prefixType) {
         this.messageCache = messageCache;
         this.prefixType = prefixType;
-    }
-
-    public static MessageAPI create(PrefixType type) {
-        return new MessageAPI(NetworkUtils.getINSTANCE().getMessageCache(), type);
     }
 
     public boolean existTranslation(String key) {

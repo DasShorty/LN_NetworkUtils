@@ -1,5 +1,6 @@
 package com.laudynetwork.networkutils.api.location.commandimpl;
 
+import com.laudynetwork.networkutils.NetworkUtils;
 import com.laudynetwork.networkutils.api.MongoDatabase;
 import com.laudynetwork.networkutils.api.location.DatabaseLocation;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
@@ -21,7 +22,7 @@ import java.util.List;
 
 public class LocationCommand implements CommandExecutor, TabCompleter {
     private final MongoDatabase database;
-    private final MessageAPI msgAPI = MessageAPI.create(MessageAPI.PrefixType.SYSTEM);
+    private final MessageAPI msgAPI = new MessageAPI(NetworkUtils.getINSTANCE().getMessageCache(), MessageAPI.PrefixType.SYSTEM);
 
     public LocationCommand(MongoDatabase database) {
         this.database = database;
@@ -52,9 +53,12 @@ public class LocationCommand implements CommandExecutor, TabCompleter {
                 }
 
                 switch (args[0].toLowerCase()) {
-                    case "add" -> player.sendMessage(this.msgAPI.getMessage(language, "command.use", Placeholder.unparsed("command", "/location add <location-key>")));
-                    case "remove" -> player.sendMessage(this.msgAPI.getMessage(language, "command.use", Placeholder.unparsed("command", "/location remove <location-key>")));
-                    case "get" -> player.sendMessage(this.msgAPI.getMessage(language, "command.use", Placeholder.unparsed("command", "/location get <location-key>")));
+                    case "add" ->
+                            player.sendMessage(this.msgAPI.getMessage(language, "command.use", Placeholder.unparsed("command", "/location add <location-key>")));
+                    case "remove" ->
+                            player.sendMessage(this.msgAPI.getMessage(language, "command.use", Placeholder.unparsed("command", "/location remove <location-key>")));
+                    case "get" ->
+                            player.sendMessage(this.msgAPI.getMessage(language, "command.use", Placeholder.unparsed("command", "/location get <location-key>")));
                     case "list" -> {
                         player.sendMessage(this.msgAPI.getMessage(language, "location.command.list"));
                         DatabaseLocation.getAllLocationNames(this.database).forEach(s -> player.sendMessage(Component.text(s).clickEvent(ClickEvent.suggestCommand("/location get " + s))));

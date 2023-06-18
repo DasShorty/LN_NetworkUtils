@@ -1,5 +1,6 @@
 package com.laudynetwork.networkutils.essentials.language;
 
+import com.laudynetwork.networkutils.NetworkUtils;
 import com.laudynetwork.networkutils.api.MongoDatabase;
 import com.laudynetwork.networkutils.api.gui.GUIHandler;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
@@ -14,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class LanguageCommand implements CommandExecutor {
 
-    private final MessageAPI msgApi = MessageAPI.create(MessageAPI.PrefixType.SYSTEM);
+    private final MessageAPI msgApi = new MessageAPI(NetworkUtils.getINSTANCE().getMessageCache(), MessageAPI.PrefixType.SYSTEM);
     private final GUIHandler<Plugin> guiHandler;
     private final MongoDatabase database;
     private final Plugin plugin;

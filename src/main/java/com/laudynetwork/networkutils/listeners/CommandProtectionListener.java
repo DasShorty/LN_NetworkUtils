@@ -1,5 +1,6 @@
 package com.laudynetwork.networkutils.listeners;
 
+import com.laudynetwork.networkutils.NetworkUtils;
 import com.laudynetwork.networkutils.api.MongoDatabase;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
@@ -13,7 +14,8 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 public class CommandProtectionListener implements Listener {
 
-    private final MessageAPI msgAPI = MessageAPI.create(MessageAPI.PrefixType.SYSTEM);
+    private final MessageAPI msgAPI = new MessageAPI(NetworkUtils.getINSTANCE().getMessageCache(), MessageAPI.PrefixType.SYSTEM);
+    ;
     private final MongoDatabase database;
 
     public CommandProtectionListener(MongoDatabase database) {

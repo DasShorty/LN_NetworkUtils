@@ -1,5 +1,6 @@
 package com.laudynetwork.networkutils.essentials;
 
+import com.laudynetwork.networkutils.NetworkUtils;
 import com.laudynetwork.networkutils.api.MongoDatabase;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
@@ -22,7 +23,7 @@ import java.util.List;
 
 public class GamemodeCommand implements CommandExecutor, TabCompleter {
 
-    private final MessageAPI msgApi = MessageAPI.create(MessageAPI.PrefixType.SYSTEM);
+    private final MessageAPI msgApi = new MessageAPI(NetworkUtils.getINSTANCE().getMessageCache(), MessageAPI.PrefixType.SYSTEM);
     private final MongoDatabase database;
 
     public GamemodeCommand(MongoDatabase database) {

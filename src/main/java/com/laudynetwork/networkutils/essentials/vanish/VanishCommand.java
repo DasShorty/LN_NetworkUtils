@@ -27,7 +27,7 @@ public class VanishCommand implements CommandExecutor, Listener {
 
     private final Cache<UUID, Boolean> vanishCache = CacheBuilder.newBuilder().expireAfterWrite(2, TimeUnit.SECONDS).build();
 
-    private final MessageAPI msgApi = MessageAPI.create(MessageAPI.PrefixType.SYSTEM);
+    private final MessageAPI msgApi = new MessageAPI(NetworkUtils.getINSTANCE().getMessageCache(), MessageAPI.PrefixType.SYSTEM);
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
