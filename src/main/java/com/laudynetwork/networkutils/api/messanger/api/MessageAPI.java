@@ -52,6 +52,7 @@ public class MessageAPI {
 
     public enum PrefixType {
         SYSTEM("&x&e&d&c&1&0&0System &8» "),
+        MANHUNT("&x&e&d&c&1&0&0System &8» "),
         CLAN("&x&c&c&7&a&1&6Clan &8» "),
         FRIEND("&x&0&2&d&d&3&cFriends &8» "),
         RACE("&x&0&0&D&2&E&5Race &8» "),
