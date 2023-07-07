@@ -8,18 +8,6 @@ plugins {
     id("de.undercouch.download") version ("5.4.0")
 }
 
-publishing {
-    repositories {
-        maven {
-            url = uri("https://repo.laudynetwork.com/repository/maven")
-            credentials {
-                username = System.getenv("NEXUS_USER")
-                password = System.getenv("NEXUS_PWD")
-            }
-        }
-    }
-}
-
 group = "com.laudynetwork.networkutils"
 version = "latest"
 description = "Utility Plugin for LaudyNetwork"
@@ -60,6 +48,15 @@ repositories {
     }
 }
 publishing {
+    repositories {
+        maven {
+            url = uri("https://repo.laudynetwork.com/repository/maven")
+            credentials {
+                username = System.getenv("NEXUS_USER")
+                password = System.getenv("NEXUS_PWD")
+            }
+        }
+    }
     publications {
         create<MavenPublication>("maven") {
             groupId = "com.laudynetwork"
@@ -144,7 +141,7 @@ fun downloadFromServer(url: String, fileName: String, dir: String) {
 
 fun downloadLink(token: String): Map<String, String> {
     val map = HashMap<String, String>()
-    val params = "format=JSON&zip=false&ak=$token&structureDelimiter"
+    val params = "format=JSON&zip=false&structureDelimiter"
     map["https://tolgee.laudynetwork.com/v2/projects/export?languages=en&$params&ak=$token"] = "en"
     map["https://tolgee.laudynetwork.com/v2/projects/export?languages=de&$params&ak=$token"] = "de"
     return map
