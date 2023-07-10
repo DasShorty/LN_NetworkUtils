@@ -62,7 +62,6 @@ public class GUIHandler<P extends Plugin> implements Listener {
             return;
 
         if (isPlayerInUI(player.getUniqueId())) {
-            Bukkit.broadcast(Component.text("You are not in a GUI").color(NamedTextColor.RED));
             return;
         }
 
