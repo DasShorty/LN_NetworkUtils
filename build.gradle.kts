@@ -68,11 +68,6 @@ publishing {
     }
 }
 
-tasks.register("translations") {
-    downloadFile(System.getenv("TOLGEE_TOKEN_PLUGIN"), "own")
-    downloadFile(System.getenv("TOLGEE_TOKEN_GENERAL"), "plugins")
-}
-
 tasks {
     // Configure reobfJar to run when invoking the build task
     assemble {
@@ -122,6 +117,11 @@ tasks {
 }
 
 
+
+tasks.register("translations") {
+    downloadFile(System.getenv("TOLGEE_TOKEN_PLUGIN"), "own")
+    downloadFile(System.getenv("TOLGEE_TOKEN_GENERAL"), "plugins")
+}
 
 fun downloadFile(token: String, dir: String) {
     downloadLink(token).forEach {
