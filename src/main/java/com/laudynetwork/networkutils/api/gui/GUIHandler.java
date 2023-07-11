@@ -52,7 +52,7 @@ public class GUIHandler<P extends Plugin> implements Listener {
     }
 
     public boolean isPlayerInUI(UUID uuid) {
-        return !openGUIs.containsKey(uuid);
+        return openGUIs.containsKey(uuid);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
