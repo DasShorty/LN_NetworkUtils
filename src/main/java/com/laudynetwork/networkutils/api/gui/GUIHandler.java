@@ -61,7 +61,7 @@ public class GUIHandler<P extends Plugin> implements Listener {
         if (!(event.getWhoClicked() instanceof Player player))
             return;
 
-        if (isPlayerInUI(player.getUniqueId())) {
+        if (!isPlayerInUI(player.getUniqueId())) {
             return;
         }
 
