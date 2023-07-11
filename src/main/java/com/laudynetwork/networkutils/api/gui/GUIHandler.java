@@ -35,7 +35,7 @@ public class GUIHandler<P extends Plugin> implements Listener {
     }
 
     public synchronized void close(Player player) {
-        if (!this.openGUIs.containsKey(player.getUniqueId()))
+        if (!isPlayerInUI(player.getUniqueId()))
             return;
         this.openGUIs.get(player.getUniqueId()).onClose(player);
         openGUIs.remove(player.getUniqueId());
