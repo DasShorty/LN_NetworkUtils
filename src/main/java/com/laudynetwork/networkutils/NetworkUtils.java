@@ -83,7 +83,7 @@ public final class NetworkUtils extends JavaPlugin {
         }
 
         this.tablistManager = new TablistManager(this, luckPerms);
-        Bukkit.getServicesManager().register(TablistManager.class, tablistManager, this, ServicePriority.Normal);
+        Bukkit.getServicesManager().register(TablistManager.class, tablistManager, this, ServicePriority.High);
 
         pm.registerEvents(new ChatListener(), this);
         pm.registerEvents(new CommandProtectionListener(this.database), this);
