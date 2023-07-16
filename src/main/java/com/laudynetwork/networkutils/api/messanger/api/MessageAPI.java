@@ -52,7 +52,7 @@ public class MessageAPI {
 
     public enum PrefixType {
         SYSTEM("&x&e&d&c&1&0&0System &8» "),
-        MANHUNT("&x&e&d&c&1&0&0System &8» "),
+        MANHUNT("&x&d&f&3&7&3&7M&x&e&4&4&1&4&1a&x&e&9&4&a&4&an&x&e&e&5&4&5&4h&x&f&3&5&d&5&du&x&f&8&6&7&6&7n&x&f&d&7&0&7&0t &8» "),
         CLAN("&x&c&c&7&a&1&6Clan &8» "),
         FRIEND("&x&0&2&d&d&3&cFriends &8» "),
         RACE("&x&0&0&D&2&E&5Race &8» "),
