@@ -10,6 +10,7 @@ public record GUIItem(int position, ItemStackBuilder itemStackBuilder, ClickActi
 
     public enum GUIAction {
         CLOSE,
+        CANCEL_AND_NEW,
         CANCEL,
         NONE
     }

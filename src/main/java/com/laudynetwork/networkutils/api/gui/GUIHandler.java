@@ -3,13 +3,13 @@ package com.laudynetwork.networkutils.api.gui;
 import com.laudynetwork.networkutils.api.gui.event.CloseReason;
 import com.laudynetwork.networkutils.api.gui.event.UICloseEvent;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.plugin.Plugin;
 
 import java.util.HashMap;
@@ -62,14 +62,29 @@ public class GUIHandler<P extends Plugin> implements Listener {
             return;
 
         if (!isPlayerInUI(player.getUniqueId())) {
+            Bukkit.broadcast(Component.text("asd1"));
             return;
         }
+
+        Bukkit.broadcast(Component.text("asd"));
 
         var gui = openGUIs.get(player.getUniqueId());
 
         event.setCancelled(true);
 
         gui.handleClick(event);
+    }
+
+    @EventHandler
+    public void onInventoryClose(InventoryCloseEvent event) {
+        if (!(event.getPlayer() instanceof Player player))
+            return;
+
+        if (!isPlayerInUI(player.getUniqueId()))
+            return;
+
+        var gui = openGUIs.get(player.getUniqueId());
+        gui.close(player, CloseReason.CLOSE);
     }
 
     @EventHandler

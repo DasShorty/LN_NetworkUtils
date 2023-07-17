@@ -102,19 +102,17 @@ public abstract class GUI implements InventoryHolder {
 
         GUIItem.GUIAction action = item.action().onClick(clicked, event.getCurrentItem(), event.getClick());
 
-        if (action == GUIItem.GUIAction.NONE) {
-            event.setCancelled(false);
-            return;
-        }
-
-        if (action == GUIItem.GUIAction.CANCEL) {
-            event.setCancelled(true);
-            return;
-        }
-
-        if (action == GUIItem.GUIAction.CLOSE) {
-            event.setCancelled(true);
-            clicked.closeInventory(InventoryCloseEvent.Reason.PLUGIN);
+        switch (action) {
+            case CLOSE -> {
+                event.setCancelled(true);
+                close(player, CloseReason.CLOSE);
+            }
+            case NONE -> event.setCancelled(false);
+            case CANCEL -> event.setCancelled(true);
+            case CANCEL_AND_NEW -> {
+                event.setCancelled(true);
+                close(player, CloseReason.NEW_UI);
+            }
         }
     }
 
