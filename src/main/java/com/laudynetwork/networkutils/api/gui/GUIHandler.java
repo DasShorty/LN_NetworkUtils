@@ -2,14 +2,12 @@ package com.laudynetwork.networkutils.api.gui;
 
 import com.laudynetwork.networkutils.api.gui.event.CloseReason;
 import com.laudynetwork.networkutils.api.gui.event.UICloseEvent;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.plugin.Plugin;
 
 import java.util.HashMap;
@@ -61,12 +59,8 @@ public class GUIHandler<P extends Plugin> implements Listener {
         if (!(event.getWhoClicked() instanceof Player player))
             return;
 
-        if (!isPlayerInUI(player.getUniqueId())) {
-            Bukkit.broadcast(Component.text("asd1"));
+        if (!isPlayerInUI(player.getUniqueId()))
             return;
-        }
-
-        Bukkit.broadcast(Component.text("asd"));
 
         var gui = openGUIs.get(player.getUniqueId());
 
