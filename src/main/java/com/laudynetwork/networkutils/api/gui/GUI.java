@@ -80,6 +80,7 @@ public abstract class GUI implements InventoryHolder {
     public void close(Player player, CloseReason closeReason) {
         onClose(player);
         Bukkit.getPluginManager().callEvent(new UICloseEvent(player, this, closeReason));
+        player.closeInventory(InventoryCloseEvent.Reason.PLUGIN);
     }
 
     public void open(Player player) {
