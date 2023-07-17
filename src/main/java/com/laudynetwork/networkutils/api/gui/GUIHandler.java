@@ -76,18 +76,6 @@ public class GUIHandler<P extends Plugin> implements Listener {
     }
 
     @EventHandler
-    public void onInventoryClose(InventoryCloseEvent event) {
-        if (!(event.getPlayer() instanceof Player player))
-            return;
-
-        if (!isPlayerInUI(player.getUniqueId()))
-            return;
-
-        var gui = openGUIs.get(player.getUniqueId());
-        gui.close(player, CloseReason.CLOSE);
-    }
-
-    @EventHandler
     public void onUIClose(UICloseEvent event) {
         if (event.getCloseReason() == CloseReason.NEW_UI)
             return;
