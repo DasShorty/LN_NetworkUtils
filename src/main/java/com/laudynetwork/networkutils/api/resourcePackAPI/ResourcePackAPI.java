@@ -12,8 +12,8 @@ import java.util.regex.Pattern;
 
 public class ResourcePackAPI {
     final static Map<String, Class<? extends ResourcePackInterface>> enums = Map.of(
-            "rankBadges", Rankbadges.class,,
-            "gameModeBadges", GameModeBadges.class
+            "rankBadges", Rankbadges.class,
+            "gameModeBadges", GameModeBadges.class,
             "overlay", Overlay.class
     );
     private static final Pattern pattern = Pattern.compile("\\{(.*?):(.*?)}");
