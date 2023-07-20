@@ -1,9 +1,8 @@
 package com.laudynetwork.networkutils.essentials;
 
-import com.laudynetwork.database.mysql.MySQL;
+import com.laudynetwork.networkutils.NetworkUtils;
+import com.laudynetwork.networkutils.api.MongoDatabase;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
-import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
-import com.laudynetwork.networkutils.api.messanger.backend.TranslationLanguage;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
 import lombok.val;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -24,23 +23,22 @@ import java.util.List;
 
 public class GamemodeCommand implements CommandExecutor, TabCompleter {
 
-    private final MessageAPI msgApi;
-    private final MySQL sql;
+    private final MessageAPI msgApi = new MessageAPI(NetworkUtils.getINSTANCE().getMessageCache(), MessageAPI.PrefixType.SYSTEM);
+    private final MongoDatabase database;
 
-    public GamemodeCommand(MessageBackend msgBackend) {
-        this.sql = msgBackend.getSql();
-        this.msgApi = new MessageAPI(msgBackend, MessageAPI.PrefixType.SYSTEM);
+    public GamemodeCommand(MongoDatabase database) {
+        this.database = database;
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(msgApi.getTranslation(TranslationLanguage.ENGLISH, "command.only.player"));
+            sender.sendMessage(msgApi.getTranslation("en", "command.only.player"));
             return true;
         }
 
-        NetworkPlayer networkPlayer = new NetworkPlayer(this.sql, player.getUniqueId());
+        NetworkPlayer networkPlayer = new NetworkPlayer(this.database, player.getUniqueId());
 
         val language = networkPlayer.getLanguage();
 
@@ -143,9 +141,7 @@ public class GamemodeCommand implements CommandExecutor, TabCompleter {
 
             }
 
-            default -> {
-                player.sendMessage(msgApi.getMessage(language, "command.usage", Placeholder.unparsed("gamemode", "/gm <0-3> [player]")));
-            }
+            default -> player.sendMessage(msgApi.getMessage(language, "command.usage", Placeholder.unparsed("gamemode", "/gm <0-3> [player]")));
         }
 
 

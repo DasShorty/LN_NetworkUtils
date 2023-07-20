@@ -1,32 +1,27 @@
 package com.laudynetwork.networkutils.api.player;
 
-import com.laudynetwork.database.mysql.MySQL;
-import com.laudynetwork.database.mysql.utils.Select;
-import com.laudynetwork.database.mysql.utils.UpdateValue;
-import com.laudynetwork.networkutils.api.messanger.backend.TranslationLanguage;
-import com.laudynetwork.networkutils.api.player.event.PlayerChangeLanguageEvent;
+import com.google.gson.Gson;
+import com.laudynetwork.networkutils.api.MongoDatabase;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
 import com.viaversion.viaversion.api.Via;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.bukkit.Bukkit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.val;
+import org.bson.Document;
 
 import java.util.UUID;
 
-@SuppressWarnings("SqlResolve")
 public class NetworkPlayer {
 
-    private final MySQL sql;
+    private final MongoDatabase database;
     @Getter
     private final UUID uuid;
-    private final Logger logger;
+    private final Gson gson = new Gson();
 
-    public NetworkPlayer(MySQL sql, UUID uuid) {
-        this.sql = sql;
+    public NetworkPlayer(MongoDatabase database, UUID uuid) {
+        this.database = database;
         this.uuid = uuid;
-
-        this.logger = LoggerFactory.getLogger("NetworkPlayer");
     }
 
     public ProtocolVersion getPlayerVersion() {
@@ -34,29 +29,30 @@ public class NetworkPlayer {
     }
 
     @SneakyThrows
-    public TranslationLanguage getLanguage() {
-
-        var select = new Select("minecraft_general_playerData", "*", "uuid = '" + uuid.toString() + "'");
-
-        if (!sql.rowExist(select)) {
-            setLanguage(TranslationLanguage.ENGLISH);
-            return TranslationLanguage.ENGLISH;
+    public String getLanguage() {
+        val collection = this.database.getDatabase().getCollection("minecraft_general_playerData");
+        if (collection.countDocuments(Filters.eq("uuid", this.uuid.toString())) == 0) {
+            setLanguage("en");
+            return "en";
         }
-
-        var result = sql.rowSelect(select);
-        var language = (String) result.getRows().get(0).get("language");
-
-        return TranslationLanguage.getFromDBName(language);
+        val document = collection.find(Filters.eq("uuid", this.uuid.toString())).first();
+        assert document != null;
+        return PlayerLanguage.fromJson(document.toJson()).language();
     }
 
-    public void setLanguage(TranslationLanguage language) {
-        var select = new Select("minecraft_general_playerData", "*", "uuid = '" + uuid.toString() + "'");
-        if (sql.rowExist(select)) {
-            logger.info("Updating language for [" + uuid + "] to " + language.name());
-            sql.rowUpdate("minecraft_general_playerData", "uuid = '" + uuid + "'", new UpdateValue("language", language.getDbName()));
-        } else {
-            logger.info("Creating language for [" + uuid + "] with language " + language.name());
-            sql.tableInsert("minecraft_general_playerData", "uuid, language", uuid.toString(), language.getDbName());
+    public void setLanguage(String language) {
+
+        val collection = this.database.getDatabase().getCollection("minecraft_general_playerData");
+
+        val iterator = collection.find(Filters.eq("uuid", this.uuid.toString())).iterator();
+        val hasNext = iterator.hasNext();
+        iterator.close();
+
+        if (!hasNext) {
+            collection.insertOne(this.gson.fromJson(this.gson.toJson(new PlayerLanguage(this.uuid.toString(), language)), Document.class));
+            return;
         }
+
+        collection.updateOne(Filters.eq("uuid", this.uuid.toString()), Updates.set("language", language));
     }
 }

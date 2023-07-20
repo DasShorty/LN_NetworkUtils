@@ -1,7 +1,8 @@
 package com.laudynetwork.networkutils.listeners;
 
+import com.laudynetwork.networkutils.NetworkUtils;
+import com.laudynetwork.networkutils.api.MongoDatabase;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
-import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
 import lombok.val;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -13,12 +14,12 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 public class CommandProtectionListener implements Listener {
 
-    private final MessageAPI msgAPI;
-    private final MessageBackend msgBackend;
+    private final MessageAPI msgAPI = new MessageAPI(NetworkUtils.getINSTANCE().getMessageCache(), MessageAPI.PrefixType.SYSTEM);
+    ;
+    private final MongoDatabase database;
 
-    public CommandProtectionListener(MessageBackend msgBackend) {
-        this.msgAPI = new MessageAPI(msgBackend, MessageAPI.PrefixType.SYSTEM);
-        this.msgBackend = msgBackend;
+    public CommandProtectionListener(MongoDatabase database) {
+        this.database = database;
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
@@ -29,7 +30,7 @@ public class CommandProtectionListener implements Listener {
         val command = message.split(" ")[0];
 
         val player = event.getPlayer();
-        val networkPlayer = new NetworkPlayer(this.msgBackend.getSql(), player.getUniqueId());
+        val networkPlayer = new NetworkPlayer(this.database, player.getUniqueId());
 
         val language = networkPlayer.getLanguage();
 

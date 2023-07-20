@@ -1,10 +1,11 @@
 package com.laudynetwork.networkutils.essentials.control;
 
+import com.laudynetwork.networkutils.NetworkUtils;
+import com.laudynetwork.networkutils.api.MongoDatabase;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
-import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
-import com.laudynetwork.networkutils.api.messanger.backend.TranslationLanguage;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
 import com.laudynetwork.networkutils.essentials.control.api.ControlSubCommandHandler;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.command.Command;
@@ -18,27 +19,22 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+@RequiredArgsConstructor
 public class ControlCommand implements CommandExecutor, TabCompleter {
 
     private final ControlSubCommandHandler subCommandHandler;
-    private final MessageBackend msgBackend;
-    private final MessageAPI msgApi;
-
-    public ControlCommand(MessageBackend msgBackend, ControlSubCommandHandler handler) {
-        this.msgBackend = msgBackend;
-        this.msgApi = new MessageAPI(msgBackend, MessageAPI.PrefixType.SYSTEM);
-        this.subCommandHandler = handler;
-    }
+    private final MongoDatabase database;
+    private final MessageAPI msgApi = new MessageAPI(NetworkUtils.getINSTANCE().getMessageCache(), MessageAPI.PrefixType.SYSTEM);
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(this.msgApi.getMessage(TranslationLanguage.ENGLISH, "command.only.player"));
+            sender.sendMessage(this.msgApi.getMessage("en", "command.only.player"));
             return true;
         }
 
-        val networkPlayer = new NetworkPlayer(this.msgBackend.getSql(), player.getUniqueId());
+        val networkPlayer = new NetworkPlayer(this.database, player.getUniqueId());
 
         val language = networkPlayer.getLanguage();
 
@@ -61,7 +57,7 @@ public class ControlCommand implements CommandExecutor, TabCompleter {
 
         val controlSubCommand = this.subCommandHandler.getSubCommands().get(id);
 
-        controlSubCommand.onCommand(player, command, label, args, this.msgBackend, this.msgApi, networkPlayer);
+        controlSubCommand.onCommand(player, command, label, args, networkPlayer);
 
         return true;
     }
@@ -86,7 +82,7 @@ public class ControlCommand implements CommandExecutor, TabCompleter {
                 return list;
 
             val subCommand = this.subCommandHandler.getSubCommands().get(id);
-            list.addAll(subCommand.onTabComplete(player, command, label, args, this.msgBackend, this.msgApi, new NetworkPlayer(this.msgBackend.getSql(), player.getUniqueId())));
+            list.addAll(subCommand.onTabComplete(player, command, label, args, new NetworkPlayer(this.database, player.getUniqueId())));
         }
 
         val completer = new ArrayList<String>();

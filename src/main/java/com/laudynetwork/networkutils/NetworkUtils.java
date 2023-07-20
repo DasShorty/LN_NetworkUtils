@@ -1,10 +1,10 @@
 package com.laudynetwork.networkutils;
 
-import com.laudynetwork.database.mysql.MySQL;
 import com.laudynetwork.database.redis.Redis;
+import com.laudynetwork.networkutils.api.MongoDatabase;
 import com.laudynetwork.networkutils.api.gui.GUIHandler;
 import com.laudynetwork.networkutils.api.location.commandimpl.LocationCommand;
-import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
+import com.laudynetwork.networkutils.api.messanger.backend.MessageCache;
 import com.laudynetwork.networkutils.api.tablist.TablistManager;
 import com.laudynetwork.networkutils.essentials.FlyCommand;
 import com.laudynetwork.networkutils.essentials.GamemodeCommand;
@@ -14,7 +14,6 @@ import com.laudynetwork.networkutils.essentials.language.LanguageCommand;
 import com.laudynetwork.networkutils.essentials.vanish.VanishCommand;
 import com.laudynetwork.networkutils.listeners.ChatListener;
 import com.laudynetwork.networkutils.listeners.CommandProtectionListener;
-import com.laudynetwork.networkutils.registration.RegisterCommand;
 import lombok.Getter;
 import lombok.val;
 import net.luckperms.api.LuckPerms;
@@ -29,11 +28,12 @@ import java.util.Objects;
 @SuppressWarnings("unused")
 public final class NetworkUtils extends JavaPlugin {
     private static NetworkUtils INSTANCE;
-    @Getter
-    private MySQL sql;
+    private MongoDatabase database;
     @Getter
     private TablistManager tablistManager;
     private Redis redis;
+    @Getter
+    private MessageCache messageCache;
 
     public static NetworkUtils getINSTANCE() {
         return INSTANCE;
@@ -43,13 +43,13 @@ public final class NetworkUtils extends JavaPlugin {
     public void onLoad() {
         INSTANCE = this;
         this.redis = new Redis();
-        sql = new MySQL("89.163.129.221", "laudynetwork", "M8-)opnbhrn/z]kD", "laudynetwork");
-        this.sql.connect();
+        this.database = new MongoDatabase("mongodb://root:gtH7O4teg2auWpouSBOi1v9q3vIHDtZ1cPJG20XYGZ8sA5srFW@127.0.0.1:27017/?authMechanism=SCRAM-SHA-1");
     }
 
     @Override
     public void onEnable() {
 
+        Bukkit.getServicesManager().register(MongoDatabase.class, database, this, ServicePriority.High);
 
         val guiHandler = new GUIHandler<Plugin>(this);
         Bukkit.getServicesManager().register(GUIHandler.class, guiHandler, this, ServicePriority.High);
@@ -57,11 +57,15 @@ public final class NetworkUtils extends JavaPlugin {
         val subControlCommandHandler = new ControlSubCommandHandler();
         Bukkit.getServicesManager().register(ControlSubCommandHandler.class, subControlCommandHandler, this, ServicePriority.High);
 
-        MessageBackend backend = new MessageBackend(this.sql, "networkutils");
+        this.messageCache = new MessageCache();
+        this.messageCache.loadFileInCache(this.getResource("translations/own/de.json"), "de");
+        this.messageCache.loadFileInCache(this.getResource("translations/own/en.json"), "en");
+        this.messageCache.loadFileInCache(this.getResource("translations/plugins/de.json"), "de");
+        this.messageCache.loadFileInCache(this.getResource("translations/plugins/en.json"), "en");
 
         var pm = Bukkit.getPluginManager();
 
-        VanishCommand vanishCommand = new VanishCommand(backend);
+        val vanishCommand = new VanishCommand();
         pm.registerEvents(vanishCommand, this);
         Objects.requireNonNull(getCommand("vanish")).setExecutor(vanishCommand);
 
@@ -79,25 +83,24 @@ public final class NetworkUtils extends JavaPlugin {
         }
 
         this.tablistManager = new TablistManager(this, luckPerms);
+        Bukkit.getServicesManager().register(TablistManager.class, tablistManager, this, ServicePriority.High);
 
         pm.registerEvents(new ChatListener(), this);
-        pm.registerEvents(new CommandProtectionListener(backend), this);
+        pm.registerEvents(new CommandProtectionListener(this.database), this);
 
-        Objects.requireNonNull(getCommand("location")).setExecutor(new LocationCommand(backend));
-        Objects.requireNonNull(getCommand("gamemode")).setExecutor(new GamemodeCommand(backend));
-        Objects.requireNonNull(getCommand("fly")).setExecutor(new FlyCommand(backend));
-        Objects.requireNonNull(getCommand("control")).setExecutor(new ControlCommand(backend, subControlCommandHandler));
-        Objects.requireNonNull(getCommand("register")).setExecutor(new RegisterCommand(backend, redis));
-        Objects.requireNonNull(getCommand("language")).setExecutor(new LanguageCommand(backend, guiHandler));
+        Objects.requireNonNull(getCommand("location")).setExecutor(new LocationCommand(this.database));
+        Objects.requireNonNull(getCommand("gamemode")).setExecutor(new GamemodeCommand(this.database));
+        Objects.requireNonNull(getCommand("fly")).setExecutor(new FlyCommand(this.database));
+        Objects.requireNonNull(getCommand("control")).setExecutor(new ControlCommand(subControlCommandHandler, this.database));
+        Objects.requireNonNull(getCommand("language")).setExecutor(new LanguageCommand(guiHandler, this.database, this));
 
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, "minecraft:player-send-to-server");
-
         getSLF4JLogger().info("loaded!");
     }
 
     @Override
     public void onDisable() {
+        this.database.shutdown();
         this.redis.shutdown();
-        this.sql.close();
     }
 }

@@ -1,10 +1,10 @@
 package com.laudynetwork.networkutils.essentials;
 
-import com.laudynetwork.database.mysql.MySQL;
+import com.laudynetwork.networkutils.NetworkUtils;
+import com.laudynetwork.networkutils.api.MongoDatabase;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
-import com.laudynetwork.networkutils.api.messanger.backend.MessageBackend;
-import com.laudynetwork.networkutils.api.messanger.backend.TranslationLanguage;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
@@ -19,25 +19,21 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+@RequiredArgsConstructor
 public class FlyCommand implements CommandExecutor, TabCompleter {
 
-    private final MessageAPI msgApi;
-    private final MySQL sql;
-
-    public FlyCommand(MessageBackend msgBackend) {
-        this.msgApi = new MessageAPI(msgBackend, MessageAPI.PrefixType.SYSTEM);
-        this.sql = msgBackend.getSql();
-    }
+    private final MessageAPI msgApi = new MessageAPI(NetworkUtils.getINSTANCE().getMessageCache(), MessageAPI.PrefixType.SYSTEM);
+    private final MongoDatabase database;
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(msgApi.getTranslation(TranslationLanguage.ENGLISH, "command.only.player"));
+            sender.sendMessage(msgApi.getMessage("en", "command.only.player"));
             return true;
         }
 
-        NetworkPlayer networkPlayer = new NetworkPlayer(this.sql, player.getUniqueId());
+        NetworkPlayer networkPlayer = new NetworkPlayer(this.database, player.getUniqueId());
 
         val language = networkPlayer.getLanguage();
 

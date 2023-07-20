@@ -1,20 +1,11 @@
+import java.io.FileOutputStream
+
 plugins {
     `java-library`
     id("io.papermc.paperweight.userdev") version "1.5.5"
     id("com.github.johnrengelman.shadow") version ("8.1.1")
     id("maven-publish")
-}
-
-publishing {
-    repositories {
-        maven {
-            url = uri("https://repo.laudynetwork.com/repository/maven")
-            credentials {
-                username = System.getenv("NEXUS_USER")
-                password = System.getenv("NEXUS_PWD")
-            }
-        }
-    }
+    id("de.undercouch.download") version ("5.4.0")
 }
 
 group = "com.laudynetwork.networkutils"
@@ -27,20 +18,23 @@ java {
 }
 
 dependencies {
-    implementation("org.projectlombok:lombok:1.18.26")
-    annotationProcessor("org.projectlombok:lombok:1.18.26")
+    implementation("org.projectlombok:lombok:1.18.28")
+    annotationProcessor("org.projectlombok:lombok:1.18.28")
     implementation("biz.paluch.redis:lettuce:4.5.0.Final")
-    paperweight.paperDevBundle("1.19.4-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("1.20-R0.1-SNAPSHOT")
     compileOnly("net.luckperms:api:5.4")
-    compileOnly("com.viaversion:viaversion-api:4.6.2")
+    compileOnly("com.viaversion:viaversion-api:4.7.0")
     implementation("com.laudynetwork:database:latest")
-    api("eu.thesimplecloud.simplecloud:simplecloud-api:2.4.1")
+    api("eu.thesimplecloud.simplecloud:simplecloud-api:2.5.0")
     compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
+    implementation("org.reflections:reflections:0.10.2")
+    implementation("org.mongodb:mongodb-driver-sync:4.10.2")
 }
 repositories {
     mavenCentral()
     maven("https://repo.thesimplecloud.eu/artifactory/list/gradle-release-local/")
     maven("https://repo.viaversion.com")
+    maven("https://jitpack.io")
     maven("https://eldonexus.de/repository/maven-proxies/")
     maven {
         url = uri("https://repo.laudynetwork.com/repository/maven")
@@ -54,6 +48,15 @@ repositories {
     }
 }
 publishing {
+    repositories {
+        maven {
+            url = uri("https://repo.laudynetwork.com/repository/maven")
+            credentials {
+                username = System.getenv("NEXUS_USER")
+                password = System.getenv("NEXUS_PWD")
+            }
+        }
+    }
     publications {
         create<MavenPublication>("maven") {
             groupId = "com.laudynetwork"
@@ -71,13 +74,24 @@ tasks {
         dependsOn(reobfJar)
     }
 
+    processResources {
+        dependsOn("translations")
+    }
+
+    build {
+        doLast {
+            file(layout.buildDirectory.file("libs/NetworkUtils-latest-dev.jar")).delete()
+            file(layout.buildDirectory.file("libs/NetworkUtils-latest-dev-all.jar")).delete()
+        }
+    }
+
     shadowJar {
         dependencies {
             exclude(dependency("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT"))
-            exclude(dependency("eu.thesimplecloud.simplecloud:simplecloud-api:2.4.1"))
+            exclude(dependency("eu.thesimplecloud.simplecloud:simplecloud-api:2.5.0"))
             exclude(dependency("eu.thesimplecloud.clientserverapi:clientserverapi:4.1.17"))
             exclude(dependency("eu.thesimplecloud.jsonlib:json-lib:1.0.10"))
-            exclude(dependency("eu.thesimplecloud.simplecloud:simplecloud-runner:2.4.1"))
+            exclude(dependency("eu.thesimplecloud.simplecloud:simplecloud-runner:2.5.0"))
         }
     }
 
@@ -100,4 +114,35 @@ tasks {
         // for a variety of reasons, however it's asked frequently enough that an example of how to do it is included here.
         outputJar.set(layout.buildDirectory.file("dist/NetworkUtils.jar"))
     }
+}
+
+
+
+tasks.register("translations") {
+    downloadFile(System.getenv("TOLGEE_TOKEN_PLUGIN"), "own")
+    downloadFile(System.getenv("TOLGEE_TOKEN_GENERAL"), "plugins")
+}
+
+fun downloadFile(token: String, dir: String) {
+    downloadLink(token).forEach {
+        downloadFromServer(it.key, it.value + ".json", dir)
+    }
+}
+
+fun downloadFromServer(url: String, fileName: String, dir: String) {
+    file("${projectDir}/src/main/resources/translations/${dir}").mkdirs()
+    val f = file("${projectDir}/src/main/resources/translations/${dir}/${fileName}")
+    uri(url).toURL().openStream().use {
+        it.copyTo(
+                FileOutputStream(f)
+        )
+    }
+}
+
+fun downloadLink(token: String): Map<String, String> {
+    val map = HashMap<String, String>()
+    val params = "format=JSON&zip=false&structureDelimiter"
+    map["https://tolgee.laudynetwork.com/v2/projects/export?languages=en&$params&ak=$token"] = "en"
+    map["https://tolgee.laudynetwork.com/v2/projects/export?languages=de&$params&ak=$token"] = "de"
+    return map
 }

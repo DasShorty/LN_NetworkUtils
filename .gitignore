@@ -118,3 +118,7 @@ run/
 !gradle-wrapper.jar
 
 **/src/test
+/src/main/resources/translations/own/de.json
+/src/main/resources/translations/plugins/de.json
+/src/main/resources/translations/own/en.json
+/src/main/resources/translations/plugins/en.json

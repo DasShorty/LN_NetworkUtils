@@ -10,6 +10,8 @@
 
 package com.laudynetwork.networkutils.api.gui;
 
+import com.laudynetwork.networkutils.api.gui.event.CloseReason;
+import com.laudynetwork.networkutils.api.gui.event.UICloseEvent;
 import com.laudynetwork.networkutils.api.item.itembuilder.ItemBuilder;
 import com.laudynetwork.networkutils.api.item.itembuilder.ItemStackBuilder;
 import lombok.Getter;
@@ -33,7 +35,6 @@ public abstract class GUI implements InventoryHolder {
 
     private final Player player;
     private final int size;
-    @Getter
     private final Inventory inventory;
     private final Map<Integer, GUIItem> guiItemMap;
     private Material background = Material.GRAY_STAINED_GLASS_PANE;
@@ -54,9 +55,7 @@ public abstract class GUI implements InventoryHolder {
     protected void generate() {
         for (int i = 0; i < inventory.getSize(); i++) {
             if (!guiItemMap.containsKey(i)) {
-                guiItemMap.put(i, new GUIItem(i, new ItemBuilder(background).displayName(Component.empty()).itemFlags(ItemFlag.values()), (clicker, clickedItem, clickType) -> {
-                    return GUIItem.GUIAction.CANCEL;
-                }));
+                guiItemMap.put(i, new GUIItem(i, new ItemBuilder(background).displayName(Component.empty()).itemFlags(ItemFlag.values()), (clicker, clickedItem, clickType) -> GUIItem.GUIAction.CANCEL));
             }
         }
         guiItemMap.forEach((slot, item) -> {
@@ -78,6 +77,12 @@ public abstract class GUI implements InventoryHolder {
 
     public abstract void onClose(Player player);
 
+    public void close(Player player, CloseReason closeReason) {
+        onClose(player);
+        Bukkit.getPluginManager().callEvent(new UICloseEvent(player, this, closeReason));
+        player.closeInventory(InventoryCloseEvent.Reason.PLUGIN);
+    }
+
     public void open(Player player) {
         generateGUI(player);
         generate();
@@ -93,22 +98,22 @@ public abstract class GUI implements InventoryHolder {
 
         GUIItem item = this.guiItemMap.get(index);
 
-        if (item == null)
+        if (item == null || item.action() == null)
             return;
 
-        if (item.action() == null)
-            return;
+        GUIItem.GUIAction action = item.action().onClick(clicked, event.getCurrentItem(), event.getClick());
 
-        GUIItem.GUIAction action;
-        action = item.action().onClick(clicked, event.getCurrentItem(), event.getClick());
-
-        if (action == GUIItem.GUIAction.NONE) {
-            event.setCancelled(false);
-            return;
-        }
-
-        if (action == GUIItem.GUIAction.CLOSE) {
-            clicked.closeInventory(InventoryCloseEvent.Reason.PLUGIN);
+        switch (action) {
+            case CLOSE -> {
+                event.setCancelled(true);
+                close(player, CloseReason.CLOSE);
+            }
+            case NONE -> event.setCancelled(false);
+            case CANCEL -> event.setCancelled(true);
+            case CANCEL_AND_NEW -> {
+                event.setCancelled(true);
+                close(player, CloseReason.NEW_UI);
+            }
         }
     }
 

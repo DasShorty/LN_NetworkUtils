@@ -1,19 +1,21 @@
 package com.laudynetwork.networkutils.essentials.vanish;
 
-import com.laudynetwork.database.mysql.utils.Select;
-import com.laudynetwork.database.mysql.utils.UpdateValue;
 import com.laudynetwork.networkutils.NetworkUtils;
+import com.laudynetwork.networkutils.api.MongoDatabase;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.bukkit.Bukkit;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public record VanishedPlayer(UUID uuid) {
 
     public VanishedPlayer update(boolean vanished) {
 
-        val player = Bukkit.getPlayer(this.uuid);
+        val player = Bukkit.getPlayer(this.uuid.toString());
         assert player != null;
 
         if (vanished)
@@ -40,28 +42,20 @@ public record VanishedPlayer(UUID uuid) {
     @SneakyThrows
     public boolean isVanished() {
 
-        val sql = NetworkUtils.getINSTANCE().getSql();
-        val select = new Select("minecraft_networktutils_essentials_vanish", "*", "uuid = '" + this.uuid.toString() + "'");
+        val database = Objects.requireNonNull(Bukkit.getServicesManager().getRegistration(MongoDatabase.class)).getProvider();
 
-        if (!sql.rowExist(select)) {
+        val document = database.getDatabase().getCollection("minecraft_networktutils_essentials_vanish").find(Filters.eq("uuid", this.uuid.toString())).first();
+
+        if (document == null)
             return false;
-        }
 
-        return ((Integer) sql.rowSelect(select).getRows().get(0).get("vanished")) == 1;
+        return document.get("vanished", Boolean.class);
     }
 
     private void updateDB(boolean vanished) {
-
-        val sql = NetworkUtils.getINSTANCE().getSql();
-        val select = new Select("minecraft_networktutils_essentials_vanish", "*", "uuid = '" + uuid.toString() + "'");
-
-
-        if (!sql.rowExist(select)) {
-            sql.tableInsert("minecraft_networktutils_essentials_vanish", "uuid, vanished", uuid.toString(), vanished ? 1 : 0);
-            return;
-        }
-
-        sql.rowUpdate("minecraft_networktutils_essentials_vanish", "uuid = '" + uuid + "'", new UpdateValue("vanished", vanished ? 1 : 0));
+        val database = Objects.requireNonNull(Bukkit.getServicesManager().getRegistration(MongoDatabase.class)).getProvider();
+        database.getDatabase().getCollection("minecraft_networktutils_essentials_vanish")
+                .updateOne(Filters.eq("uuid", this.uuid.toString()), Updates.set("vanished", vanished));
     }
 
 }
