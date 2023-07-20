@@ -1,5 +1,6 @@
 package com.laudynetwork.networkutils.api.resourcePackAPI;
 
+import com.laudynetwork.networkutils.api.resourcePackAPI.text.GameModeBadges;
 import com.laudynetwork.networkutils.api.resourcePackAPI.text.Overlay;
 import com.laudynetwork.networkutils.api.resourcePackAPI.text.Rankbadges;
 import lombok.SneakyThrows;
@@ -11,7 +12,8 @@ import java.util.regex.Pattern;
 
 public class ResourcePackAPI {
     final static Map<String, Class<? extends ResourcePackInterface>> enums = Map.of(
-            "rankBadges", Rankbadges.class,
+            "rankBadges", Rankbadges.class,,
+            "gameModeBadges", GameModeBadges.class
             "overlay", Overlay.class
     );
     private static final Pattern pattern = Pattern.compile("\\{(.*?):(.*?)}");
