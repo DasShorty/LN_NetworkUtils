@@ -18,7 +18,7 @@ public class ResourcePackAPI {
     );
     private static final Pattern pattern = Pattern.compile("\\{(.*?):(.*?)}");
 
-    public static String convert(String input) {
+    public String convert(String input) {
         Map<String, String> data = parse(input);
 
         for (Map.Entry<String, String> entry : data.entrySet()) {
