@@ -5,7 +5,6 @@ import com.laudynetwork.networkutils.api.MongoDatabase;
 import com.laudynetwork.networkutils.api.gui.GUIHandler;
 import com.laudynetwork.networkutils.api.location.commandimpl.LocationCommand;
 import com.laudynetwork.networkutils.api.messanger.backend.MessageCache;
-import com.laudynetwork.networkutils.api.resourcePackAPI.ResourcePackAPI;
 import com.laudynetwork.networkutils.api.tablist.TablistManager;
 import com.laudynetwork.networkutils.essentials.FlyCommand;
 import com.laudynetwork.networkutils.essentials.GamemodeCommand;
@@ -51,8 +50,6 @@ public final class NetworkUtils extends JavaPlugin {
     public void onEnable() {
 
         Bukkit.getServicesManager().register(MongoDatabase.class, database, this, ServicePriority.High);
-
-        Bukkit.getServicesManager().register(ResourcePackAPI.class, new ResourcePackAPI(), this, ServicePriority.High);
 
         val guiHandler = new GUIHandler<Plugin>(this);
         Bukkit.getServicesManager().register(GUIHandler.class, guiHandler, this, ServicePriority.High);

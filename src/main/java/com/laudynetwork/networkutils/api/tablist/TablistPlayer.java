@@ -5,7 +5,6 @@ import lombok.val;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.luckperms.api.model.group.Group;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.Objects;
@@ -78,7 +77,7 @@ public record TablistPlayer(Player player, net.luckperms.api.LuckPerms luckPerms
         String prefix = Objects.requireNonNull(group.getCachedData().getMetaData().getPrefix());
         TextColor rankColor = getRankColor(groupName);
 
-        return Component.text(Bukkit.getServicesManager().getRegistration(ResourcePackAPI.class).getProvider().convert(prefix))
+        return Component.text(ResourcePackAPI.convert(prefix))
                 .color(TextColor.color(0xFFFFFF))
                 .append(Component.space());
         /*else
