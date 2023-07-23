@@ -26,6 +26,7 @@ public class ResourcePackAPI {
             if (res.contains(entry.getValue()))
                 input = input.replaceAll("\\{" + entry.getKey() + ":" + entry.getValue() + "}", String.valueOf(res.get(entry.getValue())));
         }
+
         return input;
     }
 
