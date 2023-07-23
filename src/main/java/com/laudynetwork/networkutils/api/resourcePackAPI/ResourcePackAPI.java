@@ -44,7 +44,7 @@ public class ResourcePackAPI {
     }
 
     @SneakyThrows
-    private ResourcePackInterface resourcePackEnum(Class<? extends ResourcePackInterface> aClass) {
+    private static ResourcePackInterface resourcePackEnum(Class<? extends ResourcePackInterface> aClass) {
         return aClass.getDeclaredConstructor().newInstance();
     }
 }
