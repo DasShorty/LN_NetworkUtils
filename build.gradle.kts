@@ -25,7 +25,7 @@ dependencies {
     compileOnly("net.luckperms:api:5.4")
     compileOnly("com.viaversion:viaversion-api:4.7.0")
     implementation("com.laudynetwork:database:latest")
-    api("eu.thesimplecloud.simplecloud:simplecloud-api:2.5.0")
+    api("eu.thesimplecloud.simplecloud:simplecloud-api:2.6.0")
     compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
     implementation("org.reflections:reflections:0.10.2")
     implementation("org.mongodb:mongodb-driver-sync:4.10.2")
@@ -88,7 +88,7 @@ tasks {
     shadowJar {
         dependencies {
             exclude(dependency("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT"))
-            exclude(dependency("eu.thesimplecloud.simplecloud:simplecloud-api:2.5.0"))
+            exclude(dependency("eu.thesimplecloud.simplecloud:simplecloud-api:2.6.0"))
             exclude(dependency("eu.thesimplecloud.clientserverapi:clientserverapi:4.1.17"))
             exclude(dependency("eu.thesimplecloud.jsonlib:json-lib:1.0.10"))
             exclude(dependency("eu.thesimplecloud.simplecloud:simplecloud-runner:2.5.0"))
