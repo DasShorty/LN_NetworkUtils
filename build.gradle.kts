@@ -2,7 +2,7 @@ import java.io.FileOutputStream
 
 plugins {
     `java-library`
-    id("io.papermc.paperweight.userdev") version "1.5.5"
+    id("io.papermc.paperweight.userdev") version "1.7.7"
     id("com.github.johnrengelman.shadow") version ("8.1.1")
     id("maven-publish")
     id("de.undercouch.download") version ("5.4.0")
